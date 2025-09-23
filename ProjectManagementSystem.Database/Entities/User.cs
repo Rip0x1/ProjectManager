@@ -1,10 +1,4 @@
-﻿using ProjectManagementSystem.Database.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ProjectManagementSystem.Database.Entities
 {
@@ -21,20 +15,19 @@ namespace ProjectManagementSystem.Database.Entities
         public string LastName { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string Email { get; set; }
 
         [Required]
         public string PasswordHash { get; set; }
 
-        public int Role {  get; set; } // 0 - User, 1 - Manager, 2 - Admin
-
+        public int Role { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public virtual ICollection<ProjectUser> ProjectUsers { get; set; }
-        public virtual ICollection<Task> AuthoredTasks { get; set; }
-        public virtual ICollection<Task> AssignedTasks { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
-
+        public virtual ICollection<Project> ManagedProjects { get; set; } = new List<Project>();
+        public virtual ICollection<ProjectUser> ProjectUsers { get; set; } = new List<ProjectUser>();
+        public virtual ICollection<Task> AuthoredTasks { get; set; } = new List<Task>();
+        public virtual ICollection<Task> AssignedTasks { get; set; } = new List<Task>();
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

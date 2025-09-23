@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ProjectManagementSystem.Database.Entities
 {
@@ -14,10 +9,9 @@ namespace ProjectManagementSystem.Database.Entities
         public int UserId { get; set; }
 
         [MaxLength(100)]
-        public string RoleInProject { get; set; } // "Developer", "Tester", "Designer"
+        public string RoleInProject { get; set; }
 
         public virtual Project Project { get; set; }
         public virtual User User { get; set; }
-
     }
 }

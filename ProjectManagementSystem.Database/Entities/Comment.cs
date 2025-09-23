@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ProjectManagementSystem.Database.Entities
 {
@@ -13,12 +8,12 @@ namespace ProjectManagementSystem.Database.Entities
 
         [Required]
         public string Content { get; set; }
+
         public int TaskId { get; set; }
         public int AuthorId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public virtual Task Task { get; set; }
         public virtual User Author { get; set; }
-
     }
 }

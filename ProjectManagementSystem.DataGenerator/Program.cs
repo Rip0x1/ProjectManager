@@ -1,10 +1,16 @@
-﻿namespace ProjectManagementSystem.DataGenerator
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ProjectManagementSystem.DataGenerator
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+
         }
     }
 }
