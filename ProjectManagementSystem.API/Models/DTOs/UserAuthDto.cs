@@ -1,0 +1,27 @@
+﻿namespace ProjectManagementSystem.API.Models.DTOs
+{
+    public class UserAuthDto
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public int Role { get; set; } = 0; 
+    }
+}
+
+public class UserLoginDto
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+}
+
+public class AuthResponseDto
+{
+    public int UserId { get; set; }
+    public string Email { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public int Role { get; set; }
+    public string Message { get; set; }
+}

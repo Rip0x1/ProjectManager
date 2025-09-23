@@ -1,0 +1,158 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProjectManagementSystem.Database.Data;
+using ProjectManagementSystem.Database.Entities;
+
+namespace ProjectManagementSystem.API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProjectUsersController : ControllerBase
+    {
+        private readonly ApplicationDbContext _context;
+
+        public ProjectUsersController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/ProjectUsers
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProjectUser>>> GetProjectUsers()
+        {
+            return await _context.ProjectUsers
+                .Include(pu => pu.Project)
+                .Include(pu => pu.User)
+                .ToListAsync();
+        }
+
+        // GET: api/ProjectUsers/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ProjectUser>> GetProjectUser(int id)
+        {
+            var projectUser = await _context.ProjectUsers
+                .Include(pu => pu.Project)
+                .Include(pu => pu.User)
+                .FirstOrDefaultAsync(pu => pu.Id == id);
+
+            if (projectUser == null)
+            {
+                return NotFound();
+            }
+
+            return projectUser;
+        }
+
+        // GET: api/ProjectUsers/project/5
+        [HttpGet("project/{projectId}")]
+        public async Task<ActionResult<IEnumerable<ProjectUser>>> GetProjectUsersByProject(int projectId)
+        {
+            return await _context.ProjectUsers
+                .Where(pu => pu.ProjectId == projectId)
+                .Include(pu => pu.User)
+                .ToListAsync();
+        }
+
+        // GET: api/ProjectUsers/user/5
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<ProjectUser>>> GetProjectUsersByUser(int userId)
+        {
+            return await _context.ProjectUsers
+                .Where(pu => pu.UserId == userId)
+                .Include(pu => pu.Project)
+                .ToListAsync();
+        }
+
+        // POST: api/ProjectUsers
+        [HttpPost]
+        public async Task<ActionResult<ProjectUser>> PostProjectUser(ProjectUser projectUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existing = await _context.ProjectUsers
+                .FirstOrDefaultAsync(pu => pu.ProjectId == projectUser.ProjectId && pu.UserId == projectUser.UserId);
+
+            if (existing != null)
+            {
+                return Conflict("User is already assigned to this project");
+            }
+
+            _context.ProjectUsers.Add(projectUser);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetProjectUser", new { id = projectUser.Id }, projectUser);
+        }
+
+        // PUT: api/ProjectUsers/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProjectUser(int id, ProjectUser projectUser)
+        {
+            if (id != projectUser.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(projectUser).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProjectUserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: api/ProjectUsers/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProjectUser(int id)
+        {
+            var projectUser = await _context.ProjectUsers.FindAsync(id);
+            if (projectUser == null)
+            {
+                return NotFound();
+            }
+
+            _context.ProjectUsers.Remove(projectUser);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // DELETE: api/ProjectUsers/project/5/user/5
+        [HttpDelete("project/{projectId}/user/{userId}")]
+        public async Task<IActionResult> DeleteProjectUserByProjectAndUser(int projectId, int userId)
+        {
+            var projectUser = await _context.ProjectUsers
+                .FirstOrDefaultAsync(pu => pu.ProjectId == projectId && pu.UserId == userId);
+
+            if (projectUser == null)
+            {
+                return NotFound();
+            }
+
+            _context.ProjectUsers.Remove(projectUser);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool ProjectUserExists(int id)
+        {
+            return _context.ProjectUsers.Any(e => e.Id == id);
+        }
+    }
+}

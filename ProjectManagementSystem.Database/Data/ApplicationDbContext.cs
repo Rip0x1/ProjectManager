@@ -7,7 +7,6 @@ namespace ProjectManagementSystem.Database.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            Database.EnsureCreated();
         }
 
         public DbSet<Comment> Comments { get; set; }
