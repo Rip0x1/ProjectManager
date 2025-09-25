@@ -48,7 +48,7 @@
                         <materialDesign:Snackbar 
         x:Name="LoginSnackbar"
         MessageQueue="{materialDesign:MessageQueue}"
-        Background="Transparent"
+        Background="{Binding SnackbarBackground}"
         Foreground="White"
         Style="{StaticResource BeautifulSnackbar}"/>
                     </Border>
@@ -65,29 +65,79 @@
                       Foreground="{StaticResource PrimaryBrush}"
                       Margin="0,0,0,8"/>
 
-                    <TextBlock Text="Войдите в свой аккаунт" 
+                    <StackPanel Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="Войдите в свой аккаунт" 
                       FontSize="14" 
                       Foreground="Gray" 
                       HorizontalAlignment="Center"
                       Margin="0,0,0,32"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Регистрация аккаунта" 
+                      FontSize="14" 
+                      Foreground="Gray" 
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,32"
+                      Visibility="{Binding IsRegisterMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                     <TextBox materialDesign:HintAssist.Hint="Email адрес"
+                    materialDesign:HintAssist.IsFloating="True"                                                  
                     Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                    Margin="0,0,0,16">
+                    Margin="0,0,0,16"
+                    Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter" Command="{Binding LoginCommand}"/>
                         </TextBox.InputBindings>
                     </TextBox>
 
-                    <PasswordBox materialDesign:HintAssist.Hint="Пароль" 
-                        x:Name="PasswordBox"
-                        Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
-                        Margin="0,0,0,24">
-                        <PasswordBox.InputBindings>
+                    <Grid Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,24">
+                        <Grid.InputBindings>
                             <KeyBinding Key="Enter" Command="{Binding LoginCommand}"/>
-                        </PasswordBox.InputBindings>
-                    </PasswordBox>
+                        </Grid.InputBindings>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <PasswordBox x:Name="PasswordBox"
+                                     materialDesign:HintAssist.Hint="Пароль"
+                                     materialDesign:HintAssist.IsFloating="True"
+                                     Grid.Column="0">
+                            <PasswordBox.Style>
+                                <Style TargetType="PasswordBox" BasedOn="{StaticResource MaterialDesignFloatingHintPasswordBox}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPasswordVisible}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </PasswordBox.Style>
+                        </PasswordBox>
+                        <TextBox x:Name="PasswordTextBox"
+                                 Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.Hint="Пароль"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Grid.Column="0">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPasswordVisible}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                        <ToggleButton Grid.Column="1"
+                                      Margin="8,0,0,0"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding IsPasswordVisible}"
+                                      ToolTip="Показать пароль">
+                            <materialDesign:PackIcon Kind="Eye"/>
+                        </ToggleButton>
+                    </Grid>
 
                     <Button Content="ВОЙТИ" 
                    Command="{Binding LoginCommand}"
@@ -97,17 +147,118 @@
                    Height="44"
                    FontSize="14"
                    FontWeight="SemiBold"
-                   Margin="0,0,0,16"/>
+                   Margin="0,0,0,16"
+                   Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                    <Button Content="ВЫХОД" 
-                   Command="{Binding ExitCommand}"
-                   Style="{StaticResource MaterialDesignRaisedButton}"
-                   Background="{StaticResource PrimaryBrush}"
-                   Foreground="White"
-                   Height="44"
-                   FontSize="14"
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,16"/>
+                    <StackPanel Visibility="{Binding IsRegisterMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBox materialDesign:HintAssist.Hint="Имя"
+                                 Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Margin="0,0,0,12">
+
+                        </TextBox>
+                        <TextBox materialDesign:HintAssist.Hint="Фамилия"
+                                 Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Margin="0,0,0,12">
+
+                        </TextBox>
+                        <TextBox materialDesign:HintAssist.Hint="Email"
+                                 Text="{Binding RegisterEmail, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Margin="0,0,0,12">
+
+                        </TextBox>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <PasswordBox x:Name="RegisterPasswordBox"
+                                         materialDesign:HintAssist.Hint="Пароль"
+                                         materialDesign:HintAssist.IsFloating="True"
+                                         Grid.Column="0">
+                                <PasswordBox.Style>
+                                    <Style TargetType="PasswordBox" BasedOn="{StaticResource MaterialDesignFloatingHintPasswordBox}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsRegisterPasswordVisible}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </PasswordBox.Style>
+                            </PasswordBox>
+                            <TextBox x:Name="RegisterPasswordTextBox"
+                                     Text="{Binding RegisterPassword, UpdateSourceTrigger=PropertyChanged}"
+                                     materialDesign:HintAssist.Hint="Пароль"
+                                         materialDesign:HintAssist.IsFloating="True"
+                                     Grid.Column="0">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsRegisterPasswordVisible}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                            <ToggleButton Grid.Column="1"
+                                          Margin="8,0,0,0"
+                                          VerticalAlignment="Center"
+                                          IsChecked="{Binding IsRegisterPasswordVisible}"
+                                          ToolTip="Показать пароль">
+                                <materialDesign:PackIcon Kind="Eye"/>
+                            </ToggleButton>
+                        </Grid>
+                        <Button Content="ЗАРЕГИСТРИРОВАТЬСЯ"
+                                Command="{Binding RegisterCommand}"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Background="{StaticResource PrimaryBrush}"
+                                Foreground="White"
+                                Height="44"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Margin="0,0,0,16"/>
+                    </StackPanel>
+
+                    <Button Content="Ещё нет аккаунта? Зарегистрируйтесь"
+                            Command="{Binding ShowRegisterCommand}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Foreground="{StaticResource PrimaryBrush}"
+                            Margin="0,4,0,0"
+                            Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Button Content="Уже есть аккаунт? Войдите"
+                            Command="{Binding ShowLoginCommand}"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Foreground="{StaticResource PrimaryBrush}"
+                            Margin="0,4,0,0"
+                            Visibility="{Binding IsRegisterMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                    <StackPanel Margin="0,8,0,0">
+                        <Button Content="ВЫХОД" 
+                                Command="{Binding ExitCommand}"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Background="{StaticResource PrimaryBrush}"
+                                Foreground="White"
+                                Height="44"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Margin="0,16,0,0"
+                                Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <Button Content="ВЫХОД" 
+                                Command="{Binding ExitCommand}"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Background="{StaticResource PrimaryBrush}"
+                                Foreground="White"
+                                Height="44"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                Margin="0,16,0,0"
+                                Visibility="{Binding IsRegisterMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </StackPanel>
 
                     <TextBlock Text="{Binding ErrorMessage}" 
                       Foreground="Red" 
@@ -121,7 +272,8 @@
                         Margin="0,0,0,16"
                         Height="4"/>
 
-                    <Expander Header="Тестовые аккаунты" Margin="0,24,0,0" ExpandDirection="Down">
+                    <Expander Header="Тестовые аккаунты" Margin="0,24,0,0" ExpandDirection="Down"
+                              Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ScrollViewer>
                             <StackPanel>
                                 <Button Content="Админ (admin@test.com)" 
@@ -137,5 +289,4 @@
             </Border>
         </Grid>
     </ScrollViewer>
-    
 </Window>

@@ -58,7 +58,7 @@ namespace ProjectManagementSystem.WPF.Services
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
                 throw new HttpRequestException(
-                    $"HTTP {response.StatusCode}: {errorContent}");
+                    $"HTTP {response.StatusCode}: {errorContent}", null, response.StatusCode);
             }
         }
     }

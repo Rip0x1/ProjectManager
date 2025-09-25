@@ -2,6 +2,7 @@
 using ProjectManagementSystem.WPF.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace ProjectManagementSystem.WPF.Views
 {
@@ -20,15 +21,18 @@ namespace ProjectManagementSystem.WPF.Views
 
             LoginSnackbar.MessageQueue = notificationService.MessageQueue;
 
-            viewModel.PasswordChanged += (password) =>
-            {
-                PasswordBox.Password = password;
-            };
-
             PasswordBox.PasswordChanged += (s, e) =>
             {
                 viewModel.Password = PasswordBox.Password;
             };
+
+            if (RegisterPasswordBox != null)
+            {
+                RegisterPasswordBox.PasswordChanged += (s, e) =>
+                {
+                    viewModel.RegisterPassword = RegisterPasswordBox.Password;
+                };
+            }
         }
     }
 }

@@ -17,6 +17,33 @@ namespace ProjectManagementSystem.WPF.Services
             _apiClient = apiClient;
         }
 
+        public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
+        {
+            try
+            {
+                var response = await _apiClient.PostAsync<AuthResponseDto>("auth/register", dto);
+                if (response != null && !string.IsNullOrEmpty(response.Email))
+                {
+                    _currentUser = response;
+                    return response;
+                }
+                throw new Exception("Регистрация не удалась");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var message = ex.Message?.ToLowerInvariant();
+                if (!string.IsNullOrEmpty(message) && message.Contains("already exists"))
+                {
+                    throw new Exception("Аккаунт с таким email уже существует");
+                }
+                throw new Exception("Некорректные данные регистрации");
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new Exception($"Ошибка регистрации: {ex.Message}");
+            }
+        }
+
         public async Task<AuthResponseDto> LoginAsync(string email, string password)
         {
             try
@@ -34,7 +61,7 @@ namespace ProjectManagementSystem.WPF.Services
                     throw new Exception("Неверный email или пароль");
                 }
             }
-            catch (HttpRequestException ex) when (ex.Message.Contains("401"))
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
                 throw new Exception("Неверный email или пароль");
             }

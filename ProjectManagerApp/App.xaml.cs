@@ -29,10 +29,10 @@ namespace ProjectManagementSystem.WPF
             services.AddSingleton<INotificationService, NotificationService>();
 
             services.AddTransient<LoginViewModel>();
-            services.AddTransient<DashboardViewModel>();
-            services.AddTransient<ProjectsViewModel>();
-            services.AddTransient<TasksViewModel>();
-            services.AddTransient<UsersViewModel>();
+            //services.AddTransient<DashboardViewModel>();
+            //services.AddTransient<ProjectsViewModel>();
+            //services.AddTransient<TasksViewModel>();
+            //services.AddTransient<UsersViewModel>();
 
             services.AddTransient<LoginView>();
             services.AddSingleton<MainWindow>();

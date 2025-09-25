@@ -8,7 +8,7 @@ namespace ProjectManagementSystem.WPF.Services
         void ShowError(string message);
         void ShowWarning(string message);
         void ShowInfo(string message);
-        SnackbarMessageQueue MessageQueue { get; } // Добавьте это свойство
+        SnackbarMessageQueue MessageQueue { get; } 
     }
 
     public class NotificationService : INotificationService
@@ -24,22 +24,22 @@ namespace ProjectManagementSystem.WPF.Services
 
         public void ShowSuccess(string message)
         {
-            MessageQueue.Enqueue("✓ " + message); 
+            MessageQueue.Enqueue(message); 
         }
 
         public void ShowError(string message)
         {
-            MessageQueue.Enqueue("✗ " + message);
+            MessageQueue.Enqueue(message);
         }
 
         public void ShowWarning(string message)
         {
-            MessageQueue.Enqueue("⚠ " + message);
+            MessageQueue.Enqueue(message);
         }
 
         public void ShowInfo(string message)
         {
-            MessageQueue.Enqueue("ℹ " + message);
+            MessageQueue.Enqueue(message);
         }
     }
 }
