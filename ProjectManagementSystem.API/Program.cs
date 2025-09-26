@@ -9,7 +9,12 @@ namespace ProjectManagementSystem.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(opts =>
+                {
+                    opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                    opts.JsonSerializerOptions.WriteIndented = false;
+                });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddCors(options =>

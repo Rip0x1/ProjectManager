@@ -6,7 +6,7 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="NoResize"
-        Width="500" Height="750"
+        Width="530" Height="770"
         Style="{StaticResource MaterialDesignWindow}">
 
     <Window.Background>
@@ -280,6 +280,12 @@
                             <StackPanel>
                                 <Button Content="Админ (admin@test.com)" 
                            Command="{Binding UseDemoAdminCommand}"
+                           Style="{StaticResource MaterialDesignOutlinedButton}"
+                           Foreground="{StaticResource PrimaryBrush}"
+                           Height="36"
+                           Margin="0,4"/>
+                                <Button Content="User (dimaslizh@gmail.com)"
+                           Command="{Binding UseDemoUserCommand}"
                            Style="{StaticResource MaterialDesignOutlinedButton}"
                            Foreground="{StaticResource PrimaryBrush}"
                            Height="36"

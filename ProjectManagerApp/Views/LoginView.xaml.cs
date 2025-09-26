@@ -14,12 +14,12 @@ namespace ProjectManagementSystem.WPF.Views
 
             var authService = App.GetService<IAuthService>();
             var navigationService = App.GetService<INavigationService>();
-            var notificationService = App.GetService<INotificationService>();
+            var loginNotificationService = App.GetService<ILoginNotificationService>();
 
-            var viewModel = new LoginViewModel(authService, navigationService, notificationService);
+            var viewModel = new LoginViewModel(authService, navigationService, loginNotificationService);
             DataContext = viewModel;
 
-            LoginSnackbar.MessageQueue = notificationService.MessageQueue;
+            LoginSnackbar.MessageQueue = loginNotificationService.MessageQueue;
 
             PasswordBox.PasswordChanged += (s, e) =>
             {
@@ -33,6 +33,14 @@ namespace ProjectManagementSystem.WPF.Views
                     viewModel.RegisterPassword = RegisterPasswordBox.Password;
                 };
             }
+
+            viewModel.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(viewModel.Password))
+                {
+                    PasswordBox.Password = viewModel.Password;
+                }
+            };
         }
     }
 }

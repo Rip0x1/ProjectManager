@@ -11,5 +11,7 @@ namespace ProjectManagementSystem.WPF.Services
         void Logout();
         int? CurrentUserId { get; }
         string CurrentUserRole { get; }
+        string CurrentUserFirstName { get; }
+        string CurrentUserEmail { get; }
     }
 }

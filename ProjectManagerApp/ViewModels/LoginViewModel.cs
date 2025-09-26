@@ -13,7 +13,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
     {
         private readonly IAuthService _authService;
         private readonly INavigationService _navigationService;
-        private readonly INotificationService _notificationService;
+        private readonly ILoginNotificationService _notificationService;
 
         [ObservableProperty]
         private string _email = "";
@@ -74,7 +74,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
         public event System.Action<string>? PasswordChanged;
 
-        public LoginViewModel(IAuthService authService, INavigationService navigationService, INotificationService notificationService)
+        public LoginViewModel(IAuthService authService, INavigationService navigationService, ILoginNotificationService notificationService)
         {
             _authService = authService;
             _navigationService = navigationService;
@@ -230,12 +230,56 @@ namespace ProjectManagementSystem.WPF.ViewModels
         }
 
         [RelayCommand]
-        private void UseDemoAdmin()
+        private async void UseDemoAdmin()
         {
-            Email = "admin@test.com";
-            Password = "admin123";
-            PasswordChanged?.Invoke(Password);
-            _notificationService.ShowInfo("Демо-данные загружены. Нажмите 'Войти'");
+            try
+            {
+                Email = "admin@test.com";
+                Password = "admin123";
+                PasswordChanged?.Invoke(Password);
+                _notificationService.ShowInfo($"Демо-данные загружены. Нажмите 'Войти'");
+            }
+            catch (System.Exception ex)
+            {
+                SnackbarBackground = new SolidColorBrush(Colors.Red);
+                _notificationService.ShowError(ex.Message);
+                if (ex.Message.Contains("Ошибка при загрузке данных"))
+                {
+                    IsEmailInvalid = true;
+                    IsPasswordInvalid = true;
+                }
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        [RelayCommand]
+        private async void UseDemoUser()
+        {
+            try
+            {
+                Email = "dimaslizh@gmail.com";
+                Password = "123123";
+                PasswordChanged?.Invoke(Password);
+                _notificationService.ShowInfo($"Демо-данные загружены. Нажмите 'Войти'");
+
+            }
+            catch (System.Exception ex)
+            {
+                SnackbarBackground = new SolidColorBrush(Colors.Red);
+                _notificationService.ShowError(ex.Message);
+                if (ex.Message.Contains("Ошибка при загрузке данных"))
+                {
+                    IsEmailInvalid = true;
+                    IsPasswordInvalid = true;
+                }
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         partial void OnPasswordChanged(string value)

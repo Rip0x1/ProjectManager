@@ -1,0 +1,49 @@
+<UserControl x:Class="ProjectManagementSystem.WPF.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Background="{StaticResource PrimaryBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <materialDesign:PackIcon Kind="ViewDashboard" Foreground="White" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <StackPanel Margin="12,0,0,0">
+                    <TextBlock Text="Панель управления" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                    <TextBlock Foreground="#EDE7F6">
+                        <Run Text="Роль: "/>
+                        <Run Text="{Binding RoleName}"/>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <UniformGrid Grid.Row="1" Columns="3" Rows="1" Margin="0,0,0,0">
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8">
+                <StackPanel>
+                    <TextBlock Text="Проектов" FontWeight="SemiBold"/>
+                    <TextBlock Text="—" FontSize="28"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8">
+                <StackPanel>
+                    <TextBlock Text="Задач" FontWeight="SemiBold"/>
+                    <TextBlock Text="—" FontSize="28"/>
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8">
+                <StackPanel>
+                    <TextBlock Text="Пользователей" FontWeight="SemiBold"/>
+                    <TextBlock Text="—" FontSize="28"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+    </Grid>
+</UserControl>
+

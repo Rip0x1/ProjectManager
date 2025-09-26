@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ProjectManagementSystem.WPF.Services;
 
 namespace ProjectManagementSystem.WPF.ViewModels
 {
-    public class DashboardViewModel
+    public partial class DashboardViewModel : ObservableObject
     {
+        private readonly IAuthService _authService;
+
+        public string RoleName => _authService.CurrentUserRole;
+
+        public DashboardViewModel(IAuthService authService)
+        {
+            _authService = authService;
+        }
     }
 }

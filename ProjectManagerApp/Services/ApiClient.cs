@@ -57,8 +57,16 @@ namespace ProjectManagementSystem.WPF.Services
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException(
-                    $"HTTP {response.StatusCode}: {errorContent}", null, response.StatusCode);
+                var userFriendlyMessage = response.StatusCode switch
+                {
+                    HttpStatusCode.NotFound => "Данные не найдены",
+                    HttpStatusCode.Unauthorized => "Недостаточно прав доступа",
+                    HttpStatusCode.Forbidden => "Доступ запрещён",
+                    HttpStatusCode.BadRequest => "Некорректный запрос",
+                    HttpStatusCode.InternalServerError => "Ошибка сервера",
+                    _ => $"Ошибка: {response.StatusCode}"
+                };
+                throw new HttpRequestException(userFriendlyMessage, null, response.StatusCode);
             }
         }
     }

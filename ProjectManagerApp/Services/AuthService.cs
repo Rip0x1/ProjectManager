@@ -90,5 +90,8 @@ namespace ProjectManagementSystem.WPF.Services
             2 => "Администратор",
             _ => "Неизвестно"
         };
+
+        public string CurrentUserFirstName => _currentUser?.FirstName ?? string.Empty;
+        public string CurrentUserEmail => _currentUser?.Email ?? string.Empty;
     }
 }

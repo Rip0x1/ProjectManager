@@ -3,9 +3,97 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ProjectManagerApp"
+        xmlns:views="clr-namespace:ProjectManagementSystem.WPF.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-    </Grid>
+        Title="Система управления проектами" Height="600" Width="1000"
+        WindowStyle="None" ResizeMode="CanResize"
+        Background="White">
+
+    <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" SnapsToDevicePixels="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Border Grid.Row="1" Margin="20,0,0,5" 
+                    CornerRadius="6" HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+                    Effect="{StaticResource MaterialDesignShadowDepth2}"
+                    x:Name="NotificationBorder"
+                    MaxWidth="300">
+                <materialDesign:Snackbar x:Name="MainSnackbar" 
+                                         MessageQueue="{materialDesign:MessageQueue}"
+                                         Background="Transparent"
+                                         Foreground="White"
+                                         FontSize="12"
+                                         FontWeight="Medium"
+                                         HorizontalContentAlignment="Center"/>
+            </Border>
+
+            <Grid Grid.Row="0" Background="{StaticResource PrimaryBrush}"
+                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                    <materialDesign:PackIcon Kind="ViewDashboard" Foreground="White" Width="20" Height="20"/>
+                    <TextBlock Text="Система управления проектами" Foreground="White" FontWeight="SemiBold" Margin="8,0,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,140,0">
+                    <materialDesign:PackIcon Kind="Account" Foreground="White" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="Здравствуйте, " Foreground="White" Margin="8,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding CurrentUserNameText}" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <Button Grid.Column="1" Width="50" Height="32" Margin="0,0,4,0"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        ToolTip="Свернуть" Click="Minimize_Click">
+                    <materialDesign:PackIcon Kind="WindowMinimize" Foreground="White"/>
+                </Button>
+                <Button Grid.Column="2" Width="50" Height="32" Margin="0,0,4,0"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        ToolTip="Развернуть/Восстановить" Click="MaximizeRestore_Click">
+                    <materialDesign:PackIcon Kind="WindowMaximize" Foreground="White"/>
+                </Button>
+                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <Button Width="100" Height="32" Margin="0,0,8,0"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Foreground="White"
+                            ToolTip="Выйти из аккаунта" Click="Logout_Click">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Logout" Foreground="White"/>
+                            <TextBlock Text="Выйти" Margin="6,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Width="50" Height="32"
+                            Background="#E53935" Foreground="White"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            ToolTip="Закрыть" Click="Close_Click">
+                        <materialDesign:PackIcon Kind="Close"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <TabControl Grid.Row="1">
+                <TabItem Header="Панель">
+                    <views:DashboardView/>
+                </TabItem>
+                <TabItem Header="Проекты">
+                    <views:ProjectsView/>
+                </TabItem>
+                <TabItem Header="Задачи">
+                    <views:TasksView/>
+                </TabItem>
+                <TabItem Header="Пользователи">
+                    <views:UsersView/>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Border>
 </Window>

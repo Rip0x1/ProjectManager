@@ -18,29 +18,64 @@ namespace ProjectManagementSystem.API.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+        public async Task<ActionResult<IEnumerable<object>>> GetProjects()
         {
-            return await _context.Projects
+            var result = await _context.Projects
                 .Include(p => p.Manager)
-                .Include(p => p.Tasks)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.ManagerId,
+                    p.CreatedAt,
+                    p.Deadline,
+                    Manager = p.Manager == null ? null : new
+                    {
+                        p.Manager.Id,
+                        p.Manager.FirstName,
+                        p.Manager.LastName,
+                        p.Manager.Email,
+                        p.Manager.Role
+                    }
+                })
                 .ToListAsync();
+
+            return Ok(result);
         }
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        public async Task<ActionResult<object>> GetProject(int id)
         {
             var project = await _context.Projects
                 .Include(p => p.Manager)
-                .Include(p => p.Tasks)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .Where(p => p.Id == id)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.ManagerId,
+                    p.CreatedAt,
+                    p.Deadline,
+                    Manager = p.Manager == null ? null : new
+                    {
+                        p.Manager.Id,
+                        p.Manager.FirstName,
+                        p.Manager.LastName,
+                        p.Manager.Email,
+                        p.Manager.Role
+                    }
+                })
+                .FirstOrDefaultAsync();
 
             if (project == null)
             {
                 return NotFound();
             }
 
-            return project;
+            return Ok(project);
         }
 
         // POST: api/Projects
