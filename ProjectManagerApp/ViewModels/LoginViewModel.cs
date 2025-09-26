@@ -124,6 +124,13 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 return;
             }
 
+            if (!IsRegisterEmailInvalid.Equals("@"))
+            {
+                SnackbarBackground = new SolidColorBrush(Colors.Red);
+                _notificationService.ShowWarning("Почта должна быть правильного формата");
+                return;
+            }
+
             IsLoading = true;
             ErrorMessage = "";
 
@@ -169,6 +176,13 @@ namespace ProjectManagementSystem.WPF.ViewModels
             {
                 SnackbarBackground = new SolidColorBrush(Colors.Red);
                 _notificationService.ShowWarning("Пожалуйста, введите email и пароль");
+                return;
+            }
+
+            if (IsEmailInvalid.Equals("@"))
+            {
+                SnackbarBackground = new SolidColorBrush(Colors.Red);
+                _notificationService.ShowWarning("Почта должна быть правильного формата");
                 return;
             }
 
