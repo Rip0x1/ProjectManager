@@ -1,0 +1,140 @@
+<Window x:Class="ProjectManagementSystem.WPF.Views.UserDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Детали пользователя"
+        WindowStartupLocation="CenterScreen"
+        Width="700" Height="500"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <Window.Resources>
+        <Style x:Key="DetailCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Opacity="0.1" ShadowDepth="2" BlurRadius="8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Border Grid.Row="0" Background="{DynamicResource MaterialDesignToolBarBackground}" 
+                Height="50" VerticalAlignment="Top">
+            <Grid>
+                <TextBlock Text="Детали пользователя" 
+                          FontSize="18" FontWeight="Medium"
+                          VerticalAlignment="Center" Margin="20,0"/>
+                <Button x:Name="CloseButton" 
+                       Content="✕" 
+                       Width="30" Height="30"
+                       HorizontalAlignment="Right" 
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0"
+                       Style="{StaticResource MaterialDesignIconButton}"
+                       Click="CloseButton_Click"/>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,50,0,0">
+            <StackPanel Margin="20">
+                
+                <Border Style="{StaticResource DetailCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Основная информация" 
+                                  FontSize="16" FontWeight="Bold" 
+                                  Margin="0,0,0,16"/>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Имя:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FullName}" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Email:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Email}" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Роль:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,8">
+                                <Border Background="{Binding RoleColor}" 
+                                       CornerRadius="12" Padding="8,4" Margin="0,0,8,0">
+                                    <TextBlock Text="{Binding RoleText}" 
+                                              Foreground="White" FontWeight="Medium"/>
+                                </Border>
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Дата регистрации:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CreatedAtText}" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="ID:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Id}" Margin="0,0,0,8"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource DetailCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Статистика активности" 
+                                  FontSize="16" FontWeight="Bold" 
+                                  Margin="0,0,0,16"/>
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Управляемых проектов:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ManagedProjectsCount}" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Созданных задач:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding AuthoredTasksCount}" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Назначенных задач:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding AssignedTasksCount}" Margin="0,0,0,8"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Комментариев:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CommentsCount}" Margin="0,0,0,8"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                    <Button Content="Закрыть" 
+                           Style="{StaticResource MaterialDesignRaisedButton}"
+                           Click="CloseButton_Click"
+                           Margin="0,0,10,0"/>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
+

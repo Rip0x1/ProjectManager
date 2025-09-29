@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectManagementSystem.API.Models.DTOs;
 using ProjectManagementSystem.Database.Data;
 using ProjectManagementSystem.Database.Entities;
 using Task = ProjectManagementSystem.Database.Entities.Task;
@@ -19,15 +20,42 @@ namespace ProjectManagementSystem.API.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Task>>> GetTasks()
+        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> GetTasks([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
-            return await _context.Tasks
-                .Include(t => t.Project)
-                .Include(t => t.Author)
-                .Include(t => t.Assignee)
-                .Include(t => t.Comments)
-                    .ThenInclude(c => c.Author)
-                .ToListAsync();
+            try
+            {
+                var tasks = await _context.Tasks
+                    .OrderByDescending(t => t.CreatedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(t => new TaskResponseDto
+                    {
+                        Id = t.Id,
+                        Title = t.Title,
+                        Description = t.Description,
+                        Status = t.Status,
+                        Priority = t.Priority,
+                        ProjectId = t.ProjectId,
+                        ProjectName = t.Project.Name,
+                        AuthorId = t.AuthorId,
+                        AuthorName = t.Author.FirstName + " " + t.Author.LastName,
+                        AssigneeId = t.AssigneeId,
+                        AssigneeName = t.Assignee != null ? t.Assignee.FirstName + " " + t.Assignee.LastName : null,
+                        CreatedAt = t.CreatedAt,
+                        UpdatedAt = t.UpdatedAt,
+                        PlannedHours = t.PlannedHours,
+                        ActualHours = t.ActualHours,
+                        CommentsCount = 0
+                    })
+                    .ToListAsync();
+
+                return tasks;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка загрузки задач: {ex.Message}");
+                return new List<TaskResponseDto>();
+            }
         }
 
         // GET: api/Tasks/5

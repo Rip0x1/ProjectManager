@@ -8,29 +8,29 @@ using ProjectManagementSystem.WPF.ViewModels;
 
 namespace ProjectManagementSystem.WPF.Views
 {
-    public partial class TasksView : UserControl
+    public partial class UsersView : UserControl
     {
-        public TasksView()
+        public UsersView()
         {
             InitializeComponent();
-            
+
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                var tasksService = App.GetService<ITasksService>();
+                var usersService = App.GetService<IUsersService>();
                 var notificationService = App.GetService<INotificationService>();
 
-                var viewModel = new TasksViewModel(tasksService, notificationService);
+                var viewModel = new UsersViewModel(usersService, notificationService);
                 DataContext = viewModel;
 
                 viewModel.LoadAsync();
             }
         }
 
-        private void TaskCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void UserCard_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is Border border && border.DataContext is TaskItem task)
+            if (sender is Border border && border.DataContext is UserItem user)
             {
-                var detailsWindow = new TaskDetailsWindow(task);
+                var detailsWindow = new UserDetailsWindow(user);
                 detailsWindow.Owner = Window.GetWindow(this);
                 detailsWindow.ShowDialog();
             }

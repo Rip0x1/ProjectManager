@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ProjectManagerApp
+namespace ProjectManagementSystem.WPF.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,8 +23,14 @@ namespace ProjectManagerApp
             InitializeComponent();
             DataContext = new MainWindowViewModel();
             
-            var notificationService = ProjectManagementSystem.WPF.App.GetService<INotificationService>();
-            notificationService.MessageQueue = MainSnackbar.MessageQueue;
+            var notificationService = App.GetService<INotificationService>();
+            
+            if (notificationService.MessageQueue == null)
+            {
+                notificationService.MessageQueue = new MaterialDesignThemes.Wpf.SnackbarMessageQueue(TimeSpan.FromSeconds(3));
+            }
+            
+            MainSnackbar.MessageQueue = notificationService.MessageQueue;
             notificationService.SetNotificationBorder(NotificationBorder);
         }
 
@@ -55,9 +61,9 @@ namespace ProjectManagerApp
 
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
-            var auth = ProjectManagementSystem.WPF.App.GetService<IAuthService>();
+            var auth = App.GetService<IAuthService>();
             auth.Logout();
-            var nav = ProjectManagementSystem.WPF.App.GetService<INavigationService>();
+            var nav = App.GetService<INavigationService>();
             nav.NavigateToLogin();
         }
 
@@ -67,7 +73,7 @@ namespace ProjectManagerApp
 
             public MainWindowViewModel()
             {
-                var auth = ProjectManagementSystem.WPF.App.GetService<IAuthService>();
+                var auth = App.GetService<IAuthService>();
                 CurrentUserNameText = string.IsNullOrWhiteSpace(auth.CurrentUserFirstName)
                     ? auth.CurrentUserEmail
                     : auth.CurrentUserFirstName;

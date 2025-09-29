@@ -1,5 +1,4 @@
 ﻿using ProjectManagementSystem.WPF.Views;
-using ProjectManagerApp;
 using System.Windows;
 
 namespace ProjectManagementSystem.WPF.Services

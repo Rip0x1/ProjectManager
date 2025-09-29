@@ -47,26 +47,43 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="280" Height="200" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8,0,0,8">
+                        <Border Width="280" Height="200" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8,0,0,8"
+                                Cursor="Hand" MouseLeftButtonDown="ProjectCard_MouseLeftButtonDown">
                             <Grid>
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="16" FontWeight="SemiBold"/>
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" 
+                                              TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
+                                    <TextBlock Grid.Column="1" Text="👁" FontSize="14" 
+                                              ToolTip="Нажмите для просмотра деталей"/>
+                                </Grid>
 
-                                <TextBlock Grid.Row="1"
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
+                                    <Border Background="{Binding StatusColor}" CornerRadius="12" Padding="8,2" Margin="0,0,4,0">
+                                        <TextBlock Text="{Binding StatusText}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                                    </Border>
+                                </StackPanel>
+
+                                <TextBlock Grid.Row="2"
                                            Text="{Binding Description}"
                                            Foreground="Gray"
                                            TextWrapping="Wrap"
                                            TextTrimming="CharacterEllipsis"
                                            LineStackingStrategy="BlockLineHeight"
                                            LineHeight="16"
-                                           MaxHeight="80"/>
+                                           MaxHeight="60"/>
 
-                                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,8,0,0">
+                                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,0">
                                     <TextBlock Text="Руководитель: " FontWeight="SemiBold"/>
                                     <TextBlock Text="{Binding ManagerName}"/>
                                 </StackPanel>

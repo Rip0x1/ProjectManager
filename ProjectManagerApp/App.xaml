@@ -22,6 +22,7 @@
 
             <convert:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <convert:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+            <convert:StringToBrushConverter x:Key="StringToBrushConverter"/>
 
         </ResourceDictionary>
     </Application.Resources>

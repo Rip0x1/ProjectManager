@@ -27,9 +27,20 @@ namespace ProjectManagementSystem.WPF.Services
 
         public async Task<T> GetAsync<T>(string endpoint)
         {
-            var response = await _httpClient.GetAsync(endpoint);
-            await EnsureSuccess(response);
-            return await response.Content.ReadFromJsonAsync<T>();
+            try
+            {
+                var response = await _httpClient.GetAsync(endpoint);
+                await EnsureSuccess(response);
+                var json = await response.Content.ReadAsStringAsync();
+                return System.Text.Json.JsonSerializer.Deserialize<T>(json, new System.Text.Json.JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Ошибка API запроса к {endpoint}: {ex.Message}", ex);
+            }
         }
 
         public async Task<T> PostAsync<T>(string endpoint, object data)

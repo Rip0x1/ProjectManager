@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.API.Utilities;
+using ProjectManagementSystem.API.Models.DTOs;
 using ProjectManagementSystem.Database.Data;
 using ProjectManagementSystem.Database.Entities;
 
@@ -19,10 +20,10 @@ namespace ProjectManagementSystem.API.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetUsers()
         {
             var users = await _context.Users
-                .Select(u => new User
+                .Select(u => new UserResponseDto
                 {
                     Id = u.Id,
                     FirstName = u.FirstName,
@@ -30,11 +31,10 @@ namespace ProjectManagementSystem.API.Controllers
                     Email = u.Email,
                     Role = u.Role,
                     CreatedAt = u.CreatedAt,
-                    ManagedProjects = u.ManagedProjects,
-                    ProjectUsers = u.ProjectUsers,
-                    AuthoredTasks = u.AuthoredTasks,
-                    AssignedTasks = u.AssignedTasks,
-                    Comments = u.Comments
+                    ManagedProjectsCount = u.ManagedProjects.Count,
+                    AuthoredTasksCount = u.AuthoredTasks.Count,
+                    AssignedTasksCount = u.AssignedTasks.Count,
+                    CommentsCount = u.Comments.Count
                 })
                 .ToListAsync();
 
@@ -43,10 +43,10 @@ namespace ProjectManagementSystem.API.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserResponseDto>> GetUser(int id)
         {
             var user = await _context.Users
-                .Select(u => new User
+                .Select(u => new UserResponseDto
                 {
                     Id = u.Id,
                     FirstName = u.FirstName,
@@ -54,11 +54,10 @@ namespace ProjectManagementSystem.API.Controllers
                     Email = u.Email,
                     Role = u.Role,
                     CreatedAt = u.CreatedAt,
-                    ManagedProjects = u.ManagedProjects,
-                    ProjectUsers = u.ProjectUsers,
-                    AuthoredTasks = u.AuthoredTasks,
-                    AssignedTasks = u.AssignedTasks,
-                    Comments = u.Comments
+                    ManagedProjectsCount = u.ManagedProjects.Count,
+                    AuthoredTasksCount = u.AuthoredTasks.Count,
+                    AssignedTasksCount = u.AssignedTasks.Count,
+                    CommentsCount = u.Comments.Count
                 })
                 .FirstOrDefaultAsync(u => u.Id == id);
 

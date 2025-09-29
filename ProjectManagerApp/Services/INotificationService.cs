@@ -36,25 +36,25 @@ namespace ProjectManagementSystem.WPF.Services
         public void ShowSuccess(string message)
         {
             SetNotificationColor("#4CAF50");
-            MessageQueue.Enqueue(message); 
+            MessageQueue?.Enqueue(message); 
         }
 
         public void ShowError(string message)
         {
             SetNotificationColor("#F44336");
-            MessageQueue.Enqueue(message);
+            MessageQueue?.Enqueue(message);
         }
 
         public void ShowWarning(string message)
         {
             SetNotificationColor("#FF9800");
-            MessageQueue.Enqueue(message);
+            MessageQueue?.Enqueue(message);
         }
 
         public void ShowInfo(string message)
         {
             SetNotificationColor("#2196F3");
-            MessageQueue.Enqueue(message);
+            MessageQueue?.Enqueue(message);
         }
 
         private void SetNotificationColor(string color)

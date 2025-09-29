@@ -40,7 +40,8 @@
 
                 <StackPanel Margin="32" VerticalAlignment="Center">
 
-                    <Border Margin="0,-5,0,25" 
+                    <Border x:Name="NotificationBorder" 
+        Margin="0,-5,0,25" 
         Background="Purple"
         CornerRadius="10"
         HorizontalAlignment="Center"

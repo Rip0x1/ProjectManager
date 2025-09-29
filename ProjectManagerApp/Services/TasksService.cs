@@ -1,7 +1,4 @@
 using ProjectManagementSystem.WPF.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjectManagementSystem.WPF.Services
 {
@@ -16,95 +13,51 @@ namespace ProjectManagementSystem.WPF.Services
 
         public async Task<IEnumerable<TaskItem>> GetTasksAsync()
         {
-            var tasks = await _apiClient.GetAsync<IEnumerable<TaskDto>>("api/tasks");
-            return tasks.Select(MapToTaskItem);
+            try
+            {
+                var tasks = await _apiClient.GetAsync<IEnumerable<TaskDto>>("Tasks");
+                return tasks.Select(MapToTaskItem);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Ошибка загрузки задач: {ex.Message}", ex);
+            }
         }
 
         public async Task<TaskDto> GetTaskAsync(int id)
         {
-            return await _apiClient.GetAsync<TaskDto>($"api/tasks/{id}");
+            return await _apiClient.GetAsync<TaskDto>($"Tasks/{id}");
         }
 
         public async Task<IEnumerable<TaskItem>> GetTasksByStatusAsync(int status)
         {
-            var tasks = await _apiClient.GetAsync<IEnumerable<TaskDto>>($"api/tasks/status/{status}");
-            return tasks.Select(MapToTaskItem);
+            var allTasks = await GetTasksAsync();
+            return allTasks.Where(t => t.Status == status);
         }
 
         public async Task<IEnumerable<TaskItem>> GetTasksByPriorityAsync(int priority)
         {
-            var tasks = await _apiClient.GetAsync<IEnumerable<TaskDto>>($"api/tasks/priority/{priority}");
-            return tasks.Select(MapToTaskItem);
+            var allTasks = await GetTasksAsync();
+            return allTasks.Where(t => t.Priority == priority);
         }
 
-        private TaskItem MapToTaskItem(TaskDto task)
+        private static TaskItem MapToTaskItem(TaskDto task)
         {
             return new TaskItem
             {
                 Id = task.Id,
                 Title = task.Title,
                 Description = task.Description,
-                StatusText = GetStatusText(task.Status),
-                PriorityText = GetPriorityText(task.Priority),
-                ProjectName = task.Project?.Name ?? "Неизвестный проект",
-                AuthorName = task.Author != null ? $"{task.Author.FirstName} {task.Author.LastName}" : "Неизвестный автор",
-                AssigneeName = task.Assignee != null ? $"{task.Assignee.FirstName} {task.Assignee.LastName}" : "Не назначен",
+                Status = task.Status,
+                Priority = task.Priority,
+                ProjectName = task.ProjectName,
+                AuthorName = task.AuthorName,
+                AssigneeName = task.AssigneeName,
                 CreatedAt = task.CreatedAt,
                 UpdatedAt = task.UpdatedAt,
                 PlannedHours = task.PlannedHours,
                 ActualHours = task.ActualHours,
-                StatusColor = GetStatusColor(task.Status),
-                PriorityColor = GetPriorityColor(task.Priority)
-            };
-        }
-
-        private string GetStatusText(int status)
-        {
-            return status switch
-            {
-                0 => "Новая",
-                1 => "В работе",
-                2 => "На проверке",
-                3 => "Завершена",
-                4 => "Отменена",
-                _ => "Неизвестно"
-            };
-        }
-
-        private string GetPriorityText(int priority)
-        {
-            return priority switch
-            {
-                1 => "Низкий",
-                2 => "Средний",
-                3 => "Высокий",
-                4 => "Критический",
-                _ => "Неизвестно"
-            };
-        }
-
-        private string GetStatusColor(int status)
-        {
-            return status switch
-            {
-                0 => "#2196F3", 
-                1 => "#FF9800", 
-                2 => "#9C27B0", 
-                3 => "#4CAF50", 
-                4 => "#F44336", 
-                _ => "#9E9E9E"  
-            };
-        }
-
-        private string GetPriorityColor(int priority)
-        {
-            return priority switch
-            {
-                1 => "#4CAF50", 
-                2 => "#FF9800",
-                3 => "#F44336",
-                4 => "#9C27B0", 
-                _ => "#9E9E9E" 
+                CommentsCount = task.CommentsCount
             };
         }
     }

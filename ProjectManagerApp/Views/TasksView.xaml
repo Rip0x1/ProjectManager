@@ -65,7 +65,28 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="320" Height="240" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8,0,0,8">
+                        <Border Width="320" Height="240" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8,0,0,8"
+                                Cursor="Hand" MouseLeftButtonDown="TaskCard_MouseLeftButtonDown">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect Color="Black" Opacity="0.1" ShadowDepth="1" BlurRadius="4"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F5F5F5"/>
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect Color="Black" Opacity="0.2" ShadowDepth="2" BlurRadius="8"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -73,9 +94,19 @@
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0" Text="{Binding Title}" FontSize="16" FontWeight="SemiBold"/>
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" 
+                                              TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
+                                    <TextBlock Grid.Column="1" Text="👁" FontSize="14" 
+                                              ToolTip="Нажмите для просмотра деталей"/>
+                                </Grid>
 
                                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
                                     <Border Background="{Binding StatusColor}" CornerRadius="12" Padding="8,2" Margin="0,0,4,0">
@@ -104,7 +135,14 @@
                                     <TextBlock Text="Автор: " FontWeight="SemiBold"/>
                                     <TextBlock Text="{Binding AuthorName}"/>
                                     <TextBlock Text=" | Исполнитель: " FontWeight="SemiBold" Margin="8,0,0,0"/>
-                                    <TextBlock Text="{Binding AssigneeName}"/>
+                                    <TextBlock Text="{Binding AssigneeDisplayName}"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,4,0,0">
+                                    <TextBlock Text="Планируемые часы: " FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding PlannedHoursText}"/>
+                                    <TextBlock Text=" | Фактические: " FontWeight="SemiBold" Margin="8,0,0,0"/>
+                                    <TextBlock Text="{Binding ActualHoursText}"/>
                                 </StackPanel>
                             </Grid>
                         </Border>

@@ -1,9 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProjectManagementSystem.WPF.Services;
-using ProjectManagementSystem.WPF.Views;
-using ProjectManagerApp;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 

@@ -3,9 +3,7 @@ using Microsoft.Extensions.Hosting;
 using ProjectManagementSystem.WPF.Services;
 using ProjectManagementSystem.WPF.ViewModels;
 using ProjectManagementSystem.WPF.Views;
-using ProjectManagerApp;
 using System.Windows;
-using System.Windows.Navigation;
 using NavigationService = ProjectManagementSystem.WPF.Services.NavigationService;
 
 namespace ProjectManagementSystem.WPF
@@ -27,6 +25,7 @@ namespace ProjectManagementSystem.WPF
             services.AddSingleton<IAuthService, AuthService>();
             services.AddSingleton<IProjectsService, ProjectsService>();
             services.AddSingleton<ITasksService, TasksService>();
+            services.AddSingleton<IUsersService, UsersService>();
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<ILoginNotificationService, LoginNotificationService>();

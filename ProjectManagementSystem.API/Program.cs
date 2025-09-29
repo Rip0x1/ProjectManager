@@ -32,6 +32,7 @@ namespace ProjectManagementSystem.API
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly("ProjectManagementSystem.Database")
+                        .CommandTimeout(60) 
                 ));
 
             var app = builder.Build();
