@@ -22,7 +22,7 @@ namespace ProjectManagementSystem.Database.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        public decimal PlannedHours { get; set; }
+        public decimal? PlannedHours { get; set; }
         public decimal? ActualHours { get; set; }
 
         public virtual Project Project { get; set; }

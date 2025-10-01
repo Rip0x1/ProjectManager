@@ -5,45 +5,328 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
+    
     <Grid Margin="16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Background="{StaticResource PrimaryBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,16">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <materialDesign:PackIcon Kind="ViewDashboard" Foreground="White" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <StackPanel Margin="12,0,0,0">
-                    <TextBlock Text="Панель управления" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
-                    <TextBlock Foreground="#EDE7F6">
-                        <Run Text="Роль: "/>
-                        <Run Text="{Binding RoleName}"/>
-                    </TextBlock>
+        <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="ViewDashboard" Foreground="White" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <StackPanel Margin="12,0,0,0">
+                        <TextBlock Text="Панель управления" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <TextBlock Text="Роль: " Foreground="#EDE7F6"/>
+                            <Border Background="{Binding RoleColor, Converter={StaticResource StringToBrushConverter}}" 
+                                    CornerRadius="10" Padding="8,2" Margin="4,0,0,0">
+                                <TextBlock Text="{Binding RoleName}" 
+                                           Foreground="White" 
+                                           FontSize="11" 
+                                           FontWeight="SemiBold"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+                
+                <Button HorizontalAlignment="Right"
+                        Command="{Binding RefreshCommand}"
+                        Style="{StaticResource MaterialDesignIconButton}"
+                        Width="40" Height="40"
+                        ToolTip="Обновить статистику">
+                    <materialDesign:PackIcon Kind="Refresh" Foreground="White" Width="24" Height="24"/>
+                </Button>
+            </Grid>
         </Border>
 
-        <UniformGrid Grid.Row="1" Columns="3" Rows="1" Margin="0,0,0,0">
-            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8">
+        <UniformGrid Grid.Row="1" Columns="6" Rows="1" Margin="0,0,0,16">
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,8,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
                 <StackPanel>
-                    <TextBlock Text="Проектов" FontWeight="SemiBold"/>
-                    <TextBlock Text="—" FontSize="28"/>
+                    <materialDesign:PackIcon Kind="FolderMultiple" Width="32" Height="32" Foreground="#2196F3" Margin="0,0,0,8"/>
+                    <TextBlock Text="Всего проектов" FontSize="13" Foreground="#757575" Margin="0,0,0,4"/>
+                    <TextBlock Text="{Binding TotalProjects}" FontSize="32" FontWeight="Bold" Foreground="#2196F3"/>
                 </StackPanel>
             </Border>
-            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8">
+            
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="4,0,4,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
                 <StackPanel>
-                    <TextBlock Text="Задач" FontWeight="SemiBold"/>
-                    <TextBlock Text="—" FontSize="28"/>
+                    <materialDesign:PackIcon Kind="RocketLaunch" Width="32" Height="32" Foreground="#4CAF50" Margin="0,0,0,8"/>
+                    <TextBlock Text="Активных" FontSize="13" Foreground="#757575" Margin="0,0,0,4"/>
+                    <TextBlock Text="{Binding ActiveProjects}" FontSize="32" FontWeight="Bold" Foreground="#4CAF50"/>
                 </StackPanel>
             </Border>
-            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8">
+            
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="4,0,4,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
                 <StackPanel>
-                    <TextBlock Text="Пользователей" FontWeight="SemiBold"/>
-                    <TextBlock Text="—" FontSize="28"/>
+                    <materialDesign:PackIcon Kind="CheckboxMultipleMarked" Width="32" Height="32" Foreground="#9C27B0" Margin="0,0,0,8"/>
+                    <TextBlock Text="Всего задач" FontSize="13" Foreground="#757575" Margin="0,0,0,4"/>
+                    <TextBlock Text="{Binding TotalTasks}" FontSize="32" FontWeight="Bold" Foreground="#9C27B0"/>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="4,0,4,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="ClipboardPlay" Width="32" Height="32" Foreground="#FF9800" Margin="0,0,0,8"/>
+                    <TextBlock Text="В работе" FontSize="13" Foreground="#757575" Margin="0,0,0,4"/>
+                    <TextBlock Text="{Binding ActiveTasks}" FontSize="32" FontWeight="Bold" Foreground="#FF9800"/>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="4,0,4,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="CheckCircle" Width="32" Height="32" Foreground="#4CAF50" Margin="0,0,0,8"/>
+                    <TextBlock Text="Завершено" FontSize="13" Foreground="#757575" Margin="0,0,0,4"/>
+                    <TextBlock Text="{Binding CompletedTasks}" FontSize="32" FontWeight="Bold" Foreground="#4CAF50"/>
+                </StackPanel>
+            </Border>
+
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="16" Margin="8,0,0,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="AccountGroup" Width="32" Height="32" Foreground="#F44336" Margin="0,0,0,8"/>
+                    <TextBlock Text="Пользователей" FontSize="13" Foreground="#757575" Margin="0,0,0,4"/>
+                    <TextBlock Text="{Binding TotalUsers}" FontSize="32" FontWeight="Bold" Foreground="#F44336"/>
                 </StackPanel>
             </Border>
         </UniformGrid>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="📊 Детальная статистика задач" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,20"/>
+                            
+                            <TextBlock Text="Задачи по статусам:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                            
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#9E9E9E" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="Новая" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusNew}" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#2196F3" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="В работе" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusInProgress}" FontWeight="Bold" Foreground="#2196F3" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#FF9800" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="На проверке" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusReview}" FontWeight="Bold" Foreground="#FF9800" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#4CAF50" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="Завершена" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusCompleted}" FontWeight="Bold" Foreground="#4CAF50" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <TextBlock Text="Задачи по приоритетам:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                            
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#4CAF50" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="Низкий" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskPriorityLow}" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#FF9800" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="Средний" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskPriorityMedium}" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#F44336" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="Высокий" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskPriorityHigh}" FontWeight="Bold" Foreground="#F44336" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#9C27B0" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="Критический" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskPriorityCritical}" FontWeight="Bold" Foreground="#9C27B0" VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="20" Margin="8,0,0,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="📈 Статистика проектов" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,20"/>
+
+                            <TextBlock Text="Проекты по статусам:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12"/>
+                            
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#9E9E9E" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="Запланирован" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding ProjectStatusPlanned}" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#2196F3" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="В процессе" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding ProjectStatusInProgress}" FontWeight="Bold" Foreground="#2196F3" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <Grid Margin="0,0,0,30">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="12" Height="12" Background="#4CAF50" CornerRadius="6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="Завершен" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding ProjectStatusCompleted}" FontWeight="Bold" Foreground="#4CAF50" VerticalAlignment="Center"/>
+                            </Grid>
+                            
+                            <TextBlock Text="🚀 Быстрая информация" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,16"/>
+                            
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <materialDesign:PackIcon Kind="TrendingUp" Width="24" Height="24" Foreground="#4CAF50" VerticalAlignment="Center"/>
+                                <TextBlock Text="Активность системы: высокая" FontSize="14" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <materialDesign:PackIcon Kind="CheckCircle" Width="24" Height="24" Foreground="#2196F3" VerticalAlignment="Center"/>
+                                <StackPanel Margin="12,0,0,0">
+                                    <TextBlock FontSize="14" VerticalAlignment="Center">
+                                        <Run Text="Завершено задач: "/>
+                                        <Run Text="{Binding CompletedTasks}" FontWeight="Bold"/>
+                                        <Run Text=" из "/>
+                                        <Run Text="{Binding TotalTasks}" FontWeight="Bold"/>
+                                    </TextBlock>
+                                    <ProgressBar Value="{Binding CompletedTasks}" 
+                                                 Maximum="{Binding TotalTasks}"
+                                                 Height="6"
+                                                 Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <materialDesign:PackIcon Kind="Rocket" Width="24" Height="24" Foreground="#FF9800" VerticalAlignment="Center"/>
+                                <StackPanel Margin="12,0,0,0">
+                                    <TextBlock FontSize="14" VerticalAlignment="Center">
+                                        <Run Text="Активных проектов: "/>
+                                        <Run Text="{Binding ActiveProjects}" FontWeight="Bold"/>
+                                        <Run Text=" из "/>
+                                        <Run Text="{Binding TotalProjects}" FontWeight="Bold"/>
+                                    </TextBlock>
+                                    <ProgressBar Value="{Binding ActiveProjects}" 
+                                                 Maximum="{Binding TotalProjects}"
+                                                 Height="6"
+                                                 Margin="0,4,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <Border Background="#E3F2FD" CornerRadius="4" Padding="12" Margin="0,12,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="💡 Совет дня" FontSize="14" FontWeight="SemiBold" Foreground="#1976D2" Margin="0,0,0,4"/>
+                                    <TextBlock Text="Не забывайте регулярно обновлять статус задач для актуальной статистики!" 
+                                               FontSize="12" 
+                                               TextWrapping="Wrap" 
+                                               Foreground="#424242"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+
+        <Grid Grid.RowSpan="3" Background="#80FFFFFF" 
+              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="200" Margin="0,0,0,12"/>
+                <TextBlock Text="Загрузка данных..." FontSize="16" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>
 

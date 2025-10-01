@@ -5,6 +5,8 @@ using ProjectManagementSystem.WPF.Services;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjectManagementSystem.WPF.ViewModels
 {
@@ -12,6 +14,8 @@ namespace ProjectManagementSystem.WPF.ViewModels
     {
         private readonly IProjectsService _projectsService;
         private readonly INotificationService _notificationService;
+        private readonly IUsersService _usersService;
+        private readonly IPermissionService _permissionService;
 
         [ObservableProperty]
         private ObservableCollection<ProjectItem> _projects = new ObservableCollection<ProjectItem>();
@@ -35,10 +39,24 @@ namespace ProjectManagementSystem.WPF.ViewModels
         private int _totalPages = 1;
 
 
-        public ProjectsViewModel(IProjectsService projectsService, INotificationService notificationService)
+        [ObservableProperty]
+        private bool _canCreateProjects = false;
+
+        [ObservableProperty]
+        private bool _canManageProjects = false;
+
+        [ObservableProperty]
+        private int _selectedStatusFilter = -1; 
+
+        public ProjectsViewModel(IProjectsService projectsService, INotificationService notificationService, IUsersService usersServices, IPermissionService permissionService)
         {
             _projectsService = projectsService;
             _notificationService = notificationService;
+            _usersService = usersServices;
+            _permissionService = permissionService;
+            
+            CanCreateProjects = _permissionService.CanCreateProject();
+            CanManageProjects = _permissionService.IsManagerOrAbove();
         }
 
         [RelayCommand]
@@ -51,7 +69,6 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 Projects = new ObservableCollection<ProjectItem>(items);
                 CurrentPage = 1;
                 ApplyFilterAndPaging();
-                _notificationService.ShowSuccess($"Показано {PagedProjects.Count} из {items.Count} проектов");
             }
             catch (System.Exception ex)
             {
@@ -87,6 +104,20 @@ namespace ProjectManagementSystem.WPF.ViewModels
             if (value < 1) { CurrentPage = 1; return; }
             if (value > TotalPages) { CurrentPage = TotalPages; return; }
             ApplyFilterAndPaging();
+        }
+
+        partial void OnSelectedStatusFilterChanged(int value)
+        {
+            CurrentPage = 1;
+            ApplyFilterAndPaging();
+        }
+
+        [RelayCommand]
+        private void ClearFilters()
+        {
+            SelectedStatusFilter = -1;
+            SearchText = string.Empty;
+            _notificationService.ShowInfo("Фильтры сброшены");
         }
 
         [RelayCommand]
@@ -133,12 +164,90 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 );
             }
 
+            if (SelectedStatusFilter >= 0)
+            {
+                query = query.Where(p => p.Status == SelectedStatusFilter);
+            }
+
             var list = query.ToList();
             TotalPages = list.Count == 0 ? 1 : (int)System.Math.Ceiling(list.Count / (double)PageSize);
             if (CurrentPage > TotalPages) CurrentPage = TotalPages;
 
             var pageItems = list.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
             PagedProjects = new ObservableCollection<ProjectItem>(pageItems);
+        }
+
+        [RelayCommand]
+        private void CreateProject()
+        {
+            var viewModel = new CreateEditProjectViewModel(_projectsService, _usersService, _notificationService);
+            var window = new Views.CreateEditProjectWindow(viewModel);
+            
+            if (window.ShowDialog() == true)
+            {
+                _ = LoadAsync();
+            }
+        }
+
+        [RelayCommand]
+        private void EditProject(ProjectItem project)
+        {
+            if (project == null) return;
+
+            if (!_permissionService.CanEditProject(project.ManagerId))
+            {
+                _notificationService.ShowWarning("У вас нет прав для редактирования этого проекта");
+                return;
+            }
+
+            var viewModel = new CreateEditProjectViewModel(_projectsService, _usersService, _notificationService, project.Id);
+            var window = new Views.CreateEditProjectWindow(viewModel);
+            
+            if (window.ShowDialog() == true)
+            {
+                _ = LoadAsync();
+            }
+        }
+
+        [RelayCommand]
+        private async Task DeleteProjectAsync(ProjectItem project)
+        {
+            if (project == null) return;
+
+            if (!_permissionService.CanDeleteProject(project.ManagerId))
+            {
+                _notificationService.ShowWarning("У вас нет прав для удаления этого проекта");
+                return;
+            }
+
+            var result = MessageBox.Show(
+                $"Вы уверены, что хотите удалить проект \"{project.Name}\"?\n\nЭто действие нельзя отменить!",
+                "Подтверждение удаления",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            try
+            {
+                await _projectsService.DeleteProjectAsync(project.Id);
+                _notificationService.ShowSuccess($"Проект \"{project.Name}\" успешно удален");
+                await LoadAsync();
+            }
+            catch (System.Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка удаления проекта: {ex.Message}");
+            }
+        }
+        
+        public bool CanEditProjectItem(ProjectItem project)
+        {
+            return _permissionService.CanEditProject(project.ManagerId);
+        }
+        
+        public bool CanDeleteProjectItem(ProjectItem project)
+        {
+            return _permissionService.CanDeleteProject(project.ManagerId);
         }
     }
 }

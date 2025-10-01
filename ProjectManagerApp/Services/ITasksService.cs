@@ -10,5 +10,8 @@ namespace ProjectManagementSystem.WPF.Services
         Task<TaskDto> GetTaskAsync(int id);
         Task<IEnumerable<TaskItem>> GetTasksByStatusAsync(int status);
         Task<IEnumerable<TaskItem>> GetTasksByPriorityAsync(int priority);
+        Task<TaskDto> CreateTaskAsync(CreateUpdateTaskDto task);
+        Task UpdateTaskAsync(int id, CreateUpdateTaskDto task);
+        Task DeleteTaskAsync(int id);
     }
 }

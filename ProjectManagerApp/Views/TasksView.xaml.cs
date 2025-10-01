@@ -16,13 +16,9 @@ namespace ProjectManagementSystem.WPF.Views
             
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                var tasksService = App.GetService<ITasksService>();
-                var notificationService = App.GetService<INotificationService>();
-
-                var viewModel = new TasksViewModel(tasksService, notificationService);
+                var viewModel = App.GetService<TasksViewModel>();
                 DataContext = viewModel;
-
-                viewModel.LoadAsync();
+                _ = viewModel.LoadAsync();
             }
         }
 

@@ -227,29 +227,6 @@ namespace ProjectManagementSystem.WPF.ViewModels
         }
 
         [RelayCommand]
-        private async void UseDemoAdmin()
-        {
-            try
-            {
-                Email = "admin@test.com";
-                Password = "admin123";
-                PasswordChanged?.Invoke(Password);
-            }
-            catch (System.Exception ex)
-            {
-                if (ex.Message.Contains("Ошибка при загрузке данных"))
-                {
-                    IsEmailInvalid = true;
-                    IsPasswordInvalid = true;
-                }
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
-        [RelayCommand]
         private async void UseDemoUser()
         {
             try

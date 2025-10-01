@@ -20,12 +20,13 @@ namespace ProjectManagementSystem.API.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> GetTasks([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> GetTasks([FromQuery] int page = 1, [FromQuery] int pageSize = 50)
         {
             try
             {
                 var tasks = await _context.Tasks
-                    .OrderByDescending(t => t.CreatedAt)
+                    .AsNoTracking()
+                    .OrderByDescending(t => t.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .Select(t => new TaskResponseDto
@@ -36,15 +37,15 @@ namespace ProjectManagementSystem.API.Controllers
                         Status = t.Status,
                         Priority = t.Priority,
                         ProjectId = t.ProjectId,
-                        ProjectName = t.Project.Name,
+                        ProjectName = t.Project != null ? t.Project.Name : "Неизвестный проект",
                         AuthorId = t.AuthorId,
-                        AuthorName = t.Author.FirstName + " " + t.Author.LastName,
+                        AuthorName = t.Author != null ? t.Author.FirstName + " " + t.Author.LastName : "Неизвестен",
                         AssigneeId = t.AssigneeId,
                         AssigneeName = t.Assignee != null ? t.Assignee.FirstName + " " + t.Assignee.LastName : null,
                         CreatedAt = t.CreatedAt,
                         UpdatedAt = t.UpdatedAt,
-                        PlannedHours = t.PlannedHours,
-                        ActualHours = t.ActualHours,
+                        PlannedHours = t.PlannedHours ?? 0,
+                        ActualHours = t.ActualHours ?? 0,
                         CommentsCount = t.Comments.Count
                     })
                     .ToListAsync();
@@ -54,7 +55,7 @@ namespace ProjectManagementSystem.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Ошибка загрузки задач: {ex.Message}");
-                return new List<TaskResponseDto>();
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
@@ -102,33 +103,68 @@ namespace ProjectManagementSystem.API.Controllers
 
         // POST: api/Tasks
         [HttpPost]
-        public async Task<ActionResult<Task>> PostTask(Task task)
+        public async Task<ActionResult<object>> PostTask(TaskCreateUpdateDto dto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            task.CreatedAt = DateTime.UtcNow;
-            task.UpdatedAt = DateTime.UtcNow;
+            var task = new Task
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                Status = dto.Status,
+                Priority = dto.Priority,
+                ProjectId = dto.ProjectId,
+                AuthorId = dto.AuthorId,
+                AssigneeId = dto.AssigneeId,
+                PlannedHours = dto.PlannedHours,
+                ActualHours = dto.ActualHours,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
 
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTask", new { id = task.Id }, task);
+            return CreatedAtAction("GetTask", new { id = task.Id }, new
+            {
+                task.Id,
+                task.Title,
+                task.Description,
+                task.Status,
+                task.Priority,
+                task.ProjectId,
+                task.AuthorId,
+                task.AssigneeId,
+                task.PlannedHours,
+                task.ActualHours,
+                task.CreatedAt,
+                task.UpdatedAt
+            });
         }
 
         // PUT: api/Tasks/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTask(int id, Task task)
+        public async Task<IActionResult> PutTask(int id, TaskCreateUpdateDto dto)
         {
-            if (id != task.Id)
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
+            task.Title = dto.Title;
+            task.Description = dto.Description;
+            task.Status = dto.Status;
+            task.Priority = dto.Priority;
+            task.ProjectId = dto.ProjectId;
+            task.AuthorId = dto.AuthorId;
+            task.AssigneeId = dto.AssigneeId;
+            task.PlannedHours = dto.PlannedHours;
+            task.ActualHours = dto.ActualHours;
             task.UpdatedAt = DateTime.UtcNow;
-            _context.Entry(task).State = EntityState.Modified;
 
             try
             {

@@ -9,6 +9,10 @@ namespace ProjectManagementSystem.WPF.Services
     public interface IProjectsService
     {
         Task<IList<ProjectItem>> GetProjectsAsync();
+        Task<ProjectDto> GetProjectAsync(int id);
+        Task<ProjectDto> CreateProjectAsync(CreateUpdateProjectDto project);
+        Task UpdateProjectAsync(int id, CreateUpdateProjectDto project);
+        Task DeleteProjectAsync(int id);
     }
 
     public class ProjectsService : IProjectsService
@@ -38,23 +42,31 @@ namespace ProjectManagementSystem.WPF.Services
                 Deadline = p.Deadline,
                 ManagerName = p.Manager != null ? ($"{p.Manager.FirstName} {p.Manager.LastName}") : "—",
 
-                Status = GetRandomStatus(),
-                ParticipantsCount = GetRandomCount(5, 25),
-                TasksCount = GetRandomCount(10, 50),
-                CommentsCount = GetRandomCount(20, 100)
+                Status = p.Status,
+                ParticipantsCount = 0, 
+                TasksCount = 0, 
+                CommentsCount = 0 
             }).ToList();
         }
 
-        private static int GetRandomStatus()
+        public async Task<ProjectDto> GetProjectAsync(int id)
         {
-            var random = new Random();
-            return random.Next(0, 3);
+            return await _apiClient.GetAsync<ProjectDto>($"projects/{id}");
         }
 
-        private static int GetRandomCount(int min, int max)
+        public async Task<ProjectDto> CreateProjectAsync(CreateUpdateProjectDto project)
         {
-            var random = new Random();
-            return random.Next(min, max + 1);
+            return await _apiClient.PostAsync<ProjectDto>("projects", project);
+        }
+
+        public async Task UpdateProjectAsync(int id, CreateUpdateProjectDto project)
+        {
+            await _apiClient.PutAsync<ProjectDto>($"projects/{id}", project);
+        }
+
+        public async Task DeleteProjectAsync(int id)
+        {
+            await _apiClient.DeleteAsync($"projects/{id}");
         }
     }
 }

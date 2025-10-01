@@ -21,7 +21,6 @@ namespace ProjectManagementSystem.WPF.Views
 
             LoginSnackbar.MessageQueue = loginNotificationService.MessageQueue;
             
-            // Находим Border для уведомлений и устанавливаем его в сервис
             var notificationBorder = this.FindName("NotificationBorder") as System.Windows.Controls.Border;
             if (notificationBorder != null)
             {

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Database.Data;
 using ProjectManagementSystem.Database.Entities;
+using ProjectManagementSystem.API.Models.DTOs;
 
 namespace ProjectManagementSystem.API.Controllers
 {
@@ -28,6 +29,7 @@ namespace ProjectManagementSystem.API.Controllers
                     p.Name,
                     p.Description,
                     p.ManagerId,
+                    p.Status,
                     p.CreatedAt,
                     p.Deadline,
                     Manager = p.Manager == null ? null : new
@@ -57,6 +59,7 @@ namespace ProjectManagementSystem.API.Controllers
                     p.Name,
                     p.Description,
                     p.ManagerId,
+                    p.Status,
                     p.CreatedAt,
                     p.Deadline,
                     Manager = p.Manager == null ? null : new
@@ -80,24 +83,48 @@ namespace ProjectManagementSystem.API.Controllers
 
         // POST: api/Projects
         [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
+        public async Task<ActionResult<object>> PostProject(ProjectCreateUpdateDto dto)
         {
+            var project = new Project
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                ManagerId = dto.ManagerId,
+                Status = dto.Status,
+                Deadline = dto.Deadline,
+                CreatedAt = DateTime.UtcNow
+            };
+
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProject", new { id = project.Id }, project);
+            return CreatedAtAction("GetProject", new { id = project.Id }, new
+            {
+                project.Id,
+                project.Name,
+                project.Description,
+                project.ManagerId,
+                project.Status,
+                project.CreatedAt,
+                project.Deadline
+            });
         }
 
         // PUT: api/Projects/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(int id, Project project)
+        public async Task<IActionResult> PutProject(int id, ProjectCreateUpdateDto dto)
         {
-            if (id != project.Id)
+            var project = await _context.Projects.FindAsync(id);
+            if (project == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(project).State = EntityState.Modified;
+            project.Name = dto.Name;
+            project.Description = dto.Description;
+            project.ManagerId = dto.ManagerId;
+            project.Status = dto.Status;
+            project.Deadline = dto.Deadline;
 
             try
             {

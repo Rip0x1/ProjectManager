@@ -279,12 +279,6 @@
                               Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ScrollViewer>
                             <StackPanel>
-                                <Button Content="Админ (admin@test.com)" 
-                           Command="{Binding UseDemoAdminCommand}"
-                           Style="{StaticResource MaterialDesignOutlinedButton}"
-                           Foreground="{StaticResource PrimaryBrush}"
-                           Height="36"
-                           Margin="0,4"/>
                                 <Button Content="User (dimaslizh@gmail.com)"
                            Command="{Binding UseDemoUserCommand}"
                            Style="{StaticResource MaterialDesignOutlinedButton}"

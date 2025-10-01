@@ -41,6 +41,21 @@ namespace ProjectManagementSystem.WPF.Services
             return allTasks.Where(t => t.Priority == priority);
         }
 
+        public async Task<TaskDto> CreateTaskAsync(CreateUpdateTaskDto task)
+        {
+            return await _apiClient.PostAsync<TaskDto>("tasks", task);
+        }
+
+        public async Task UpdateTaskAsync(int id, CreateUpdateTaskDto task)
+        {
+            await _apiClient.PutAsync<TaskDto>($"tasks/{id}", task);
+        }
+
+        public async Task DeleteTaskAsync(int id)
+        {
+            await _apiClient.DeleteAsync($"tasks/{id}");
+        }
+
         private static TaskItem MapToTaskItem(TaskDto task)
         {
             return new TaskItem
@@ -50,8 +65,11 @@ namespace ProjectManagementSystem.WPF.Services
                 Description = task.Description,
                 Status = task.Status,
                 Priority = task.Priority,
+                ProjectId = task.ProjectId,
                 ProjectName = task.ProjectName,
+                AuthorId = task.AuthorId,
                 AuthorName = task.AuthorName,
+                AssigneeId = task.AssigneeId,
                 AssigneeName = task.AssigneeName,
                 CreatedAt = task.CreatedAt,
                 UpdatedAt = task.UpdatedAt,

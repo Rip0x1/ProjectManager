@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -39,22 +40,45 @@ namespace ProjectManagementSystem.WPF.Services
             }
             catch (Exception ex)
             {
+                Debug.WriteLine($"Ошибка API запроса к {endpoint}: {ex.Message}", ex);
                 throw new Exception($"Ошибка API запроса к {endpoint}: {ex.Message}", ex);
             }
         }
 
         public async Task<T> PostAsync<T>(string endpoint, object data)
         {
-            var response = await _httpClient.PostAsJsonAsync(endpoint, data);
-            await EnsureSuccess(response);
-            return await response.Content.ReadFromJsonAsync<T>();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(endpoint, data);
+                await EnsureSuccess(response);
+                return await response.Content.ReadFromJsonAsync<T>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка POST запроса к {endpoint}: {ex.Message}", ex);
+                throw new Exception($"Ошибка POST запроса к {endpoint}: {ex.Message}", ex);
+            }
         }
 
         public async Task<T> PutAsync<T>(string endpoint, object data)
         {
-            var response = await _httpClient.PutAsJsonAsync(endpoint, data);
-            await EnsureSuccess(response);
-            return await response.Content.ReadFromJsonAsync<T>();
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync(endpoint, data);
+                await EnsureSuccess(response);
+                
+                if (response.StatusCode == HttpStatusCode.NoContent)
+                {
+                    return default(T);
+                }
+                
+                return await response.Content.ReadFromJsonAsync<T>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка PUT запроса к {endpoint}: {ex.Message}", ex);
+                throw new Exception($"Ошибка PUT запроса к {endpoint}: {ex.Message}", ex);
+            }
         }
 
         public async Task<bool> DeleteAsync(string endpoint)
@@ -73,9 +97,9 @@ namespace ProjectManagementSystem.WPF.Services
                     HttpStatusCode.NotFound => "Данные не найдены",
                     HttpStatusCode.Unauthorized => "Недостаточно прав доступа",
                     HttpStatusCode.Forbidden => "Доступ запрещён",
-                    HttpStatusCode.BadRequest => "Некорректный запрос",
-                    HttpStatusCode.InternalServerError => "Ошибка сервера",
-                    _ => $"Ошибка: {response.StatusCode}"
+                    HttpStatusCode.BadRequest => $"Некорректный запрос. Детали: {errorContent}",
+                    HttpStatusCode.InternalServerError => $"Ошибка сервера. Детали: {errorContent}",
+                    _ => $"Ошибка: {response.StatusCode}. Детали: {errorContent}"
                 };
                 throw new HttpRequestException(userFriendlyMessage, null, response.StatusCode);
             }

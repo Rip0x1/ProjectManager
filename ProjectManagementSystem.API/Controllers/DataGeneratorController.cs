@@ -154,6 +154,7 @@ namespace ProjectManagementSystem.API.Controllers
                 .RuleFor(p => p.Name, f => $"{f.Commerce.ProductName()} {f.Commerce.ProductAdjective()} Project")
                 .RuleFor(p => p.Description, f => f.Lorem.Paragraphs(1, 3))
                 .RuleFor(p => p.ManagerId, f => f.PickRandom(managers).Id)
+                .RuleFor(p => p.Status, f => f.Random.Int(0, 2))
                 .RuleFor(p => p.CreatedAt, f => f.Date.Past(2))
                 .RuleFor(p => p.Deadline, f => f.Date.Between(DateTime.Now, DateTime.Now.AddYears(1)));
 
@@ -234,9 +235,9 @@ namespace ProjectManagementSystem.API.Controllers
                 .RuleFor(t => t.AssigneeId, f => f.PickRandom(users).Id)
                 .RuleFor(t => t.CreatedAt, f => f.Date.Past(1))
                 .RuleFor(t => t.UpdatedAt, (f, t) => f.Date.Between(t.CreatedAt, DateTime.Now))
-                .RuleFor(t => t.PlannedHours, f => Math.Round(f.Random.Decimal(1, 40), 1))
+                .RuleFor(t => t.PlannedHours, f => (decimal?)Math.Round(f.Random.Decimal(1, 40), 1))
                 .RuleFor(t => t.ActualHours, (f, t) =>
-                    t.Status == 3 ? Math.Round(f.Random.Decimal(t.PlannedHours * 0.5m, t.PlannedHours * 1.5m), 1) : (decimal?)null);
+                    t.Status == 3 ? Math.Round(f.Random.Decimal(t.PlannedHours.GetValueOrDefault() * 0.5m, t.PlannedHours.GetValueOrDefault() * 1.5m), 1) : (decimal?)null);
 
             for (int i = 0; i < count; i += 1000)
             {

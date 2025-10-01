@@ -18,6 +18,7 @@ namespace ProjectManagementSystem.Database.Entities
         public string Description { get; set; }
 
         public int ManagerId { get; set; }
+        public int Status { get; set; } = 0; 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? Deadline { get; set; }
 

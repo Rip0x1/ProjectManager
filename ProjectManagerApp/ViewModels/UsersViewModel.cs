@@ -36,6 +36,9 @@ namespace ProjectManagementSystem.WPF.ViewModels
         [ObservableProperty]
         private int _totalUsers = 0;
 
+        [ObservableProperty]
+        private int _selectedRoleFilter = -1; 
+
         public UsersViewModel(IUsersService usersService, INotificationService notificationService)
         {
             _usersService = usersService;
@@ -59,11 +62,9 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
                 TotalUsers = Users.Count;
                 ApplySearchAndPagination();
-                _notificationService.ShowSuccess($"Показано {PagedUsers.Count} из {TotalUsers} пользователей");
             }
             catch (Exception ex)
             {
-                _notificationService.ShowError($"Ошибка загрузки пользователей: {ex.Message}");
             }
             finally
             {
@@ -134,6 +135,20 @@ namespace ProjectManagementSystem.WPF.ViewModels
             ApplySearchAndPagination();
         }
 
+        partial void OnSelectedRoleFilterChanged(int value)
+        {
+            CurrentPage = 1;
+            ApplySearchAndPagination();
+        }
+
+        [RelayCommand]
+        private void ClearFilters()
+        {
+            SelectedRoleFilter = -1;
+            SearchText = string.Empty;
+            _notificationService.ShowInfo("Фильтры сброшены");
+        }
+
         private void ApplySearchAndPagination()
         {
             var filteredUsers = Users.AsEnumerable();
@@ -145,6 +160,11 @@ namespace ProjectManagementSystem.WPF.ViewModels
                     u.LastName.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
                     u.Email.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
                     u.RoleText.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (SelectedRoleFilter >= 0)
+            {
+                filteredUsers = filteredUsers.Where(u => u.Role == SelectedRoleFilter);
             }
 
             var filteredList = filteredUsers.ToList();

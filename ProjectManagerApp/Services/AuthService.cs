@@ -82,14 +82,8 @@ namespace ProjectManagementSystem.WPF.Services
 
         public Task<bool> IsLoggedIn() => Task.FromResult(_currentUser != null);
 
-        public int? CurrentUserId => _currentUser?.UserId;
-        public string CurrentUserRole => _currentUser?.Role switch
-        {
-            0 => "Пользователь",
-            1 => "Менеджер",
-            2 => "Администратор",
-            _ => "Неизвестно"
-        };
+        public int CurrentUserId => _currentUser?.UserId ?? 0;
+        public int CurrentUserRole => _currentUser?.Role ?? 0;
 
         public string CurrentUserFirstName => _currentUser?.FirstName ?? string.Empty;
         public string CurrentUserEmail => _currentUser?.Email ?? string.Empty;

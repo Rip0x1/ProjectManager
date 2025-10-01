@@ -2,10 +2,10 @@
 using System.Windows;
 using System.Windows.Input;
 using ProjectManagementSystem.WPF.Services;
+using ProjectManagementSystem.WPF.Models;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -70,6 +70,8 @@ namespace ProjectManagementSystem.WPF.Views
         private sealed class MainWindowViewModel
         {
             public string CurrentUserNameText { get; }
+            public string CurrentUserRoleName { get; }
+            public string CurrentUserRoleColor { get; }
 
             public MainWindowViewModel()
             {
@@ -77,6 +79,10 @@ namespace ProjectManagementSystem.WPF.Views
                 CurrentUserNameText = string.IsNullOrWhiteSpace(auth.CurrentUserFirstName)
                     ? auth.CurrentUserEmail
                     : auth.CurrentUserFirstName;
+                
+                var role = (UserRole)auth.CurrentUserRole;
+                CurrentUserRoleName = role.GetRoleName();
+                CurrentUserRoleColor = role.GetRoleColor();
             }
         }
     }

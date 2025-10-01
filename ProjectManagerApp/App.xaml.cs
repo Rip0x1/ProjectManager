@@ -23,6 +23,7 @@ namespace ProjectManagementSystem.WPF
         {
             services.AddSingleton<IApiClient, ApiClient>();
             services.AddSingleton<IAuthService, AuthService>();
+            services.AddSingleton<IPermissionService, PermissionService>();
             services.AddSingleton<IProjectsService, ProjectsService>();
             services.AddSingleton<ITasksService, TasksService>();
             services.AddSingleton<IUsersService, UsersService>();
@@ -35,6 +36,8 @@ namespace ProjectManagementSystem.WPF
             services.AddTransient<ProjectsViewModel>();
             services.AddTransient<TasksViewModel>();
             services.AddTransient<UsersViewModel>();
+            services.AddTransient<CreateEditProjectViewModel>();
+            services.AddTransient<CreateEditTaskViewModel>();
 
             services.AddTransient<LoginView>();
             services.AddSingleton<MainWindow>();

@@ -48,6 +48,14 @@
                     <materialDesign:PackIcon Kind="Account" Foreground="White" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBlock Text="Здравствуйте, " Foreground="White" Margin="8,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding CurrentUserNameText}" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text=". Вы авторизовались как " Foreground="White" Margin="4,0,4,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Background="{Binding CurrentUserRoleColor, Converter={StaticResource StringToBrushConverter}}" 
+                            CornerRadius="10" Padding="8,2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding CurrentUserRoleName}" 
+                                   Foreground="White" 
+                                   FontSize="11" 
+                                   FontWeight="SemiBold"/>
+                    </Border>
                 </StackPanel>
 
                 <Button Grid.Column="1" Width="50" Height="32" Margin="0,0,4,0"

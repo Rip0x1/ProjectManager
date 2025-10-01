@@ -27,37 +27,69 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0" 
-                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     materialDesign:HintAssist.Hint="Поиск пользователей">
-                <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding RefreshCommand}"/>
-                </TextBox.InputBindings>
-            </TextBox>
+                <TextBox Grid.Column="0" 
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:HintAssist.Hint="Поиск пользователей">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding RefreshCommand}"/>
+                    </TextBox.InputBindings>
+                </TextBox>
 
-            <ComboBox Grid.Column="1" 
-                      SelectedValue="{Binding PageSize, UpdateSourceTrigger=PropertyChanged}"
-                      SelectedValuePath="Tag"
-                      Width="100" 
-                      Margin="8, 0, 0, 0"
-                      VerticalAlignment="Bottom">
-                <ComboBoxItem Content="5" Tag="5"/>
-                <ComboBoxItem Content="10" Tag="10"/>
-                <ComboBoxItem Content="25" Tag="25"/>
-                <ComboBoxItem Content="50" Tag="50"/>
-            </ComboBox>
+                <ComboBox Grid.Column="1" 
+                          SelectedValue="{Binding PageSize, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValuePath="Tag"
+                          Width="100" 
+                          Margin="8, 0, 0, 0"
+                          VerticalAlignment="Bottom">
+                    <ComboBoxItem Content="5" Tag="5"/>
+                    <ComboBoxItem Content="10" Tag="10"/>
+                    <ComboBoxItem Content="25" Tag="25"/>
+                    <ComboBoxItem Content="50" Tag="50"/>
+                </ComboBox>
 
-            <Button Grid.Column="2" Content="Обновить" Margin="8,0,0,0"
-                    Style="{StaticResource MaterialDesignRaisedButton}"
-                    Command="{Binding RefreshCommand}"/>
-        </Grid>
+                <Button Grid.Column="2" Content="Обновить" Margin="8,0,0,0"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Command="{Binding RefreshCommand}"/>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" 
+                           Text="Роль:" 
+                           VerticalAlignment="Center" 
+                           Margin="0,0,8,0"/>
+                
+                <ComboBox Grid.Column="1" 
+                          SelectedValue="{Binding SelectedRoleFilter}"
+                          SelectedValuePath="Tag"
+                          materialDesign:HintAssist.Hint="Все роли">
+                    <ComboBoxItem Content="Все роли" Tag="-1"/>
+                    <ComboBoxItem Content="Пользователь" Tag="0"/>
+                    <ComboBoxItem Content="Менеджер" Tag="1"/>
+                    <ComboBoxItem Content="Администратор" Tag="2"/>
+                </ComboBox>
+
+                <Button Grid.Column="3" 
+                        Content="Сбросить фильтры" 
+                        Margin="16,0,0,0"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Command="{Binding ClearFiltersCommand}"/>
+            </Grid>
+        </StackPanel>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="16">
