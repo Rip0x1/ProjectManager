@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectManagementSystem.API.Models.DTOs;
 using ProjectManagementSystem.Database.Data;
 using ProjectManagementSystem.Database.Entities;
 
@@ -18,12 +19,44 @@ namespace ProjectManagementSystem.API.Controllers
 
         // GET: api/Comments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
+        public async Task<ActionResult<IEnumerable<object>>> GetComment([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
-            return await _context.Comments
-                .Include(c => c.Task)
-                .Include(c => c.Author)
-                .ToListAsync();
+            try
+            {
+                var comments = await _context.Comments
+                    .OrderByDescending(t => t.CreatedAt)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(t => new CommentResponseDto
+                    {
+                        Id = t.Id,
+                        Content = t.Content,
+                        TaskId = t.TaskId,
+                        AuthorId = t.AuthorId,
+                        CreatedAt = t.CreatedAt,
+                        CommentUserResponceDto = new CommentUserResponceDto
+                        {
+                            FirstName = t.Author.FirstName,
+                            LastName = t.Author.LastName,
+                            Email = t.Author.Email,
+                        },
+                        CommentTaskReponseDto = new CommentTaskReponseDto
+                        {
+                            Id = t.Task.Id,
+                            Title = t.Task.Title,
+                            Description = t.Task.Description,
+                        }
+                    })
+                    .ToListAsync();
+                return comments;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка загрузки комментариев: {ex.Message}");
+                return new List<CommentResponseDto>();
+
+            }
+
         }
 
         // GET: api/Comments/5

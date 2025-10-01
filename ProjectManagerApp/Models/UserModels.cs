@@ -40,10 +40,10 @@ namespace ProjectManagementSystem.WPF.Models
 
         public string RoleColor => Role switch
         {
-            0 => "#2196F3", // Blue
-            1 => "#FF9800", // Orange
-            2 => "#F44336", // Red
-            _ => "#9E9E9E"  // Grey
+            0 => "#2196F3", 
+            1 => "#FF9800", 
+            2 => "#F44336", 
+            _ => "#9E9E9E" 
         };
 
         public string CreatedAtText => CreatedAt.ToString("dd.MM.yyyy");

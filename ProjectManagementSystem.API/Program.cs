@@ -36,6 +36,12 @@ namespace ProjectManagementSystem.API
                 ));
 
             var app = builder.Build();
+
+            app.Urls.Add("http://localhost:5000");
+            app.Urls.Add("http://localhost:5001");
+            app.Urls.Add("http://*:7260");
+            app.Urls.Add("https://localhost:7260");
+
             app.UseCors("AllowAll");
 
             using (var scope = app.Services.CreateScope())

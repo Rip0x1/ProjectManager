@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectManagementSystem.API.Models.DTOs;
 using ProjectManagementSystem.Database.Data;
 using ProjectManagementSystem.Database.Entities;
 
@@ -18,12 +19,40 @@ namespace ProjectManagementSystem.API.Controllers
 
         // GET: api/ProjectUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProjectUser>>> GetProjectUsers()
+        public async Task<ActionResult<IEnumerable<object>>> GetProjectUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
-            return await _context.ProjectUsers
-                .Include(pu => pu.Project)
-                .Include(pu => pu.User)
-                .ToListAsync();
+            try
+            {
+                var projectUsers = await _context.ProjectUsers
+    .Skip((page - 1) * pageSize)
+    .Take(pageSize)
+    .Select(x => new ProjectUserResponseDto
+    {
+        Id = x.Id,
+        ProjectId = x.ProjectId,
+        UserId = x.UserId,
+        RoleInProject = x.RoleInProject,
+        ProjectsAuthorResponceDto = new ProjectsAuthorResponceDto
+        {
+            FirstName = x.User.FirstName,
+            LastName = x.User.LastName,
+            Email = x.User.Email,
+        },
+        ProjectsResponceDto = new ProjectsResponceDto
+        {
+            Id = x.Project.Id,
+            Name = x.Project.Name,
+            Description = x.Project.Description
+        }
+    })
+    .ToListAsync();
+                return projectUsers;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка загрузки проектов пользователей: {ex.Message}");
+                return new List<ProjectUserResponseDto>();
+            }
         }
 
         // GET: api/ProjectUsers/5

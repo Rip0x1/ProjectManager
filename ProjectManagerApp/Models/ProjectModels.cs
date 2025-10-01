@@ -23,8 +23,7 @@ namespace ProjectManagementSystem.WPF.Models
         public DateTime? Deadline { get; set; }
         public string ManagerName { get; set; }
         
-        // Дополнительные поля для модального окна
-        public int Status { get; set; } = 0; // 0 - Активный, 1 - Завершен, 2 - Приостановлен
+        public int Status { get; set; } = 0;
         public int ParticipantsCount { get; set; } = 0;
         public int TasksCount { get; set; } = 0;
         public int CommentsCount { get; set; } = 0;
@@ -39,10 +38,10 @@ namespace ProjectManagementSystem.WPF.Models
 
         public string StatusColor => Status switch
         {
-            0 => "#4CAF50", // Green - Active
-            1 => "#2196F3", // Blue - Completed
-            2 => "#FF9800", // Orange - Paused
-            _ => "#9E9E9E"  // Grey - Unknown
+            0 => "#4CAF50", 
+            1 => "#2196F3", 
+            2 => "#FF9800",
+            _ => "#9E9E9E" 
         };
 
         public string CreatedAtText => CreatedAt.ToString("dd.MM.yyyy");

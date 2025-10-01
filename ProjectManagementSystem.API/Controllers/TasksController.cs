@@ -45,7 +45,7 @@ namespace ProjectManagementSystem.API.Controllers
                         UpdatedAt = t.UpdatedAt,
                         PlannedHours = t.PlannedHours,
                         ActualHours = t.ActualHours,
-                        CommentsCount = 0
+                        CommentsCount = t.Comments.Count
                     })
                     .ToListAsync();
 
