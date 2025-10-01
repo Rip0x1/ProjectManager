@@ -19,7 +19,7 @@ namespace ProjectManagementSystem.WPF.Services
 
         public NotificationService()
         {
-            _messageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
+            _messageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(2));
         }
 
         public SnackbarMessageQueue MessageQueue 

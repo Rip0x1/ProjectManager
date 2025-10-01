@@ -234,12 +234,9 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 Email = "admin@test.com";
                 Password = "admin123";
                 PasswordChanged?.Invoke(Password);
-                _notificationService.ShowInfo($"Демо-данные загружены. Нажмите 'Войти'");
             }
             catch (System.Exception ex)
             {
-                SnackbarBackground = new SolidColorBrush(Colors.Red);
-                _notificationService.ShowError(ex.Message);
                 if (ex.Message.Contains("Ошибка при загрузке данных"))
                 {
                     IsEmailInvalid = true;
@@ -260,13 +257,10 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 Email = "dimaslizh@gmail.com";
                 Password = "123123";
                 PasswordChanged?.Invoke(Password);
-                _notificationService.ShowInfo($"Демо-данные загружены. Нажмите 'Войти'");
 
             }
             catch (System.Exception ex)
             {
-                SnackbarBackground = new SolidColorBrush(Colors.Red);
-                _notificationService.ShowError(ex.Message);
                 if (ex.Message.Contains("Ошибка при загрузке данных"))
                 {
                     IsEmailInvalid = true;

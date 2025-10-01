@@ -57,67 +57,68 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding PagedTasks}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel IsItemsHost="True" Margin="-8,0,0,0"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Width="320" Height="240" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8,0,0,8"
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="16">
+                <ItemsControl ItemsSource="{Binding PagedTasks}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" IsItemsHost="True" Margin="-8, 0, 0, 0"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="320" Height="240" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8,0,0,8"
                                 Cursor="Hand" MouseLeftButtonDown="TaskCard_MouseLeftButtonDown">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="White"/>
-                                    <Setter Property="Effect">
-                                        <Setter.Value>
-                                            <DropShadowEffect Color="Black" Opacity="0.1" ShadowDepth="1" BlurRadius="4"/>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#F5F5F5"/>
-                                            <Setter Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect Color="Black" Opacity="0.2" ShadowDepth="2" BlurRadius="8"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="White"/>
+                                        <Setter Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect Color="Black" Opacity="0.1" ShadowDepth="1" BlurRadius="4"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#F5F5F5"/>
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <DropShadowEffect Color="Black" Opacity="0.2" ShadowDepth="2" BlurRadius="8"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                                <Grid Grid.Row="0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" 
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" 
                                               TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
-                                    <TextBlock Grid.Column="1" Text="👁" FontSize="14" 
+                                        <TextBlock Grid.Column="1" Text="👁" FontSize="14" 
                                               ToolTip="Нажмите для просмотра деталей"/>
-                                </Grid>
+                                    </Grid>
 
-                                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
-                                    <Border Background="{Binding StatusColor}" CornerRadius="12" Padding="8,2" Margin="0,0,4,0">
-                                        <TextBlock Text="{Binding StatusText}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
-                                    </Border>
-                                    <Border Background="{Binding PriorityColor}" CornerRadius="12" Padding="8,2">
-                                        <TextBlock Text="{Binding PriorityText}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
-                                    </Border>
-                                </StackPanel>
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
+                                        <Border Background="{Binding StatusColor}" CornerRadius="12" Padding="8,2" Margin="0,0,4,0">
+                                            <TextBlock Text="{Binding StatusText}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                                        </Border>
+                                        <Border Background="{Binding PriorityColor}" CornerRadius="12" Padding="8,2">
+                                            <TextBlock Text="{Binding PriorityText}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                                        </Border>
+                                    </StackPanel>
 
-                                <TextBlock Grid.Row="2"
+                                    <TextBlock Grid.Row="2"
                                            Text="{Binding Description}"
                                            Foreground="Gray"
                                            TextWrapping="Wrap"
@@ -126,29 +127,30 @@
                                            LineHeight="16"
                                            MaxHeight="80"/>
 
-                                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,0">
-                                    <TextBlock Text="Проект: " FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding ProjectName}"/>
-                                </StackPanel>
+                                    <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,0">
+                                        <TextBlock Text="Проект: " FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding ProjectName}"/>
+                                    </StackPanel>
 
-                                <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,4,0,0">
-                                    <TextBlock Text="Автор: " FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding AuthorName}"/>
-                                    <TextBlock Text=" | Исполнитель: " FontWeight="SemiBold" Margin="8,0,0,0"/>
-                                    <TextBlock Text="{Binding AssigneeDisplayName}"/>
-                                </StackPanel>
+                                    <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,4,0,0">
+                                        <TextBlock Text="Автор: " FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding AuthorName}"/>
+                                        <TextBlock Text=" | Исполнитель: " FontWeight="SemiBold" Margin="8,0,0,0"/>
+                                        <TextBlock Text="{Binding AssigneeDisplayName}"/>
+                                    </StackPanel>
 
-                                <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,4,0,0">
-                                    <TextBlock Text="Планируемые часы: " FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding PlannedHoursText}"/>
-                                    <TextBlock Text=" | Фактические: " FontWeight="SemiBold" Margin="8,0,0,0"/>
-                                    <TextBlock Text="{Binding ActualHoursText}"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                    <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,4,0,0">
+                                        <TextBlock Text="Планируемые часы: " FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding PlannedHoursText}"/>
+                                        <TextBlock Text=" | Фактические: " FontWeight="SemiBold" Margin="8,0,0,0"/>
+                                        <TextBlock Text="{Binding ActualHoursText}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </WrapPanel>
         </ScrollViewer>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
@@ -160,8 +162,6 @@
             <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center"/>
             <Button Content="›" Command="{Binding NextPageCommand}" Margin="4,0"/>
             <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0"/>
-            <TextBlock Text="Всего: " VerticalAlignment="Center" Margin="16,0,4,0"/>
-            <TextBlock Text="{Binding TotalItems}" VerticalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </UserControl>

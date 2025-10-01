@@ -7,7 +7,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=viewmodels:UsersViewModel}">
-    
+
     <UserControl.Resources>
         <Style x:Key="UserCardStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
@@ -20,43 +20,43 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="16,16,16,8">
+        <Grid Grid.Row="0" Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0" 
                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                     materialDesign:HintAssist.Hint="Поиск пользователей..."
-                     materialDesign:HintAssist.IsFloating="False"
-                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                     Margin="0,0,16,0"/>
+                     materialDesign:HintAssist.Hint="Поиск пользователей">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding RefreshCommand}"/>
+                </TextBox.InputBindings>
+            </TextBox>
 
             <ComboBox Grid.Column="1" 
                       SelectedValue="{Binding PageSize, UpdateSourceTrigger=PropertyChanged}"
                       SelectedValuePath="Tag"
-                      Width="80" 
-                      Margin="0,0,16,0">
+                      Width="100" 
+                      Margin="8, 0, 0, 0"
+                      VerticalAlignment="Bottom">
                 <ComboBoxItem Content="5" Tag="5"/>
                 <ComboBoxItem Content="10" Tag="10"/>
                 <ComboBoxItem Content="25" Tag="25"/>
                 <ComboBoxItem Content="50" Tag="50"/>
             </ComboBox>
 
-            <Button Grid.Column="2" 
-                    Content="🔄" 
-                    Command="{Binding RefreshCommand}"
-                    Style="{StaticResource MaterialDesignIconButton}"
-                    ToolTip="Обновить"/>
+            <Button Grid.Column="2" Content="Обновить" Margin="8,0,0,0"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Command="{Binding RefreshCommand}"/>
         </Grid>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -64,7 +64,7 @@
                 <ItemsControl ItemsSource="{Binding PagedUsers}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" IsItemsHost="True" Margin="-8, 0, 0, 0"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -151,14 +151,5 @@
             <Button Content="›" Command="{Binding NextPageCommand}" Margin="8,0"/>
             <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0"/>
         </StackPanel>
-
-        <Grid Grid.Row="0" Grid.RowSpan="3" 
-              Background="#80000000" 
-              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <ProgressBar IsIndeterminate="True" Width="100" Height="4" Margin="0,0,0,16"/>
-                <TextBlock Text="Загрузка пользователей..." Foreground="White" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </Grid>
     </Grid>
 </UserControl>
