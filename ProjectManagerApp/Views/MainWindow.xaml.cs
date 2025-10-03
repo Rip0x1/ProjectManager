@@ -10,12 +10,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading.Tasks;
+using ProjectManagerApp.Services;
 
 namespace ProjectManagementSystem.WPF.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -32,6 +31,24 @@ namespace ProjectManagementSystem.WPF.Views
             
             MainSnackbar.MessageQueue = notificationService.MessageQueue;
             notificationService.SetNotificationBorder(NotificationBorder);
+            
+            Loaded += MainWindow_Loaded;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var tabControl = FindName("TabControl") as TabControl;
+            if (tabControl != null)
+            {
+                foreach (TabItem tab in tabControl.Items)
+                {
+                    if (tab.Content is ProjectManagerApp.Views.MyProjectsView myProjectsView)
+                    {
+                        var viewModel = App.GetService<ProjectManagerApp.ViewModels.MyProjectsViewModel>();
+                        myProjectsView.DataContext = viewModel;
+                    }
+                }
+            }
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -67,11 +84,14 @@ namespace ProjectManagementSystem.WPF.Views
             nav.NavigateToLogin();
         }
 
-        private sealed class MainWindowViewModel
+        private sealed partial class MainWindowViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
         {
             public string CurrentUserNameText { get; }
             public string CurrentUserRoleName { get; }
             public string CurrentUserRoleColor { get; }
+
+            [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+            private bool _isLoading = true;
 
             public MainWindowViewModel()
             {
@@ -83,6 +103,44 @@ namespace ProjectManagementSystem.WPF.Views
                 var role = (UserRole)auth.CurrentUserRole;
                 CurrentUserRoleName = role.GetRoleName();
                 CurrentUserRoleColor = role.GetRoleColor();
+
+            // Запускаем реальную загрузку данных
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    // Загружаем все необходимые данные
+                    var apiClient = App.GetService<IApiClient>();
+                    var authService = App.GetService<IAuthService>();
+                    
+                    // Загружаем статистику
+                    await apiClient.GetAsync<object>("statistics/overview");
+                    
+                    // Загружаем проекты
+                    await apiClient.GetAsync<object>("projects");
+                    
+                    // Загружаем задачи
+                    await apiClient.GetAsync<object>("tasks");
+                    
+                    // Загружаем пользователей
+                    await apiClient.GetAsync<object>("users");
+                    
+                    // Загружаем проекты пользователя
+                    await apiClient.GetAsync<object>($"projects/user/{authService.CurrentUserId}");
+                }
+                catch (Exception ex)
+                {
+                    // Логируем ошибку, но не показываем пользователю
+                    System.Diagnostics.Debug.WriteLine($"Ошибка загрузки данных: {ex.Message}");
+                }
+                finally
+                {
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        IsLoading = false;
+                    });
+                }
+            });
             }
         }
     }

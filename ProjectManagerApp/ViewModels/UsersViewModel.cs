@@ -4,6 +4,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProjectManagementSystem.WPF.Models;
 using ProjectManagementSystem.WPF.Services;
+using Microsoft.Extensions.DependencyInjection;
+using ProjectManagerApp.Models;
+using ProjectManagerApp.Services;
+using ProjectManagerApp.ViewModels;
+using ProjectManagerApp.Views;
+using System.Windows;
 
 namespace ProjectManagementSystem.WPF.ViewModels
 {
@@ -39,6 +45,8 @@ namespace ProjectManagementSystem.WPF.ViewModels
         [ObservableProperty]
         private int _selectedRoleFilter = -1; 
 
+        public bool CanManageUsers => App.ServiceProvider.GetRequiredService<IAuthService>().CurrentUserRole >= 2;
+
         public UsersViewModel(IUsersService usersService, INotificationService notificationService)
         {
             _usersService = usersService;
@@ -72,11 +80,6 @@ namespace ProjectManagementSystem.WPF.ViewModels
             }
         }
 
-        [RelayCommand]
-        private async Task RefreshAsync()
-        {
-            await LoadAsync();
-        }
 
         [RelayCommand]
         private void Search()
@@ -84,39 +87,6 @@ namespace ProjectManagementSystem.WPF.ViewModels
             ApplySearchAndPagination();
         }
 
-        [RelayCommand]
-        private void FirstPage()
-        {
-            CurrentPage = 1;
-            ApplySearchAndPagination();
-        }
-
-        [RelayCommand]
-        private void PreviousPage()
-        {
-            if (CurrentPage > 1)
-            {
-                CurrentPage--;
-                ApplySearchAndPagination();
-            }
-        }
-
-        [RelayCommand]
-        private void NextPage()
-        {
-            if (CurrentPage < TotalPages)
-            {
-                CurrentPage++;
-                ApplySearchAndPagination();
-            }
-        }
-
-        [RelayCommand]
-        private void LastPage()
-        {
-            CurrentPage = TotalPages;
-            ApplySearchAndPagination();
-        }
 
         partial void OnSearchTextChanged(string value)
         {
@@ -183,6 +153,113 @@ namespace ProjectManagementSystem.WPF.ViewModels
             {
                 PagedUsers.Add(user);
             }
+        }
+
+        [RelayCommand]
+        private async Task CreateUserAsync()
+        {
+            try
+            {
+                var createEditUserViewModel = new CreateEditUserViewModel(_usersService, _notificationService);
+                var window = new CreateEditUserWindow(createEditUserViewModel);
+                window.Owner = Application.Current.MainWindow;
+                
+                if (window.ShowDialog() == true)
+                {
+                    await LoadAsync();
+                    _notificationService.ShowSuccess("Пользователь создан успешно!");
+                }
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка создания пользователя: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task EditUserAsync(UserItem user)
+        {
+            try
+            {
+                var createEditUserViewModel = new CreateEditUserViewModel(_usersService, _notificationService, user.Id);
+                var window = new CreateEditUserWindow(createEditUserViewModel);
+                window.Owner = Application.Current.MainWindow;
+                
+                if (window.ShowDialog() == true)
+                {
+                    await LoadAsync();
+                    _notificationService.ShowSuccess("Пользователь обновлен успешно!");
+                }
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка редактирования пользователя: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task DeleteUserAsync(UserItem user)
+        {
+            try
+            {
+                var result = MessageBox.Show(
+                    $"Вы уверены, что хотите удалить пользователя {user.FullName}?",
+                    "Подтверждение удаления",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    await _usersService.DeleteUserAsync(user.Id);
+                    await LoadAsync();
+                    _notificationService.ShowSuccess("Пользователь удален успешно!");
+                }
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка удаления пользователя: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task RefreshAsync()
+        {
+            await LoadAsync();
+            _notificationService.ShowSuccess("Данные обновлены!");
+        }
+
+        [RelayCommand]
+        private void PreviousPage()
+        {
+            if (CurrentPage > 1)
+            {
+                CurrentPage--;
+                ApplySearchAndPagination();
+            }
+        }
+
+        [RelayCommand]
+        private void NextPage()
+        {
+            if (CurrentPage < TotalPages)
+            {
+                CurrentPage++;
+                ApplySearchAndPagination();
+            }
+        }
+
+        [RelayCommand]
+        private void FirstPage()
+        {
+            CurrentPage = 1;
+            ApplySearchAndPagination();
+        }
+
+        [RelayCommand]
+        private void LastPage()
+        {
+            CurrentPage = TotalPages;
+            ApplySearchAndPagination();
         }
     }
 }

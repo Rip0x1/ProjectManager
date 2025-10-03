@@ -16,6 +16,24 @@ namespace ProjectManagementSystem.WPF.Models
         public int CommentsCount { get; set; }
     }
 
+    public class CreateUserDto
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public int Role { get; set; }
+    }
+
+    public class UpdateUserDto
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Password { get; set; }
+        public int Role { get; set; }
+    }
+
     public class UserItem : INotifyPropertyChanged
     {
         public int Id { get; set; }
@@ -46,7 +64,7 @@ namespace ProjectManagementSystem.WPF.Models
             _ => "#9E9E9E" 
         };
 
-        public string CreatedAtText => CreatedAt.ToString("dd.MM.yyyy");
+        public string CreatedAtText => CreatedAt.ToLocalTime().ToString("dd.MM.yyyy");
         public string ActivityText => $"Проектов: {ManagedProjectsCount}, Задач: {AuthoredTasksCount + AssignedTasksCount}, Комментариев: {CommentsCount}";
 
         public event PropertyChangedEventHandler? PropertyChanged;

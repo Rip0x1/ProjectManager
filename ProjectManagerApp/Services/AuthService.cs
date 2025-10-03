@@ -71,7 +71,7 @@ namespace ProjectManagementSystem.WPF.Services
             }
             catch (Exception ex)
             {
-                throw new Exception($"Ошибка авторизации: {ex.Message}");
+                throw new Exception($"Ошибка авторизации: Вы должны включить API");
             }
         }
 
@@ -87,5 +87,14 @@ namespace ProjectManagementSystem.WPF.Services
 
         public string CurrentUserFirstName => _currentUser?.FirstName ?? string.Empty;
         public string CurrentUserEmail => _currentUser?.Email ?? string.Empty;
+        public UserDto? CurrentUser => _currentUser != null ? new UserDto
+        {
+            Id = _currentUser.UserId,
+            FirstName = _currentUser.FirstName,
+            LastName = _currentUser.LastName,
+            Email = _currentUser.Email,
+            Role = _currentUser.Role,
+            CreatedAt = DateTime.UtcNow 
+        } : null;
     }
 }

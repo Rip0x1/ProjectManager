@@ -6,9 +6,9 @@ namespace ProjectManagementSystem.WPF.Services
     {
         Task<IEnumerable<UserDto>> GetUsersAsync();
         Task<UserDto?> GetUserAsync(int id);
-        Task<UserDto?> CreateUserAsync(UserDto user);
-        Task<UserDto?> UpdateUserAsync(UserDto user);
-        Task<bool> DeleteUserAsync(int id);
+        Task<UserDto> CreateUserAsync(CreateUserDto createDto);
+        Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateDto);
+        Task DeleteUserAsync(int id);
         Task<IEnumerable<UserDto>> GetUsersByRoleAsync(int role);
         Task<IEnumerable<UserDto>> SearchUsersAsync(string searchTerm);
     }

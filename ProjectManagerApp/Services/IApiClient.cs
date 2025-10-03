@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace ProjectManagementSystem.WPF.Services
 {
@@ -7,6 +8,6 @@ namespace ProjectManagementSystem.WPF.Services
         Task<T> GetAsync<T>(string endpoint);
         Task<T> PostAsync<T>(string endpoint, object data);
         Task<T> PutAsync<T>(string endpoint, object data);
-        Task<bool> DeleteAsync(string endpoint);
+        Task<HttpResponseMessage> DeleteAsync(string endpoint);
     }
 }

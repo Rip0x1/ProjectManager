@@ -1,4 +1,5 @@
 using ProjectManagementSystem.WPF.Models;
+using ProjectManagerApp.Models;
 
 namespace ProjectManagementSystem.WPF.Services
 {
@@ -15,8 +16,8 @@ namespace ProjectManagementSystem.WPF.Services
         {
             try
             {
-                var tasks = await _apiClient.GetAsync<IEnumerable<TaskDto>>("Tasks");
-                return tasks.Select(MapToTaskItem);
+                var response = await _apiClient.GetAsync<ApiTasksResponse>("tasks?page=1&pageSize=1000");
+                return response.Tasks.Select(MapToTaskItem);
             }
             catch (Exception ex)
             {
@@ -26,7 +27,26 @@ namespace ProjectManagementSystem.WPF.Services
 
         public async Task<TaskDto> GetTaskAsync(int id)
         {
-            return await _apiClient.GetAsync<TaskDto>($"Tasks/{id}");
+            var response = await _apiClient.GetAsync<ApiTaskResponseDto>($"tasks/{id}");
+            return new TaskDto
+            {
+                Id = response.Id,
+                Title = response.Title,
+                Description = response.Description,
+                Status = response.Status,
+                Priority = response.Priority,
+                ProjectId = response.ProjectId,
+                ProjectName = response.ProjectName,
+                AuthorId = response.AuthorId,
+                AuthorName = response.AuthorName,
+                AssigneeId = response.AssigneeId,
+                AssigneeName = response.AssigneeName,
+                CreatedAt = response.CreatedAt,
+                UpdatedAt = response.UpdatedAt,
+                PlannedHours = response.PlannedHours,
+                ActualHours = response.ActualHours,
+                CommentsCount = response.CommentsCount
+            };
         }
 
         public async Task<IEnumerable<TaskItem>> GetTasksByStatusAsync(int status)
@@ -56,7 +76,7 @@ namespace ProjectManagementSystem.WPF.Services
             await _apiClient.DeleteAsync($"tasks/{id}");
         }
 
-        private static TaskItem MapToTaskItem(TaskDto task)
+        private static TaskItem MapToTaskItem(ApiTaskResponseDto task)
         {
             return new TaskItem
             {

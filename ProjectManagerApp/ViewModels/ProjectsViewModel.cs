@@ -84,6 +84,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
         private async Task RefreshAsync()
         {
             await LoadAsync();
+            _notificationService.ShowSuccess("Данные обновлены!");
         }
 
         partial void OnSearchTextChanged(string value)
@@ -120,35 +121,6 @@ namespace ProjectManagementSystem.WPF.ViewModels
             _notificationService.ShowInfo("Фильтры сброшены");
         }
 
-        [RelayCommand]
-        private void NextPage()
-        {
-            if (CurrentPage < TotalPages)
-            {
-                CurrentPage++;
-            }
-        }
-
-        [RelayCommand]
-        private void PrevPage()
-        {
-            if (CurrentPage > 1)
-            {
-                CurrentPage--;
-            }
-        }
-
-        [RelayCommand]
-        private void FirstPage()
-        {
-            CurrentPage = 1;
-        }
-
-        [RelayCommand]
-        private void LastPage()
-        {
-            CurrentPage = TotalPages;
-        }
 
         private void ApplyFilterAndPaging()
         {
@@ -248,6 +220,61 @@ namespace ProjectManagementSystem.WPF.ViewModels
         public bool CanDeleteProjectItem(ProjectItem project)
         {
             return _permissionService.CanDeleteProject(project.ManagerId);
+        }
+
+        [RelayCommand]
+        private async Task ManageMembersAsync(ProjectItem project)
+        {
+            try
+            {
+                var window = new ProjectManagerApp.Views.ProjectMembersViewWindow();
+                var viewModel = App.ServiceProvider.GetService<ProjectManagerApp.ViewModels.ProjectMembersViewViewModel>();
+                if (viewModel != null)
+                {
+                    await viewModel.InitializeAsync(project.Id, project.Name);
+                    window.DataContext = viewModel;
+                    window.Owner = Application.Current.MainWindow;
+                    window.ShowDialog();
+                }
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка управления участниками: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private void PreviousPage()
+        {
+            if (CurrentPage > 1)
+            {
+                CurrentPage--;
+                ApplyFilterAndPaging();
+            }
+        }
+
+        [RelayCommand]
+        private void NextPage()
+        {
+            if (CurrentPage < TotalPages)
+            {
+                CurrentPage++;
+                ApplyFilterAndPaging();
+            }
+        }
+
+        [RelayCommand]
+        private void FirstPage()
+        {
+            CurrentPage = 1;
+            ApplyFilterAndPaging();
+        }
+
+        [RelayCommand]
+        private void LastPage()
+        {
+            CurrentPage = TotalPages;
+            ApplyFilterAndPaging();
         }
     }
 }

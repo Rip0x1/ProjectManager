@@ -22,7 +22,7 @@ namespace ProjectManagementSystem.WPF.Services
             _httpClient = new HttpClient(handler)
             {
                 BaseAddress = new Uri(BaseUrl),
-                Timeout = TimeSpan.FromSeconds(30)
+                Timeout = TimeSpan.FromMinutes(5) 
             };
         }
 
@@ -55,7 +55,6 @@ namespace ProjectManagementSystem.WPF.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка POST запроса к {endpoint}: {ex.Message}", ex);
                 throw new Exception($"Ошибка POST запроса к {endpoint}: {ex.Message}", ex);
             }
         }
@@ -81,10 +80,18 @@ namespace ProjectManagementSystem.WPF.Services
             }
         }
 
-        public async Task<bool> DeleteAsync(string endpoint)
+        public async Task<HttpResponseMessage> DeleteAsync(string endpoint)
         {
-            var response = await _httpClient.DeleteAsync(endpoint);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                var response = await _httpClient.DeleteAsync(endpoint);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка DELETE запроса к {endpoint}: {ex.Message}");
+                throw new Exception($"Ошибка DELETE запроса к {endpoint}: {ex.Message}", ex);
+            }
         }
 
         private async Task EnsureSuccess(HttpResponseMessage response)

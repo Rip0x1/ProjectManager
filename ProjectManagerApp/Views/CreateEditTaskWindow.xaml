@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:ProjectManagementSystem.WPF.Converters"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}"
-        Height="700" Width="700"
+        Height="600" Width="600"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -20,10 +21,12 @@
             <Setter Property="Margin" Value="0,0,0,8"/>
             <Setter Property="Foreground" Value="#37474F"/>
         </Style>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     </Window.Resources>
 
     <Border Background="White" CornerRadius="15" Effect="{StaticResource MaterialDesignShadowDepth5}">
-        <Grid Margin="16">
+        <Grid Margin="25">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -53,8 +56,9 @@
                 </Grid>
             </Border>
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="25,20">
-                <StackPanel>
+            <Grid Grid.Row="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="25,20">
+                    <StackPanel>
                     <TextBlock Text="Название задачи *" Style="{StaticResource LabelStyle}"/>
                     <TextBox Text="{Binding TaskTitle, UpdateSourceTrigger=PropertyChanged}"
                              materialDesign:HintAssist.Hint="Введите название задачи"
@@ -154,7 +158,23 @@
                                Foreground="#757575"
                                Margin="0,10,0,0"/>
                 </StackPanel>
-            </ScrollViewer>
+                </ScrollViewer>
+
+                <Border Background="#80000000" 
+                        Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Panel.ZIndex="1000">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ProgressBar IsIndeterminate="True" 
+                                   Width="150" Height="10"
+                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"
+                                   Margin="0,0,0,5"/>
+                        <TextBlock Text="Загрузка данных..." 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
 
             <Border Grid.Row="2" 
                     Background="#F5F5F5" 

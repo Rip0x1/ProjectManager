@@ -8,7 +8,7 @@ namespace ProjectManagementSystem.API.Models.DTOs
 
         public string Content { get; set; }
 
-        public int TaskId { get; set; }
+        public int? TaskId { get; set; }
         public int AuthorId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public CommentUserResponceDto CommentUserResponceDto { get; set; }
@@ -17,6 +17,7 @@ namespace ProjectManagementSystem.API.Models.DTOs
 
     public class CommentUserResponceDto
     {
+        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }

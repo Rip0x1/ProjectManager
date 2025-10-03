@@ -18,7 +18,6 @@ namespace ProjectManagementSystem.API.Controllers
             _context = context;
         }
 
-        // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetUsers()
         {
@@ -41,7 +40,6 @@ namespace ProjectManagementSystem.API.Controllers
             return users;
         }
 
-        // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UserResponseDto>> GetUser(int id)
         {
@@ -69,42 +67,68 @@ namespace ProjectManagementSystem.API.Controllers
             return user;
         }
 
-        // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<UserResponseDto>> PostUser(UserCreateDto dto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            user.PasswordHash = PasswordHasher.HashPassword("default123");
-            user.CreatedAt = DateTime.UtcNow;
+
+            var user = new User
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                PasswordHash = PasswordHasher.HashPassword(dto.Password),
+                Role = dto.Role,
+                CreatedAt = DateTime.UtcNow
+            };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            user.PasswordHash = null;
+            var response = new UserResponseDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt,
+                ManagedProjectsCount = 0,
+                AuthoredTasksCount = 0,
+                AssignedTasksCount = 0,
+                CommentsCount = 0
+            };
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return CreatedAtAction("GetUser", new { id = user.Id }, response);
         }
 
-        // PUT: api/Users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<ActionResult<UserResponseDto>> PutUser(int id, UserUpdateDto dto)
         {
-            if (id != user.Id)
+            if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
-            var existingUser = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
-            if (existingUser != null && user.PasswordHash != existingUser.PasswordHash)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
-                user.PasswordHash = PasswordHasher.HashPassword(user.PasswordHash);
+                return NotFound();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            user.FirstName = dto.FirstName;
+            user.LastName = dto.LastName;
+            user.Email = dto.Email;
+            user.Role = dto.Role;
+
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                user.PasswordHash = PasswordHasher.HashPassword(dto.Password);
+            }
 
             try
             {
@@ -122,23 +146,69 @@ namespace ProjectManagementSystem.API.Controllers
                 }
             }
 
-            return NoContent();
+            var response = new UserResponseDto
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedAt = user.CreatedAt,
+                ManagedProjectsCount = user.ManagedProjects.Count,
+                AuthoredTasksCount = user.AuthoredTasks.Count,
+                AssignedTasksCount = user.AssignedTasks.Count,
+                CommentsCount = user.Comments.Count
+            };
+
+            return Ok(response);
         }
 
-        // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var managedProjectsCount = await _context.Projects.CountAsync(p => p.ManagerId == id);
+                if (managedProjectsCount > 0)
+                {
+                    return BadRequest("Нельзя удалить пользователя, который управляет проектами. Сначала переназначьте проекты другому менеджеру.");
+                }
+
+                var adminUser = await _context.Users.FirstOrDefaultAsync(u => u.Role == 2);
+                
+                if (adminUser != null)
+                {
+                    await _context.Database.ExecuteSqlRawAsync(
+                        "UPDATE Tasks SET AssigneeId = {0} WHERE AssigneeId = {1}", 
+                        adminUser.Id, id);
+                    
+                    await _context.Database.ExecuteSqlRawAsync(
+                        "UPDATE Tasks SET AuthorId = {0} WHERE AuthorId = {1}", 
+                        adminUser.Id, id);
+                }
+                else
+                {
+                    await _context.Database.ExecuteSqlRawAsync("DELETE FROM Tasks WHERE AssigneeId = {0}", id);
+                    await _context.Database.ExecuteSqlRawAsync("DELETE FROM Tasks WHERE AuthorId = {0}", id);
+                }
+
+                await _context.Database.ExecuteSqlRawAsync("DELETE FROM Comments WHERE AuthorId = {0}", id);
+
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                
+                return NoContent();
             }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest($"Ошибка удаления пользователя: {ex.Message}");
+            }
         }
 
         private bool UserExists(int id)

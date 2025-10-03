@@ -1,10 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using ProjectManagementSystem.WPF.Models;
 using ProjectManagementSystem.WPF.Services;
+using ProjectManagerApp.Models;
+using ProjectManagerApp.Services;
+using ProjectManagerApp.ViewModels;
+using ProjectManagerApp.Views;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Windows;
 
 namespace ProjectManagementSystem.WPF.ViewModels
 {
@@ -85,6 +91,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
         private async Task RefreshAsync()
         {
             await LoadAsync();
+            _notificationService.ShowSuccess("Данные обновлены!");
         }
 
         [RelayCommand]
@@ -168,7 +175,8 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
         partial void OnSearchTextChanged(string value)
         {
-            Search();
+            CurrentPage = 1;
+            ApplyFilterAndPaging();
         }
 
         partial void OnPageSizeChanged(int value)
@@ -212,12 +220,20 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 return;
             }
 
-            var window = new Views.CreateEditTaskWindow();
-            window.Owner = System.Windows.Application.Current.MainWindow;
-            
-            if (window.ShowDialog() == true)
+            try
             {
-                await LoadAsync();
+                IsLoading = true;
+                var window = new Views.CreateEditTaskWindow();
+                window.Owner = System.Windows.Application.Current.MainWindow;
+                
+                if (window.ShowDialog() == true)
+                {
+                    await LoadAsync();
+                }
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
@@ -232,12 +248,20 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 return;
             }
 
-            var window = new Views.CreateEditTaskWindow(task.Id);
-            window.Owner = System.Windows.Application.Current.MainWindow;
-            
-            if (window.ShowDialog() == true)
+            try
             {
-                await LoadAsync();
+                IsLoading = true;
+                var window = new Views.CreateEditTaskWindow(task.Id);
+                window.Owner = System.Windows.Application.Current.MainWindow;
+                
+                if (window.ShowDialog() == true)
+                {
+                    await LoadAsync();
+                }
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
@@ -262,6 +286,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
             {
                 try
                 {
+                    IsLoading = true;
                     await _tasksService.DeleteTaskAsync(task.Id);
                     _notificationService.ShowSuccess($"Задача '{task.Title}' успешно удалена");
                     await LoadAsync();
@@ -269,6 +294,10 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 catch (Exception ex)
                 {
                     _notificationService.ShowError($"Ошибка при удалении задачи: {ex.Message}");
+                }
+                finally
+                {
+                    IsLoading = false;
                 }
             }
         }
@@ -281,6 +310,28 @@ namespace ProjectManagementSystem.WPF.ViewModels
         public bool CanDeleteTaskItem(TaskItem task)
         {
             return _permissionService.CanDeleteTask(task.AuthorId);
+        }
+
+        [RelayCommand]
+        private async Task ViewCommentsAsync(TaskItem task)
+        {
+            try
+            {
+                var commentsService = App.ServiceProvider.GetRequiredService<ICommentsService>();
+                var authService = App.ServiceProvider.GetRequiredService<IAuthService>();
+                var notificationService = App.ServiceProvider.GetRequiredService<INotificationService>();
+
+                var viewModel = new TaskCommentsViewModel(commentsService, authService, notificationService);
+                await viewModel.InitializeAsync(task.Id, task.Title);
+
+                var window = new TaskCommentsWindow(viewModel);
+                window.Owner = Application.Current.MainWindow;
+                window.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка открытия комментариев: {ex.Message}");
+            }
         }
     }
 }

@@ -152,6 +152,14 @@
 
                                     <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0"
                                                 Visibility="{Binding DataContext.CanManageProjects, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Button Command="{Binding DataContext.ManageMembersCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignIconButton}"
+                                                Width="32" Height="32"
+                                                ToolTip="Участники"
+                                                Margin="0,0,4,0">
+                                            <materialDesign:PackIcon Kind="AccountGroup" Width="18" Height="18" Foreground="#9C27B0"/>
+                                        </Button>
                                         <Button Command="{Binding DataContext.EditProjectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}"
                                                 Style="{StaticResource MaterialDesignIconButton}"
@@ -178,7 +186,7 @@
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
             <Button Content="⟪" Command="{Binding FirstPageCommand}" Margin="4,0"/>
-            <Button Content="‹" Command="{Binding PrevPageCommand}" Margin="4,0"/>
+            <Button Content="‹" Command="{Binding PreviousPageCommand}" Margin="4,0"/>
             <TextBlock Text="Стр." VerticalAlignment="Center" Margin="8,0"/>
             <TextBox Width="50" Text="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="из" VerticalAlignment="Center" Margin="8,0"/>

@@ -14,6 +14,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
         private readonly IProjectsService _projectsService;
         private readonly ITasksService _tasksService;
         private readonly IUsersService _usersService;
+        private readonly IStatisticsService _statisticsService;
         private readonly INotificationService _notificationService;
 
         [ObservableProperty]
@@ -79,6 +80,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
             IProjectsService projectsService,
             ITasksService tasksService,
             IUsersService usersService,
+            IStatisticsService statisticsService,
             INotificationService notificationService)
         {
             _authService = authService;
@@ -86,6 +88,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
             _projectsService = projectsService;
             _tasksService = tasksService;
             _usersService = usersService;
+            _statisticsService = statisticsService;
             _notificationService = notificationService;
         }
 
@@ -94,38 +97,30 @@ namespace ProjectManagementSystem.WPF.ViewModels
             IsLoading = true;
             try
             {
-                var projectsTask = _projectsService.GetProjectsAsync();
-                var tasksTask = _tasksService.GetTasksAsync();
-                var usersTask = _usersService.GetUsersAsync();
+                var overviewStats = await _statisticsService.GetOverviewStatisticsAsync();
 
-                await Task.WhenAll(projectsTask, tasksTask, usersTask);
+                TotalProjects = overviewStats.TotalProjects;
+                TotalTasks = overviewStats.TotalTasks;
+                TotalUsers = overviewStats.TotalUsers;
 
-                var projects = projectsTask.Result;
-                var tasks = tasksTask.Result;
-                var users = usersTask.Result;
+                ActiveProjects = overviewStats.ActiveProjects;
 
-                TotalProjects = projects.Count;
-                TotalTasks = tasks.Count();
-                TotalUsers = users.Count();
+                CompletedTasks = overviewStats.CompletedTasks;
+                ActiveTasks = overviewStats.ActiveTasks;
 
-                ActiveProjects = projects.Count(p => p.Status == 1);
+                TaskStatusNew = overviewStats.TaskStatusNew;
+                TaskStatusInProgress = overviewStats.TaskStatusInProgress;
+                TaskStatusReview = overviewStats.TaskStatusReview;
+                TaskStatusCompleted = overviewStats.TaskStatusCompleted;
 
-                CompletedTasks = tasks.Count(t => t.Status == 3);
-                ActiveTasks = tasks.Count(t => t.Status == 1);
+                TaskPriorityLow = overviewStats.TaskPriorityLow;
+                TaskPriorityMedium = overviewStats.TaskPriorityMedium;
+                TaskPriorityHigh = overviewStats.TaskPriorityHigh;
+                TaskPriorityCritical = overviewStats.TaskPriorityCritical;
 
-                TaskStatusNew = tasks.Count(t => t.Status == 0);
-                TaskStatusInProgress = tasks.Count(t => t.Status == 1);
-                TaskStatusReview = tasks.Count(t => t.Status == 2);
-                TaskStatusCompleted = tasks.Count(t => t.Status == 3);
-
-                TaskPriorityLow = tasks.Count(t => t.Priority == 0);
-                TaskPriorityMedium = tasks.Count(t => t.Priority == 1);
-                TaskPriorityHigh = tasks.Count(t => t.Priority == 2);
-                TaskPriorityCritical = tasks.Count(t => t.Priority == 3);
-
-                ProjectStatusPlanned = projects.Count(p => p.Status == 0);
-                ProjectStatusInProgress = projects.Count(p => p.Status == 1);
-                ProjectStatusCompleted = projects.Count(p => p.Status == 2);
+                ProjectStatusPlanned = overviewStats.ProjectStatusPlanned;
+                ProjectStatusInProgress = overviewStats.ProjectStatusInProgress;
+                ProjectStatusCompleted = overviewStats.ProjectStatusCompleted;
 
             }
             catch (System.Exception ex)

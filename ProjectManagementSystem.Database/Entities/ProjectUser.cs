@@ -7,6 +7,7 @@ namespace ProjectManagementSystem.Database.Entities
         public int Id { get; set; }
         public int ProjectId { get; set; }
         public int UserId { get; set; }
+        public DateTime JoinedAt { get; set; }
 
         [MaxLength(100)]
         public string RoleInProject { get; set; }

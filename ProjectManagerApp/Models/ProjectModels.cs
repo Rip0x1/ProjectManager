@@ -12,6 +12,9 @@ namespace ProjectManagementSystem.WPF.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? Deadline { get; set; }
         public UserDto Manager { get; set; }
+        public int ParticipantsCount { get; set; }
+        public int TasksCount { get; set; }
+        public int CommentsCount { get; set; }
     }
 
     public class CreateUpdateProjectDto
@@ -54,8 +57,8 @@ namespace ProjectManagementSystem.WPF.Models
             _ => "#9E9E9E" 
         };
 
-        public string CreatedAtText => CreatedAt.ToString("dd.MM.yyyy");
-        public string DeadlineText => Deadline?.ToString("dd.MM.yyyy") ?? "Не указан";
+        public string CreatedAtText => CreatedAt.ToLocalTime().ToString("dd.MM.yyyy");
+        public string DeadlineText => Deadline?.ToLocalTime().ToString("dd.MM.yyyy") ?? "Не указан";
     }
 }
 

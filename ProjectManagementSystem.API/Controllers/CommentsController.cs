@@ -17,7 +17,50 @@ namespace ProjectManagementSystem.API.Controllers
             _context = context;
         }
 
-        // GET: api/Comments
+
+        [HttpPost("project/{projectId}")]
+        public async Task<ActionResult<object>> CreateProjectComment(int projectId, [FromBody] CreateProjectCommentDto dto)
+        {
+            try
+            {
+                var firstTask = await _context.Tasks
+                    .Where(t => t.ProjectId == projectId)
+                    .FirstOrDefaultAsync();
+
+                var comment = new Comment
+                {
+                    Content = dto.Content,
+                    AuthorId = dto.AuthorId,
+                    TaskId = firstTask?.Id, 
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Comments.Add(comment);
+                await _context.SaveChangesAsync();
+
+                var author = await _context.Users.FindAsync(comment.AuthorId);
+                var result = new
+                {
+                    Id = comment.Id,
+                    Content = comment.Content,
+                    CreatedAt = comment.CreatedAt,
+                    Author = author != null ? new
+                    {
+                        Id = author.Id,
+                        FirstName = author.FirstName,
+                        LastName = author.LastName,
+                        Email = author.Email
+                    } : null
+                };
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ошибка создания комментария: {ex.Message}");
+            }
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetComment([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
@@ -36,6 +79,7 @@ namespace ProjectManagementSystem.API.Controllers
                         CreatedAt = t.CreatedAt,
                         CommentUserResponceDto = new CommentUserResponceDto
                         {
+                            Id = t.Author.Id,
                             FirstName = t.Author.FirstName,
                             LastName = t.Author.LastName,
                             Email = t.Author.Email,
@@ -59,7 +103,6 @@ namespace ProjectManagementSystem.API.Controllers
 
         }
 
-        // GET: api/Comments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(int id)
         {
@@ -76,18 +119,86 @@ namespace ProjectManagementSystem.API.Controllers
             return comment;
         }
 
-        // GET: api/Comments/task/5
-        [HttpGet("task/{taskId}")]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsByTask(int taskId)
+        [HttpGet("~/api/tasks/{taskId}/comments")]
+        public async Task<ActionResult<IEnumerable<object>>> GetCommentsForTask(int taskId)
         {
-            return await _context.Comments
+            var comments = await _context.Comments
                 .Where(c => c.TaskId == taskId)
                 .Include(c => c.Author)
                 .OrderByDescending(c => c.CreatedAt)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Content,
+                    c.TaskId,
+                    c.AuthorId,
+                    c.CreatedAt,
+                    CommentUserResponceDto = c.Author == null ? null : new
+                    {
+                        c.Author.Id,
+                        c.Author.FirstName,
+                        c.Author.LastName,
+                        c.Author.Email,
+                        c.Author.Role
+                    }
+                })
                 .ToListAsync();
+
+            return Ok(comments);
         }
 
-        // POST: api/Comments
+        [HttpPost("~/api/tasks/{taskId}/comments")]
+        public async Task<ActionResult<object>> CreateCommentForTask(int taskId, [FromBody] CreateCommentDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var task = await _context.Tasks.FindAsync(taskId);
+            if (task == null)
+            {
+                return NotFound("Задача не найдена");
+            }
+
+            var comment = new Comment
+            {
+                Content = dto.Content,
+                TaskId = taskId,
+                AuthorId = dto.AuthorId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            task.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            var createdComment = await _context.Comments
+                .Include(c => c.Author)
+                .Where(c => c.Id == comment.Id)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Content,
+                    c.TaskId,
+                    c.AuthorId,
+                    c.CreatedAt,
+                    Author = c.Author == null ? null : new
+                    {
+                        c.Author.Id,
+                        c.Author.FirstName,
+                        c.Author.LastName,
+                        c.Author.Email,
+                        c.Author.Role
+                    }
+                })
+                .FirstOrDefaultAsync();
+
+            return CreatedAtAction("GetComment", new { id = comment.Id }, createdComment);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Comment>> PostComment(Comment comment)
         {
@@ -111,7 +222,6 @@ namespace ProjectManagementSystem.API.Controllers
             return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
         }
 
-        // PUT: api/Comments/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutComment(int id, Comment comment)
         {
@@ -141,7 +251,64 @@ namespace ProjectManagementSystem.API.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Comments/5
+        [HttpGet("project/{projectId}")]
+        public async Task<ActionResult<object>> GetProjectComments(int projectId, string? search = null, int page = 1, int pageSize = 10)
+        {
+            var baseQuery = _context.Comments
+                .Where(c => c.TaskId.HasValue && _context.Tasks
+                    .Where(t => t.ProjectId == projectId)
+                    .Select(t => t.Id)
+                    .Contains(c.TaskId.Value))
+                .Include(c => c.Author);
+
+            var query = baseQuery.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(c => c.Content.Contains(search));
+            }
+
+            var totalCount = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var comments = await query
+                .OrderByDescending(c => c.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var result = comments.Select(c => new CommentResponseDto
+            {
+                Id = c.Id,
+                Content = c.Content,
+                CreatedAt = c.CreatedAt,
+                TaskId = c.TaskId,
+                AuthorId = c.AuthorId,
+                CommentUserResponceDto = new CommentUserResponceDto
+                {
+                    Id = c.Author.Id,
+                    FirstName = c.Author.FirstName,
+                    LastName = c.Author.LastName,
+                    Email = c.Author.Email
+                },
+                CommentTaskReponseDto = c.TaskId.HasValue ? new CommentTaskReponseDto
+                {
+                    Id = c.TaskId.Value,
+                    Title = _context.Tasks.FirstOrDefault(t => t.Id == c.TaskId.Value)?.Title ?? "",
+                    Description = _context.Tasks.FirstOrDefault(t => t.Id == c.TaskId.Value)?.Description ?? ""
+                } : null
+            }).ToList();
+
+            return Ok(new
+            {
+                Comments = result,
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+                CurrentPage = page,
+                PageSize = pageSize
+            });
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
         {

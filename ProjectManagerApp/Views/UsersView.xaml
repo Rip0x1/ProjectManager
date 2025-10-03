@@ -33,6 +33,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBox Grid.Column="0" 
@@ -55,7 +56,20 @@
                     <ComboBoxItem Content="50" Tag="50"/>
                 </ComboBox>
 
-                <Button Grid.Column="2" Content="Обновить" Margin="8,0,0,0"
+                <Button Grid.Column="2" Margin="8,0,0,0"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Background="{StaticResource PrimaryBrush}"
+                        BorderBrush="{StaticResource PrimaryBrush}"
+                        Command="{Binding CreateUserCommand}"
+                        Visibility="{Binding CanManageUsers, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Создать" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Grid.Column="3" Content="Обновить" Margin="8,0,0,0"
                         Style="{StaticResource MaterialDesignRaisedButton}"
                         Command="{Binding RefreshCommand}"/>
             </Grid>
@@ -157,6 +171,25 @@
                                                Foreground="Gray" 
                                                Margin="0,8,0,0"/>
 
+                                    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0"
+                                                Visibility="{Binding DataContext.CanManageUsers, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Button Command="{Binding DataContext.EditUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignIconButton}"
+                                                Width="32" Height="32"
+                                                ToolTip="Редактировать"
+                                                Margin="0,0,4,0">
+                                            <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18" Foreground="#2196F3"/>
+                                        </Button>
+                                        <Button Command="{Binding DataContext.DeleteUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignIconButton}"
+                                                Width="32" Height="32"
+                                                ToolTip="Удалить">
+                                            <materialDesign:PackIcon Kind="Delete" Width="18" Height="18" Foreground="#F44336"/>
+                                        </Button>
+                                    </StackPanel>
+
                                     <TextBlock Grid.Row="5" 
                                                Text="{Binding ActivityText}" 
                                                FontSize="10" 
@@ -174,14 +207,14 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
-            <Button Content="⟪" Command="{Binding FirstPageCommand}" Margin="4,0"/>
-            <Button Content="‹" Command="{Binding PrevPageCommand}" Margin="4,0"/>
+            <Button Content="⟪" Command="{Binding FirstPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+            <Button Content="‹" Command="{Binding PreviousPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
             <TextBlock Text="Стр." VerticalAlignment="Center" Margin="8,0"/>
             <TextBox Width="50" Text="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="из" VerticalAlignment="Center" Margin="8,0"/>
             <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center"/>
-            <Button Content="›" Command="{Binding NextPageCommand}" Margin="8,0"/>
-            <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0"/>
+            <Button Content="›" Command="{Binding NextPageCommand}" Margin="8,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+            <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
         </StackPanel>
     </Grid>
 </UserControl>

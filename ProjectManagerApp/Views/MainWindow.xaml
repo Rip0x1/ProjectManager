@@ -4,11 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:ProjectManagementSystem.WPF.Views"
+        xmlns:myViews="clr-namespace:ProjectManagerApp.Views"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:ProjectManagementSystem.WPF.Converters"
         mc:Ignorable="d"
         Title="Система управления проектами" Height="600" Width="1000"
         WindowStyle="None" ResizeMode="CanResize"
         Background="White">
+
+    <Window.Resources>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
 
     <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" SnapsToDevicePixels="True">
         <Grid>
@@ -21,7 +27,7 @@
                     CornerRadius="6" HorizontalAlignment="Left" VerticalAlignment="Bottom" 
                     Effect="{StaticResource MaterialDesignShadowDepth2}"
                     x:Name="NotificationBorder"
-                    MaxWidth="300">
+                    MaxWidth="500">
                 <materialDesign:Snackbar x:Name="MainSnackbar" 
                                          Background="Transparent"
                                          Foreground="White"
@@ -87,20 +93,40 @@
                 </StackPanel>
             </Grid>
 
-            <TabControl Grid.Row="1">
-                <TabItem Header="Панель">
-                    <views:DashboardView/>
-                </TabItem>
-                <TabItem Header="Проекты">
-                    <views:ProjectsView/>
-                </TabItem>
-                <TabItem Header="Задачи">
-                    <views:TasksView/>
-                </TabItem>
-                <TabItem Header="Пользователи">
-                    <views:UsersView/>
-                </TabItem>
-            </TabControl>
+            <Grid Grid.Row="1">
+                <TabControl x:Name="TabControl">
+                    <TabItem Header="Панель">
+                        <views:DashboardView/>
+                    </TabItem>
+                    <TabItem Header="Проекты">
+                        <views:ProjectsView/>
+                    </TabItem>
+                    <TabItem Header="Мои проекты">
+                        <myViews:MyProjectsView/>
+                    </TabItem>
+                    <TabItem Header="Задачи">
+                        <views:TasksView/>
+                    </TabItem>
+                    <TabItem Header="Пользователи">
+                        <views:UsersView/>
+                    </TabItem>
+                </TabControl>
+
+                <Border Background="#80000000" 
+                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Panel.ZIndex="1000">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ProgressBar IsIndeterminate="True" 
+                                   Width="150" Height="10"
+                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"
+                                   Margin="0,0,0,5"/>
+                        <TextBlock Text="Загрузка данных..." 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Grid>
     </Border>
 </Window>

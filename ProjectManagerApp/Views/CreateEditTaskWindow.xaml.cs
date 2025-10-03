@@ -5,12 +5,11 @@ namespace ProjectManagementSystem.WPF.Views
 {
     public partial class CreateEditTaskWindow : Window
     {
-        public CreateEditTaskWindow(int? taskId = null)
+        public CreateEditTaskWindow(int? taskId = null, int? projectId = null, string projectName = null)
         {
             InitializeComponent();
             
             var viewModel = App.GetService<CreateEditTaskViewModel>();
-            viewModel.TaskId = taskId;
             DataContext = viewModel;
             
             viewModel.CloseRequested += (s, success) =>
@@ -19,7 +18,21 @@ namespace ProjectManagementSystem.WPF.Views
                 Close();
             };
             
-            Loaded += async (s, e) => await viewModel.LoadAsync();
+            Loaded += async (s, e) => 
+            {
+                if (taskId.HasValue)
+                {
+                    await viewModel.InitializeForEdit(taskId.Value);
+                }
+                else if (projectId.HasValue && !string.IsNullOrEmpty(projectName))
+                {
+                    await viewModel.InitializeForProject(projectId.Value, projectName);
+                }
+                else
+                {
+                    await viewModel.LoadAsync();
+                }
+            };
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

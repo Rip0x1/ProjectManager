@@ -13,5 +13,6 @@ namespace ProjectManagementSystem.WPF.Services
         int CurrentUserRole { get; }
         string CurrentUserFirstName { get; }
         string CurrentUserEmail { get; }
+        UserDto? CurrentUser { get; }
     }
 }

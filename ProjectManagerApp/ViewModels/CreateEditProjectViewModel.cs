@@ -75,6 +75,11 @@ namespace ProjectManagementSystem.WPF.ViewModels
             _ = LoadDataAsync();
         }
 
+        public async Task InitializeForEdit(int projectId)
+        {
+            await LoadDataAsync();
+        }
+
         private async Task LoadDataAsync()
         {
             try

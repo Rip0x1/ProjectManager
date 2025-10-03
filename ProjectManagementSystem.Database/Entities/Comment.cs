@@ -9,7 +9,7 @@ namespace ProjectManagementSystem.Database.Entities
         [Required]
         public string Content { get; set; }
 
-        public int TaskId { get; set; }
+        public int? TaskId { get; set; }
         public int AuthorId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

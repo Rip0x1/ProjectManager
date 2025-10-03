@@ -18,14 +18,31 @@ namespace ProjectManagementSystem.API.Controllers
             _context = context;
         }
 
-        // GET: api/Tasks
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> GetTasks([FromQuery] int page = 1, [FromQuery] int pageSize = 50)
+        public async Task<ActionResult<object>> GetTasks(
+            [FromQuery] int page = 1, 
+            [FromQuery] int pageSize = 50,
+            [FromQuery] string? search = null,
+            [FromQuery] int? projectId = null)
         {
             try
             {
-                var tasks = await _context.Tasks
-                    .AsNoTracking()
+                var query = _context.Tasks.AsNoTracking();
+
+                if (projectId.HasValue)
+                {
+                    query = query.Where(t => t.ProjectId == projectId.Value);
+                }
+
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    query = query.Where(t => t.Title.Contains(search) || t.Description.Contains(search));
+                }
+
+                var totalCount = await query.CountAsync();
+                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+                var tasks = await query
                     .OrderByDescending(t => t.Id)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
@@ -39,7 +56,11 @@ namespace ProjectManagementSystem.API.Controllers
                         ProjectId = t.ProjectId,
                         ProjectName = t.Project != null ? t.Project.Name : "Неизвестный проект",
                         AuthorId = t.AuthorId,
-                        AuthorName = t.Author != null ? t.Author.FirstName + " " + t.Author.LastName : "Неизвестен",
+                        AuthorName = t.Author != null ? 
+                            (!string.IsNullOrEmpty(t.Author.FirstName) || !string.IsNullOrEmpty(t.Author.LastName) 
+                                ? $"{t.Author.FirstName} {t.Author.LastName}".Trim() 
+                                : t.Author.Email ?? $"Пользователь #{t.AuthorId}") 
+                            : $"Пользователь #{t.AuthorId}",
                         AssigneeId = t.AssigneeId,
                         AssigneeName = t.Assignee != null ? t.Assignee.FirstName + " " + t.Assignee.LastName : null,
                         CreatedAt = t.CreatedAt,
@@ -50,7 +71,14 @@ namespace ProjectManagementSystem.API.Controllers
                     })
                     .ToListAsync();
 
-                return tasks;
+                return Ok(new
+                {
+                    Tasks = tasks,
+                    TotalCount = totalCount,
+                    TotalPages = totalPages,
+                    CurrentPage = page,
+                    PageSize = pageSize
+                });
             }
             catch (Exception ex)
             {
@@ -59,16 +87,13 @@ namespace ProjectManagementSystem.API.Controllers
             }
         }
 
-        // GET: api/Tasks/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Task>> GetTask(int id)
+        public async Task<ActionResult<object>> GetTask(int id)
         {
             var task = await _context.Tasks
                 .Include(t => t.Project)
                 .Include(t => t.Author)
                 .Include(t => t.Assignee)
-                .Include(t => t.Comments)
-                    .ThenInclude(c => c.Author)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (task == null)
@@ -76,10 +101,31 @@ namespace ProjectManagementSystem.API.Controllers
                 return NotFound();
             }
 
-            return task;
+            var commentsCount = await _context.Comments
+                .Where(c => c.TaskId == id)
+                .CountAsync();
+
+            return new
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                Status = task.Status,
+                Priority = task.Priority,
+                ProjectId = task.ProjectId,
+                ProjectName = task.Project?.Name ?? "Неизвестный проект",
+                AuthorId = task.AuthorId,
+                AuthorName = task.Author != null ? $"{task.Author.FirstName} {task.Author.LastName}" : "Неизвестен",
+                AssigneeId = task.AssigneeId,
+                AssigneeName = task.Assignee != null ? $"{task.Assignee.FirstName} {task.Assignee.LastName}" : null,
+                CreatedAt = task.CreatedAt,
+                UpdatedAt = task.UpdatedAt,
+                PlannedHours = task.PlannedHours ?? 0,
+                ActualHours = task.ActualHours ?? 0,
+                CommentsCount = commentsCount
+            };
         }
 
-        // GET: api/Tasks/status/1
         [HttpGet("status/{status}")]
         public async Task<ActionResult<IEnumerable<Task>>> GetTasksByStatus(int status)
         {
@@ -90,7 +136,6 @@ namespace ProjectManagementSystem.API.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/Tasks/priority/2
         [HttpGet("priority/{priority}")]
         public async Task<ActionResult<IEnumerable<Task>>> GetTasksByPriority(int priority)
         {
@@ -101,7 +146,6 @@ namespace ProjectManagementSystem.API.Controllers
                 .ToListAsync();
         }
 
-        // POST: api/Tasks
         [HttpPost]
         public async Task<ActionResult<object>> PostTask(TaskCreateUpdateDto dto)
         {
@@ -145,7 +189,6 @@ namespace ProjectManagementSystem.API.Controllers
             });
         }
 
-        // PUT: api/Tasks/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTask(int id, TaskCreateUpdateDto dto)
         {
@@ -185,7 +228,6 @@ namespace ProjectManagementSystem.API.Controllers
             return NoContent();
         }
 
-        // PATCH: api/Tasks/5/status
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateTaskStatus(int id, [FromBody] int status)
         {
@@ -203,7 +245,6 @@ namespace ProjectManagementSystem.API.Controllers
             return NoContent();
         }
 
-        // PATCH: api/Tasks/5/assignee
         [HttpPatch("{id}/assignee")]
         public async Task<IActionResult> UpdateTaskAssignee(int id, [FromBody] int assigneeId)
         {
@@ -221,7 +262,6 @@ namespace ProjectManagementSystem.API.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Tasks/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {

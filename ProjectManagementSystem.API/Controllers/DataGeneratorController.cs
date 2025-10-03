@@ -194,7 +194,8 @@ namespace ProjectManagementSystem.API.Controllers
                     {
                         ProjectId = project.Id,
                         UserId = user.Id,
-                        RoleInProject = new Bogus.Faker().PickRandom(roles)
+                        RoleInProject = new Bogus.Faker().PickRandom(roles),
+                        JoinedAt = new Bogus.Faker().Date.Between(project.CreatedAt, DateTime.UtcNow)
                     });
                 }
 

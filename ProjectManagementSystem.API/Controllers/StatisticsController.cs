@@ -15,7 +15,6 @@ namespace ProjectManagementSystem.API.Controllers
             _context = context;
         }
 
-        // GET: api/Statistics/project/5
         [HttpGet("project/{projectId}")]
         public async Task<ActionResult<object>> GetProjectStatistics(int projectId)
         {
@@ -41,6 +40,14 @@ namespace ProjectManagementSystem.API.Controllers
                 .Where(t => t.ProjectId == projectId && t.ActualHours.HasValue)
                 .SumAsync(t => t.ActualHours.Value);
 
+            var projectMembers = await _context.ProjectUsers
+                .Where(pu => pu.ProjectId == projectId)
+                .CountAsync();
+
+            var totalComments = await _context.Comments
+                .Where(c => c.Task.ProjectId == projectId)
+                .CountAsync();
+
             return new
             {
                 ProjectId = projectId,
@@ -49,11 +56,99 @@ namespace ProjectManagementSystem.API.Controllers
                 CompletedTasks = completedTasks,
                 CompletionRate = totalTasks > 0 ? (double)completedTasks / totalTasks * 100 : 0,
                 TotalPlannedHours = totalHours,
-                TotalActualHours = actualHours
+                TotalActualHours = actualHours,
+                ProjectMembers = projectMembers,
+                TotalComments = totalComments
             };
         }
 
-        // GET: api/Statistics/user/5
+        [HttpGet("overview")]
+        public async Task<ActionResult<object>> GetOverviewStatistics()
+        {
+            var totalProjects = await _context.Projects.CountAsync();
+            var totalTasks = await _context.Tasks.CountAsync();
+            var totalUsers = await _context.Users.CountAsync();
+            var totalComments = await _context.Comments.CountAsync();
+
+            var activeProjects = await _context.Projects
+                .Where(p => p.Status == 0)
+                .CountAsync();
+
+            var completedTasks = await _context.Tasks
+                .Where(t => t.Status == 3)
+                .CountAsync();
+
+            var activeTasks = await _context.Tasks
+                .Where(t => t.Status == 1)
+                .CountAsync();
+
+            var taskStatusNew = await _context.Tasks
+                .Where(t => t.Status == 0)
+                .CountAsync();
+
+            var taskStatusInProgress = await _context.Tasks
+                .Where(t => t.Status == 1)
+                .CountAsync();
+
+            var taskStatusReview = await _context.Tasks
+                .Where(t => t.Status == 2)
+                .CountAsync();
+
+            var taskStatusCompleted = await _context.Tasks
+                .Where(t => t.Status == 3)
+                .CountAsync();
+
+            var taskPriorityLow = await _context.Tasks
+                .Where(t => t.Priority == 0)
+                .CountAsync();
+
+            var taskPriorityMedium = await _context.Tasks
+                .Where(t => t.Priority == 1)
+                .CountAsync();
+
+            var taskPriorityHigh = await _context.Tasks
+                .Where(t => t.Priority == 2)
+                .CountAsync();
+
+            var taskPriorityCritical = await _context.Tasks
+                .Where(t => t.Priority == 3)
+                .CountAsync();
+
+            var projectStatusPlanned = await _context.Projects
+                .Where(p => p.Status == 0)
+                .CountAsync();
+
+            var projectStatusInProgress = await _context.Projects
+                .Where(p => p.Status == 0)
+                .CountAsync();
+
+            var projectStatusCompleted = await _context.Projects
+                .Where(p => p.Status == 1)
+                .CountAsync();
+
+            return new
+            {
+                TotalProjects = totalProjects,
+                TotalTasks = totalTasks,
+                TotalUsers = totalUsers,
+                TotalComments = totalComments,
+                ActiveProjects = activeProjects,
+                CompletedTasks = completedTasks,
+                ActiveTasks = activeTasks,
+                TaskStatusNew = taskStatusNew,
+                TaskStatusInProgress = taskStatusInProgress,
+                TaskStatusReview = taskStatusReview,
+                TaskStatusCompleted = taskStatusCompleted,
+                TaskPriorityLow = taskPriorityLow,
+                TaskPriorityMedium = taskPriorityMedium,
+                TaskPriorityHigh = taskPriorityHigh,
+                TaskPriorityCritical = taskPriorityCritical,
+                ProjectStatusPlanned = projectStatusPlanned,
+                ProjectStatusInProgress = projectStatusInProgress,
+                ProjectStatusCompleted = projectStatusCompleted
+            };
+        }
+
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<object>> GetUserStatistics(int userId)
         {

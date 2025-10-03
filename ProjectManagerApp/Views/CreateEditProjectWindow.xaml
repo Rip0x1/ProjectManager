@@ -6,7 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}"
-        Height="600" Width="700"
+        Height="600" Width="600"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -23,7 +23,7 @@
     </Window.Resources>
 
     <Border Background="White" CornerRadius="15" Effect="{StaticResource MaterialDesignShadowDepth5}">
-        <Grid Margin="16">
+        <Grid Margin="25">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>

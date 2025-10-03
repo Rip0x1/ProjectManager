@@ -16,6 +16,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
         private readonly IUsersService _usersService;
         private readonly IAuthService _authService;
         private readonly INotificationService _notificationService;
+        private int? _taskId;
 
         [ObservableProperty]
         private string _taskTitle = string.Empty;
@@ -37,6 +38,12 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
         [ObservableProperty]
         private int _selectedStatus = 0;
+
+        [ObservableProperty]
+        private bool _isLoading = false;
+
+        [ObservableProperty]
+        private bool _isEditMode = false;
 
         [ObservableProperty]
         private int _selectedPriority = 1;
@@ -72,6 +79,76 @@ namespace ProjectManagementSystem.WPF.ViewModels
             _usersService = usersService;
             _authService = authService;
             _notificationService = notificationService;
+        }
+
+        public async Task InitializeForProject(int projectId, string projectName)
+        {
+            try
+            {
+                IsLoading = true;
+                
+                await LoadAsync();
+                
+                var project = Projects.FirstOrDefault(p => p.Id == projectId);
+                if (project != null)
+                {
+                    SelectedProject = project;
+                }
+                
+                IsEditMode = false;
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка инициализации: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        public async Task InitializeForEdit(int taskId)
+        {
+            try
+            {
+                IsLoading = true;
+                _taskId = taskId;
+                
+                await LoadAsync();
+                
+                var task = await _tasksService.GetTaskAsync(taskId);
+                if (task != null)
+                {
+                    TaskTitle = task.Title;
+                    TaskDescription = task.Description;
+                    SelectedStatus = task.Status;
+                    SelectedPriority = task.Priority;
+                    PlannedHours = task.PlannedHours.ToString();
+                    ActualHours = task.ActualHours.ToString();
+                    
+                    var project = Projects.FirstOrDefault(p => p.Id == task.ProjectId);
+                    if (project != null)
+                    {
+                        SelectedProject = project;
+                    }
+                    
+                    var assignee = Users.FirstOrDefault(u => u.Id == task.AssigneeId);
+                    if (assignee != null)
+                    {
+                        SelectedAssignee = assignee;
+                    }
+                }
+                
+                IsEditMode = true;
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка инициализации: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         public async Task LoadAsync()
@@ -183,9 +260,9 @@ namespace ProjectManagementSystem.WPF.ViewModels
                     ActualHours = actualHrs
                 };
 
-                if (TaskId.HasValue)
+                if (_taskId.HasValue)
                 {
-                    await _tasksService.UpdateTaskAsync(TaskId.Value, taskDto);
+                    await _tasksService.UpdateTaskAsync(_taskId.Value, taskDto);
                     _notificationService.ShowSuccess("Задача успешно обновлена!");
                 }
                 else
@@ -206,6 +283,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 ValidateForm();
             }
         }
+
     }
 }
 

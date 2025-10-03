@@ -37,8 +37,6 @@ namespace ProjectManagementSystem.API
 
             var app = builder.Build();
 
-            app.Urls.Add("http://localhost:5000");
-            app.Urls.Add("http://localhost:5001");
             app.Urls.Add("http://*:7260");
             app.Urls.Add("https://localhost:7260");
 
@@ -47,7 +45,7 @@ namespace ProjectManagementSystem.API
             using (var scope = app.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                context.Database.EnsureCreated(); 
+                context.Database.Migrate();
             }
 
             if (app.Environment.IsDevelopment())

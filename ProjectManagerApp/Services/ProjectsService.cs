@@ -41,11 +41,10 @@ namespace ProjectManagementSystem.WPF.Services
                 CreatedAt = p.CreatedAt,
                 Deadline = p.Deadline,
                 ManagerName = p.Manager != null ? ($"{p.Manager.FirstName} {p.Manager.LastName}") : "—",
-
                 Status = p.Status,
-                ParticipantsCount = 0, 
-                TasksCount = 0, 
-                CommentsCount = 0 
+                ParticipantsCount = p.ParticipantsCount,
+                TasksCount = p.TasksCount,
+                CommentsCount = p.CommentsCount 
             }).ToList();
         }
 

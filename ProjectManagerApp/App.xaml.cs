@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using ProjectManagementSystem.WPF.Services;
 using ProjectManagementSystem.WPF.ViewModels;
 using ProjectManagementSystem.WPF.Views;
+using ProjectManagerApp.Services;
 using System.Windows;
 using NavigationService = ProjectManagementSystem.WPF.Services.NavigationService;
 
@@ -27,6 +28,10 @@ namespace ProjectManagementSystem.WPF
             services.AddSingleton<IProjectsService, ProjectsService>();
             services.AddSingleton<ITasksService, TasksService>();
             services.AddSingleton<IUsersService, UsersService>();
+            services.AddSingleton<ICommentsService, CommentsService>();
+            services.AddSingleton<IProjectMembersService, ProjectMembersService>();
+            services.AddSingleton<IUserProjectsService, UserProjectsService>();
+            services.AddSingleton<IStatisticsService, StatisticsService>();
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<ILoginNotificationService, LoginNotificationService>();
@@ -34,10 +39,17 @@ namespace ProjectManagementSystem.WPF
             services.AddTransient<LoginViewModel>();
             services.AddTransient<DashboardViewModel>();
             services.AddTransient<ProjectsViewModel>();
+            services.AddTransient<ProjectManagerApp.ViewModels.MyProjectsViewModel>();
             services.AddTransient<TasksViewModel>();
             services.AddTransient<UsersViewModel>();
             services.AddTransient<CreateEditProjectViewModel>();
             services.AddTransient<CreateEditTaskViewModel>();
+            services.AddTransient<ProjectManagerApp.ViewModels.ProjectMembersViewViewModel>();
+            services.AddTransient<ProjectManagerApp.ViewModels.ProjectMembersAddViewModel>();
+            services.AddTransient<ProjectManagerApp.ViewModels.ProjectCommentViewModel>();
+            services.AddTransient<ProjectManagerApp.ViewModels.ProjectCommentsViewViewModel>();
+            services.AddTransient<ProjectManagerApp.ViewModels.ProjectCommentsAddViewModel>();
+            services.AddTransient<ProjectManagerApp.ViewModels.ProjectTasksViewModel>();
 
             services.AddTransient<LoginView>();
             services.AddSingleton<MainWindow>();
@@ -47,7 +59,10 @@ namespace ProjectManagementSystem.WPF
         {
             await Host!.StartAsync();
 
-            var mainWindow = Host.Services.GetRequiredService<MainWindow>();
+            // Показываем окно авторизации
+            var loginView = Host.Services.GetRequiredService<LoginView>();
+            loginView.Show();
+
             base.OnStartup(e);
         }
 
@@ -64,5 +79,7 @@ namespace ProjectManagementSystem.WPF
         {
             return Host!.Services.GetService<T>()!;
         }
+
+        public static IServiceProvider ServiceProvider => Host!.Services;
     }
 }

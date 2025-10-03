@@ -1,0 +1,89 @@
+<Window x:Class="ProjectManagerApp.Views.ProjectCommentsAddWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Добавить комментарий к проекту" 
+        Height="400" Width="500"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+    
+    <Border Background="{DynamicResource MaterialDesignPaper}"
+            CornerRadius="8"
+            Effect="{StaticResource MaterialDesignElevationShadow4}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="{DynamicResource PrimaryHueMidBrush}" 
+                    CornerRadius="8,8,0,0" Height="50">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                        <materialDesign:PackIcon Kind="CommentPlus" Width="24" Height="24" 
+                                               Foreground="{DynamicResource MaterialDesignBody}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="Добавить комментарий к проекту" 
+                                   Foreground="{DynamicResource MaterialDesignBody}"
+                                   VerticalAlignment="Center"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <Button Content="✕" 
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Center"
+                            Margin="0,0,16,0"
+                            Background="Transparent"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Width="32" Height="32"
+                            FontSize="16"
+                            Click="Close_Click"/>
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" Margin="16">
+                <StackPanel>
+                    <TextBlock Text="{Binding ProjectName}" 
+                               Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                               Foreground="{DynamicResource PrimaryHueMidBrush}"
+                               Margin="0,0,0,16"/>
+                    
+                    <TextBox Text="{Binding CommentText, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Введите ваш комментарий..."
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             Height="120"
+                             VerticalScrollBarVisibility="Auto"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Row="2" Background="{DynamicResource MaterialDesignDivider}" 
+                    CornerRadius="0,0,8,8" Height="60">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Button Grid.Column="1" 
+                            Content="Отмена" 
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="8,0,8,0"
+                            Click="Close_Click"/>
+                    <Button Grid.Column="2" 
+                            Content="Добавить комментарий" 
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Margin="8,0,16,0"
+                            Command="{Binding AddCommentCommand}"
+                            IsEnabled="{Binding CanAddComment}"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
