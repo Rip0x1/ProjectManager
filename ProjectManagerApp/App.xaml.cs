@@ -59,7 +59,6 @@ namespace ProjectManagementSystem.WPF
         {
             await Host!.StartAsync();
 
-            // Показываем окно авторизации
             var loginView = Host.Services.GetRequiredService<LoginView>();
             loginView.Show();
 

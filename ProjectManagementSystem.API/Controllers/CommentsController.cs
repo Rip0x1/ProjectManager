@@ -185,7 +185,7 @@ namespace ProjectManagementSystem.API.Controllers
                     c.TaskId,
                     c.AuthorId,
                     c.CreatedAt,
-                    Author = c.Author == null ? null : new
+                    CommentUserResponceDto = c.Author == null ? null : new
                     {
                         c.Author.Id,
                         c.Author.FirstName,

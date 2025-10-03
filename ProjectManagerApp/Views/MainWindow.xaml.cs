@@ -104,33 +104,21 @@ namespace ProjectManagementSystem.WPF.Views
                 CurrentUserRoleName = role.GetRoleName();
                 CurrentUserRoleColor = role.GetRoleColor();
 
-            // Запускаем реальную загрузку данных
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    // Загружаем все необходимые данные
                     var apiClient = App.GetService<IApiClient>();
                     var authService = App.GetService<IAuthService>();
                     
-                    // Загружаем статистику
                     await apiClient.GetAsync<object>("statistics/overview");
-                    
-                    // Загружаем проекты
                     await apiClient.GetAsync<object>("projects");
-                    
-                    // Загружаем задачи
                     await apiClient.GetAsync<object>("tasks");
-                    
-                    // Загружаем пользователей
                     await apiClient.GetAsync<object>("users");
-                    
-                    // Загружаем проекты пользователя
                     await apiClient.GetAsync<object>($"projects/user/{authService.CurrentUserId}");
                 }
                 catch (Exception ex)
                 {
-                    // Логируем ошибку, но не показываем пользователю
                     System.Diagnostics.Debug.WriteLine($"Ошибка загрузки данных: {ex.Message}");
                 }
                 finally

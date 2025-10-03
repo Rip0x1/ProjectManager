@@ -86,13 +86,37 @@ namespace ProjectManagerApp.Services
                     return null;
                 }
 
+                var authorName = "Неизвестный пользователь";
+                if (response.CommentUserResponceDto != null)
+                {
+                    var firstName = response.CommentUserResponceDto.FirstName ?? "";
+                    var lastName = response.CommentUserResponceDto.LastName ?? "";
+                    
+                    if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
+                    {
+                        authorName = $"{firstName} {lastName}".Trim();
+                    }
+                    else if (!string.IsNullOrEmpty(response.CommentUserResponceDto.Email))
+                    {
+                        authorName = response.CommentUserResponceDto.Email;
+                    }
+                    else if (response.AuthorId > 0)
+                    {
+                        authorName = $"Пользователь #{response.AuthorId}";
+                    }
+                }
+                else if (response.AuthorId > 0)
+                {
+                    authorName = $"Пользователь #{response.AuthorId}";
+                }
+
                 return new CommentItem
                 {
                     Id = response.Id,
                     TaskId = response.TaskId,
                     AuthorId = response.AuthorId,
                     Content = response.Content,
-                    AuthorName = response.CommentUserResponceDto != null ? $"{response.CommentUserResponceDto.FirstName} {response.CommentUserResponceDto.LastName}" : "Неизвестный",
+                    AuthorName = authorName,
                     CreatedAt = response.CreatedAt
                 };
             }

@@ -17,7 +17,6 @@ namespace ProjectManagementSystem.API.Controllers
             _context = context;
         }
 
-        // GET: api/ProjectUsers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetProjectUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         {
@@ -55,7 +54,6 @@ namespace ProjectManagementSystem.API.Controllers
             }
         }
 
-        // GET: api/ProjectUsers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectUser>> GetProjectUser(int id)
         {
@@ -72,7 +70,6 @@ namespace ProjectManagementSystem.API.Controllers
             return projectUser;
         }
 
-        // GET: api/ProjectUsers/project/5
         [HttpGet("project/{projectId}")]
         public async Task<ActionResult<IEnumerable<ProjectUser>>> GetProjectUsersByProject(int projectId)
         {
@@ -82,7 +79,6 @@ namespace ProjectManagementSystem.API.Controllers
                 .ToListAsync();
         }
 
-        // GET: api/ProjectUsers/user/5
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<ProjectUser>>> GetProjectUsersByUser(int userId)
         {
@@ -92,7 +88,6 @@ namespace ProjectManagementSystem.API.Controllers
                 .ToListAsync();
         }
 
-        // POST: api/ProjectUsers
         [HttpPost]
         public async Task<ActionResult<ProjectUser>> PostProjectUser(ProjectUser projectUser)
         {
@@ -115,7 +110,6 @@ namespace ProjectManagementSystem.API.Controllers
             return CreatedAtAction("GetProjectUser", new { id = projectUser.Id }, projectUser);
         }
 
-        // PUT: api/ProjectUsers/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProjectUser(int id, ProjectUser projectUser)
         {
@@ -145,7 +139,6 @@ namespace ProjectManagementSystem.API.Controllers
             return NoContent();
         }
 
-        // DELETE: api/ProjectUsers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProjectUser(int id)
         {
@@ -161,7 +154,6 @@ namespace ProjectManagementSystem.API.Controllers
             return NoContent();
         }
 
-        // DELETE: api/ProjectUsers/project/5/user/5
         [HttpDelete("project/{projectId}/user/{userId}")]
         public async Task<IActionResult> DeleteProjectUserByProjectAndUser(int projectId, int userId)
         {
