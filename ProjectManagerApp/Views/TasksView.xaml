@@ -58,7 +58,7 @@
                         Background="{StaticResource PrimaryBrush}"
                         BorderBrush="{StaticResource PrimaryBrush}"
                         Command="{Binding CreateTaskCommand}"
-                        Visibility="{Binding CanCreateTasks, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding CanCreateTasks, Converter={StaticResource BooleanToVisibilityConverter}}" Cursor="Hand">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>

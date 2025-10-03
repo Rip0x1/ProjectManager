@@ -150,7 +150,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
             try
             {
-                await Task.Delay(500);
+                await Task.Delay(1000);
 
                 decimal? plannedHrs = null;
                 if (!string.IsNullOrWhiteSpace(PlannedHours))

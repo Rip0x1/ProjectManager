@@ -145,7 +145,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
             try
             {
-                await System.Threading.Tasks.Task.Delay(500);
+                await System.Threading.Tasks.Task.Delay(1000);
 
                 var projectDto = new CreateUpdateProjectDto
                 {

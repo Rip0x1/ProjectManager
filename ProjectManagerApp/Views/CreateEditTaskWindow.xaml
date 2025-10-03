@@ -23,7 +23,7 @@
     </Window.Resources>
 
     <Border Background="White" CornerRadius="15" Effect="{StaticResource MaterialDesignShadowDepth5}">
-        <Grid>
+        <Grid Margin="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
