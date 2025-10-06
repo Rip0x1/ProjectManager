@@ -115,6 +115,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Margin="0,0,0,16">
@@ -304,16 +306,109 @@
                                                  Margin="0,4,0,0"/>
                                 </StackPanel>
                             </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
 
-                            <Border Background="#E3F2FD" CornerRadius="4" Padding="12" Margin="0,12,0,0">
-                                <StackPanel>
-                                    <TextBlock Text="🕒 Текущее время" FontSize="14" FontWeight="SemiBold" Foreground="#1976D2" Margin="0,0,0,4"/>
-                                    <TextBlock Text="{Binding CurrentDateTime}" 
-                                               FontSize="12" 
-                                               TextWrapping="Wrap" 
-                                               Foreground="#424242"/>
-                                </StackPanel>
-                            </Border>
+                <Grid Grid.Row="1" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+    
+                    <Border Grid.Column="0" Background="#E8F5E8" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <StackPanel Grid.Column="0" Panel.ZIndex="1" Margin="5">
+                                <TextBlock Text="👋 Приветствие" FontSize="26" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="#2E7D32"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding Greeting}" FontSize="20" TextWrapping="Wrap" Foreground="#424242" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                          
+                    <Border Grid.Column="1" Background="#FFF3E0" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <StackPanel Grid.Column="1" Panel.ZIndex="1" Margin="5">
+                                <TextBlock Text="🕒 Время" FontSize="26" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="#F57C00"/>
+                            </StackPanel>
+                            <TextBlock Text="{Binding CurrentTime}" FontSize="24" VerticalAlignment="Center" FontWeight="Bold" Foreground="#F57C00" HorizontalAlignment="Left"/>
+                            <TextBlock Text="{Binding CurrentDate}" FontSize="16" VerticalAlignment="Center" Foreground="#424242" HorizontalAlignment="Left" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="#F3E5F5" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="📊 Прогресс" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="#7B1FA2"/>
+                            <TextBlock Text="Завершено задач:" FontSize="12" Foreground="#424242" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="14" Foreground="#7B1FA2">
+                                <Run Text="{Binding CompletedTasks}" FontWeight="Bold"/>
+                                <Run Text=" из "/>
+                                <Run Text="{Binding TotalTasks}" FontWeight="Bold"/>
+                            </TextBlock>
+                            <ProgressBar Value="{Binding CompletedTasks}" 
+                                         Maximum="{Binding TotalTasks}"
+                                         Height="8"
+                                         Margin="0,8,0,0"
+                                         Background="#E1BEE7"
+                                         Foreground="#7B1FA2"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Background="#E0F2F1" CornerRadius="8" Padding="20" Margin="4,0,4,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="🚀 Активность" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="#00695C"/>
+                            <TextBlock Text="Активных проектов:" FontSize="12" Foreground="#424242" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="14" Foreground="#00695C">
+                                <Run Text="{Binding ActiveProjects}" FontWeight="Bold"/>
+                                <Run Text=" из "/>
+                                <Run Text="{Binding TotalProjects}" FontWeight="Bold"/>
+                            </TextBlock>
+                            <ProgressBar Value="{Binding ActiveProjects}" 
+                                         Maximum="{Binding TotalProjects}"
+                                         Height="8"
+                                         Margin="0,8,0,0"
+                                         Background="#B2DFDB"
+                                         Foreground="#00695C"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Background="#FFEBEE" CornerRadius="8" Padding="20" Margin="8,0,0,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="⚡ Статус" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="#C62828"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Ellipse Width="8" Height="8" Fill="#4CAF50" Margin="0,0,8,0"/>
+                                <TextBlock Text="Система работает" FontSize="12" Foreground="#424242"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Ellipse Width="8" Height="8" Fill="#2196F3" Margin="0,0,8,0"/>
+                                <TextBlock Text="База данных подключена" FontSize="12" Foreground="#424242"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="#FF9800" Margin="0,0,8,0"/>
+                                <TextBlock Text="API доступен" FontSize="12" Foreground="#424242"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </Grid>

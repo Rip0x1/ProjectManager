@@ -4,6 +4,7 @@ using ProjectManagementSystem.WPF.Models;
 using ProjectManagementSystem.WPF.Services;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace ProjectManagementSystem.WPF.ViewModels
 {
@@ -16,12 +17,22 @@ namespace ProjectManagementSystem.WPF.ViewModels
         private readonly IUsersService _usersService;
         private readonly IStatisticsService _statisticsService;
         private readonly INotificationService _notificationService;
+        private DispatcherTimer _timer;
 
         [ObservableProperty]
         private bool _isLoading = false;
 
         [ObservableProperty]
         private string _currentDateTime = string.Empty;
+
+        [ObservableProperty]
+        private string _currentTime = string.Empty;
+
+        [ObservableProperty]
+        private string _currentDate = string.Empty;
+
+        [ObservableProperty]
+        private string _greeting = string.Empty;
 
         [ObservableProperty]
         private int _totalProjects = 0;
@@ -94,7 +105,9 @@ namespace ProjectManagementSystem.WPF.ViewModels
             _statisticsService = statisticsService;
             _notificationService = notificationService;
             
+            InitializeTimer();
             UpdateCurrentDateTime();
+            UpdateGreeting();
         }
 
         public async Task LoadDataAsync()
@@ -146,10 +159,37 @@ namespace ProjectManagementSystem.WPF.ViewModels
             _notificationService.ShowSuccess($"Статистика обновлена!");
         }
 
+        private void InitializeTimer()
+        {
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            _timer.Tick += (s, e) => UpdateCurrentDateTime();
+            _timer.Start();
+        }
+
         private void UpdateCurrentDateTime()
         {
-            CurrentDateTime = DateTime.Now.ToString("dddd, dd MMMM yyyy, HH:mm:ss", 
-                new System.Globalization.CultureInfo("ru-RU"));
+            var now = DateTime.Now;
+            var culture = new System.Globalization.CultureInfo("ru-RU");
+            
+            CurrentDateTime = now.ToString("dddd, dd MMMM yyyy, HH:mm:ss", culture);
+            CurrentTime = now.ToString("HH:mm:ss", culture);
+            CurrentDate = now.ToString("dddd, dd MMMM yyyy", culture);
+        }
+
+        private void UpdateGreeting()
+        {
+            var hour = DateTime.Now.Hour;
+            var userName = _authService.CurrentUser?.FirstName ?? "Пользователь";
+            
+            if (hour >= 5 && hour < 12)
+                Greeting = $"Доброе утро, {userName}!";
+            else if (hour >= 12 && hour < 17)
+                Greeting = $"Добрый день, {userName}!";
+            else if (hour >= 17 && hour < 22)
+                Greeting = $"Добрый вечер, {userName}!";
+            else
+                Greeting = $"Доброй ночи, {userName}!";
         }
     }
 }

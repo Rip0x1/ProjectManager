@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProjectManagementSystem.WPF.Services;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -109,22 +111,8 @@ namespace ProjectManagementSystem.WPF.ViewModels
         [RelayCommand]
         private async Task RegisterAsync()
         {
-            IsFirstNameInvalid = string.IsNullOrWhiteSpace(FirstName);
-            IsLastNameInvalid = string.IsNullOrWhiteSpace(LastName);
-            IsRegisterEmailInvalid = string.IsNullOrWhiteSpace(RegisterEmail);
-            IsRegisterPasswordInvalid = string.IsNullOrWhiteSpace(RegisterPassword);
-
-            if (IsFirstNameInvalid || IsLastNameInvalid || IsRegisterEmailInvalid || IsRegisterPasswordInvalid)
+            if (!ValidateRegistrationInput())
             {
-                SnackbarBackground = new SolidColorBrush(Colors.Red);
-                _notificationService.ShowWarning("Заполните все поля регистрации");
-                return;
-            }
-
-            if (!IsRegisterEmailInvalid.Equals("@"))
-            {
-                SnackbarBackground = new SolidColorBrush(Colors.Red);
-                _notificationService.ShowWarning("Почта должна быть правильного формата");
                 return;
             }
 
@@ -152,11 +140,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
             catch (System.Exception ex)
             {
                 SnackbarBackground = new SolidColorBrush(Colors.Red);
-                _notificationService.ShowError(ex.Message);
-                IsFirstNameInvalid = string.IsNullOrWhiteSpace(FirstName);
-                IsLastNameInvalid = string.IsNullOrWhiteSpace(LastName);
-                IsRegisterEmailInvalid = true;
-                IsRegisterPasswordInvalid = string.IsNullOrWhiteSpace(RegisterPassword);
+                _notificationService.ShowError(GetUserFriendlyErrorMessage(ex));
             }
             finally
             {
@@ -167,19 +151,8 @@ namespace ProjectManagementSystem.WPF.ViewModels
         [RelayCommand]
         private async Task LoginAsync()
         {
-            IsEmailInvalid = string.IsNullOrWhiteSpace(Email);
-            IsPasswordInvalid = string.IsNullOrWhiteSpace(Password);
-            if (IsEmailInvalid || IsPasswordInvalid)
+            if (!ValidateLoginInput())
             {
-                SnackbarBackground = new SolidColorBrush(Colors.Red);
-                _notificationService.ShowWarning("Пожалуйста, введите email и пароль");
-                return;
-            }
-
-            if (IsEmailInvalid.Equals("@"))
-            {
-                SnackbarBackground = new SolidColorBrush(Colors.Red);
-                _notificationService.ShowWarning("Почта должна быть правильного формата");
                 return;
             }
 
@@ -195,7 +168,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
                     SnackbarBackground = new SolidColorBrush(Colors.Green);
                     _notificationService.ShowSuccess($"Добро пожаловать, {result.FirstName}!");
 
-                    await Task.Delay(1000);
+                    await Task.Delay(2500);
                     _navigationService.NavigateToDashboard();
                 }
                 else
@@ -207,7 +180,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
             catch (System.Exception ex)
             {
                 SnackbarBackground = new SolidColorBrush(Colors.Red);
-                _notificationService.ShowError(ex.Message);
+                _notificationService.ShowError(GetUserFriendlyErrorMessage(ex));
                 if (ex.Message.Contains("Неверный email или пароль"))
                 {
                     IsEmailInvalid = true;
@@ -226,29 +199,29 @@ namespace ProjectManagementSystem.WPF.ViewModels
             Application.Current.Shutdown();
         }
 
-        [RelayCommand]
-        private async void UseDemoUser()
-        {
-            try
-            {
-                Email = "dimaslizh@gmail.com";
-                Password = "123123";
-                PasswordChanged?.Invoke(Password);
+        //[RelayCommand]
+        //private async void UseDemoUser()
+        //{
+        //    try
+        //    {
+        //        Email = "dimaslizh@gmail.com";
+        //        Password = "123123";
+        //        PasswordChanged?.Invoke(Password);
 
-            }
-            catch (System.Exception ex)
-            {
-                if (ex.Message.Contains("Ошибка при загрузке данных"))
-                {
-                    IsEmailInvalid = true;
-                    IsPasswordInvalid = true;
-                }
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        if (ex.Message.Contains("Ошибка при загрузке данных"))
+        //        {
+        //            IsEmailInvalid = true;
+        //            IsPasswordInvalid = true;
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        IsLoading = false;
+        //    }
+        //}
 
         partial void OnPasswordChanged(string value)
         {
@@ -278,6 +251,203 @@ namespace ProjectManagementSystem.WPF.ViewModels
         partial void OnRegisterPasswordChanged(string value)
         {
             IsRegisterPasswordInvalid = false;
+        }
+
+        private bool ValidateLoginInput()
+        {
+            var errors = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(Email))
+            {
+                errors.Add("Введите email");
+                IsEmailInvalid = true;
+            }
+            else if (!IsValidEmail(Email))
+            {
+                errors.Add("Введите корректный email адрес");
+                IsEmailInvalid = true;
+            }
+            else
+            {
+                IsEmailInvalid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                errors.Add("Введите пароль");
+                IsPasswordInvalid = true;
+            }
+            else
+            {
+                IsPasswordInvalid = false;
+            }
+
+            if (errors.Any())
+            {
+                SnackbarBackground = new SolidColorBrush(Colors.Red);
+                var errorMessage = string.Join("\n", errors);
+                System.Diagnostics.Debug.WriteLine($"Login validation error: {errorMessage}");
+                _notificationService.ShowError(errorMessage);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateRegistrationInput()
+        {
+            var errors = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(FirstName))
+            {
+                errors.Add("Введите имя");
+                IsFirstNameInvalid = true;
+            }
+            else if (FirstName.Trim().Length < 2)
+            {
+                errors.Add("Имя должно содержать минимум 2 символа");
+                IsFirstNameInvalid = true;
+            }
+            else if (FirstName.Trim().Length > 50)
+            {
+                errors.Add("Имя не должно превышать 50 символов");
+                IsFirstNameInvalid = true;
+            }
+            else
+            {
+                IsFirstNameInvalid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(LastName))
+            {
+                errors.Add("Введите фамилию");
+                IsLastNameInvalid = true;
+            }
+            else if (LastName.Trim().Length < 2)
+            {
+                errors.Add("Фамилия должна содержать минимум 2 символа");
+                IsLastNameInvalid = true;
+            }
+            else if (LastName.Trim().Length > 50)
+            {
+                errors.Add("Фамилия не должна превышать 50 символов");
+                IsLastNameInvalid = true;
+            }
+            else
+            {
+                IsLastNameInvalid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(RegisterEmail))
+            {
+                errors.Add("Введите email");
+                IsRegisterEmailInvalid = true;
+            }
+            else if (!IsValidEmail(RegisterEmail))
+            {
+                errors.Add("Введите корректный email адрес");
+                IsRegisterEmailInvalid = true;
+            }
+            else
+            {
+                IsRegisterEmailInvalid = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(RegisterPassword))
+            {
+                errors.Add("Введите пароль");
+                IsRegisterPasswordInvalid = true;
+            }
+            else if (RegisterPassword.Length < 6)
+            {
+                errors.Add("Пароль должен содержать минимум 6 символов");
+                IsRegisterPasswordInvalid = true;
+            }
+            else if (RegisterPassword.Length > 100)
+            {
+                errors.Add("Пароль не должен превышать 100 символов");
+                IsRegisterPasswordInvalid = true;
+            }
+            else
+            {
+                IsRegisterPasswordInvalid = false;
+            }
+
+            if (errors.Any())
+            {
+                SnackbarBackground = new SolidColorBrush(Colors.Red);
+                var errorMessage = string.Join("\n", errors);
+                System.Diagnostics.Debug.WriteLine($"Registration validation error: {errorMessage}");
+                _notificationService.ShowError(errorMessage);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private string GetUserFriendlyErrorMessage(Exception ex)
+        {
+            var message = ex.Message.ToLower();
+
+            if (message.Contains("неверный email или пароль"))
+            {
+                return "Неверный email или пароль";
+            }
+
+            if (message.Contains("email") && message.Contains("уже существует"))
+            {
+                return "Пользователь с таким email уже существует";
+            }
+
+            if (message.Contains("email") && message.Contains("некорректный"))
+            {
+                return "Введите корректный email адрес";
+            }
+
+            if (message.Contains("имя") && message.Contains("обязательно"))
+            {
+                return "Имя является обязательным полем";
+            }
+
+            if (message.Contains("фамилия") && message.Contains("обязательно"))
+            {
+                return "Фамилия является обязательным полем";
+            }
+
+            if (message.Contains("пароль") && message.Contains("короткий"))
+            {
+                return "Пароль должен содержать минимум 6 символов";
+            }
+
+            if (message.Contains("подключения к серверу") || message.Contains("включить api"))
+            {
+                return "Ошибка подключения к серверу. Проверьте, что API запущен";
+            }
+
+            if (message.Contains("некорректный запрос"))
+            {
+                return "Проверьте правильность введенных данных";
+            }
+
+            if (message.Contains("ошибка сервера"))
+            {
+                return "Временная ошибка сервера. Попробуйте позже";
+            }
+
+            return "Произошла ошибка. Проверьте введенные данные";
         }
     }
 }

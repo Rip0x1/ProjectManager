@@ -29,24 +29,22 @@ namespace ProjectManagementSystem.WPF.Views
 
             PasswordBox.PasswordChanged += (s, e) =>
             {
-                viewModel.Password = PasswordBox.Password;
+                if (PasswordBox.Password != viewModel.Password)
+                {
+                    viewModel.Password = PasswordBox.Password;
+                }
             };
 
             if (RegisterPasswordBox != null)
             {
                 RegisterPasswordBox.PasswordChanged += (s, e) =>
                 {
-                    viewModel.RegisterPassword = RegisterPasswordBox.Password;
+                    if (RegisterPasswordBox.Password != viewModel.RegisterPassword)
+                    {
+                        viewModel.RegisterPassword = RegisterPasswordBox.Password;
+                    }
                 };
             }
-
-            viewModel.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(viewModel.Password))
-                {
-                    PasswordBox.Password = viewModel.Password;
-                }
-            };
         }
     }
 }

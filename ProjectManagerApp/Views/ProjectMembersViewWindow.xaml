@@ -125,16 +125,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        
-                        <StackPanel Grid.Column="0" Orientation="Horizontal">
-                            <Button Content="‹‹" Command="{Binding FirstPageCommand}" 
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    Margin="0,0,5,0" Padding="8,4"/>
-                            <Button Content="‹" Command="{Binding PreviousPageCommand}" 
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    Margin="0,0,5,0" Padding="8,4"/>
-                        </StackPanel>
-                        
+
                         <TextBlock Grid.Column="1" 
                                    VerticalAlignment="Center" HorizontalAlignment="Center"
                                    Foreground="{DynamicResource MaterialDesignBodyLight}">
@@ -147,25 +138,16 @@
                         </TextBlock>
                         
                     </Grid>
-                    
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0">
-                        <Button Content="⟪" Command="{Binding FirstPageCommand}" Margin="4,0" 
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
-                                ToolTip="Первая страница"/>
-                        <Button Content="‹" Command="{Binding PreviousPageCommand}" Margin="4,0"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
-                                ToolTip="Предыдущая страница"/>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
+                        <Button Content="⟪" Command="{Binding FirstPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                        <Button Content="‹" Command="{Binding PreviousPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
                         <TextBlock Text="Стр." VerticalAlignment="Center" Margin="8,0"/>
-                        <TextBox Width="50" Text="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}"
-                                 HorizontalContentAlignment="Center"/>
+                        <TextBox Width="50" Text="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}"/>
                         <TextBlock Text="из" VerticalAlignment="Center" Margin="8,0"/>
                         <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center"/>
-                        <Button Content="›" Command="{Binding NextPageCommand}" Margin="8,0"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
-                                ToolTip="Следующая страница"/>
-                        <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
-                                ToolTip="Последняя страница" Cursor="Hand"/>
+                        <Button Content="›" Command="{Binding NextPageCommand}" Margin="8,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                        <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

@@ -4,7 +4,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>api_icon_135949.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="api_icon_135949.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.3" />

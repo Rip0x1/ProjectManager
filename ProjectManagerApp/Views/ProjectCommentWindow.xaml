@@ -161,18 +161,19 @@
                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                    Foreground="{DynamicResource MaterialDesignBodyLight}"/>
                     </StackPanel>
-                    
+
                     <Button Grid.Column="1" 
-                            Content="Отмена" 
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Margin="8,0,8,0"
-                            Click="Cancel_Click"/>
-                    <Button Grid.Column="2" 
                             Content="Добавить комментарий" 
                             Style="{StaticResource MaterialDesignRaisedButton}"
                             Margin="8,0,16,0"
                             Command="{Binding AddCommentCommand}"
                             IsEnabled="{Binding CanAddComment}"/>
+                    
+                    <Button Grid.Column="2" 
+                            Content="Закрыть" 
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="8,0,8,0"
+                            Click="Cancel_Click"/>
                 </Grid>
             </Border>
         </Grid>

@@ -36,25 +36,43 @@ namespace ProjectManagementSystem.WPF.Services
         public void ShowSuccess(string message)
         {
             SetNotificationColor("#4CAF50");
-            MessageQueue.Enqueue(message); 
+            if (MessageQueue != null)
+            {
+                MessageQueue.Enqueue(message);
+            }
         }
 
         public void ShowError(string message)
         {
+            System.Diagnostics.Debug.WriteLine($"LoginNotificationService.ShowError: {message}");
             SetNotificationColor("#F44336");
-            MessageQueue.Enqueue(message);
+            if (MessageQueue != null)
+            {
+                MessageQueue.Enqueue(message);
+                System.Diagnostics.Debug.WriteLine("Message enqueued successfully");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("MessageQueue is null!");
+            }
         }
 
         public void ShowWarning(string message)
         {
             SetNotificationColor("#FF9800");
-            MessageQueue.Enqueue(message);
+            if (MessageQueue != null)
+            {
+                MessageQueue.Enqueue(message);
+            }
         }
 
         public void ShowInfo(string message)
         {
             SetNotificationColor("#2196F3");
-            MessageQueue.Enqueue(message);
+            if (MessageQueue != null)
+            {
+                MessageQueue.Enqueue(message);
+            }
         }
 
         private void SetNotificationColor(string color)

@@ -262,5 +262,15 @@ namespace ProjectManagerApp.ViewModels
         }
 
         public bool HasNoProjects => !IsLoading && TotalCount == 0;
+
+        partial void OnIsLoadingChanged(bool value)
+        {
+            OnPropertyChanged(nameof(HasNoProjects));
+        }
+
+        partial void OnTotalCountChanged(int value)
+        {
+            OnPropertyChanged(nameof(HasNoProjects));
+        }
     }
 }

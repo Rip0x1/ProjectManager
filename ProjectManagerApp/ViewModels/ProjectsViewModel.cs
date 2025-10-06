@@ -176,7 +176,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
         }
 
         [RelayCommand]
-        private void EditProject(ProjectItem project)
+        private async Task EditProject(ProjectItem project)
         {
             if (project == null) return;
 
@@ -191,7 +191,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
             
             if (window.ShowDialog() == true)
             {
-                _ = LoadAsync();
+                await LoadAsync();
             }
         }
 

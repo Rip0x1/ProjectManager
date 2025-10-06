@@ -23,10 +23,10 @@
         <StackPanel Grid.Row="0" Margin="20,20,20,20">
             <TextBlock Text="Мои проекты" 
                        Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                       Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                       Foreground="{DynamicResource MaterialDesignShadowBrush}"/>
             <TextBlock Text="Проекты, в которых вы участвуете" 
                        Style="{StaticResource MaterialDesignBody2TextBlock}"
-                       Foreground="{DynamicResource MaterialDesignBodyLight}"
+                       Foreground="{DynamicResource MaterialDesignShadowBrush}"
                        Margin="0,5,0,15"/>
 
             <Grid>
@@ -58,7 +58,8 @@
 
         <Grid Grid.Row="1" Margin="20,0,20,0">
             <ScrollViewer>
-                <ItemsControl ItemsSource="{Binding UserProjects}">
+                <Grid>
+                    <ItemsControl ItemsSource="{Binding UserProjects}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="{DynamicResource MaterialDesignCardBackground}"
@@ -82,7 +83,7 @@
                                     <StackPanel Grid.Row="0" Grid.Column="0">
                                         <TextBlock Text="{Binding Name}" 
                                                Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                                               Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                               Foreground="{DynamicResource MaterialDesignShadowBrush}"
                                                FontWeight="Bold"
                                                FontSize="20"/>
                                         <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
@@ -230,6 +231,31 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
+                <Border Background="{DynamicResource MaterialDesignCardBackground}"
+                        CornerRadius="12"
+                        Padding="40"
+                        Margin="0,40,0,0"
+                        Effect="{StaticResource MaterialDesignElevationShadow2}"
+                        Visibility="{Binding HasNoProjects, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Viewbox Width="80" Height="80" Margin="0,0,0,20">
+                            <materialDesign:PackIcon Kind="FolderOpenOutline" 
+                                                     Foreground="{DynamicResource MaterialDesignShadowBrush}"/>
+                        </Viewbox>
+                        <TextBlock Text="У вас нет проектов" 
+                                   Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,10"/>
+                            <TextBlock Text="Вы не участвуете ни в одном проекте" 
+                                   Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,20"/>
+                        </StackPanel>
+                </Border>
+            </Grid>
             </ScrollViewer>
         </Grid>
 

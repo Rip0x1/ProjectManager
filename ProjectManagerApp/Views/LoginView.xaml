@@ -6,7 +6,7 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="NoResize"
-        Width="570" Height="770"
+        Width="500" Height="640"
         Style="{StaticResource MaterialDesignWindow}">
 
     <Window.Background>
@@ -50,7 +50,6 @@
 
                         <materialDesign:Snackbar 
         x:Name="LoginSnackbar"
-        MessageQueue="{materialDesign:MessageQueue}"
         Background="{Binding SnackbarBackground}"
         Foreground="White"
         Style="{StaticResource BeautifulSnackbar}"/>
@@ -275,7 +274,7 @@
                         Margin="0,0,0,16"
                         Height="4"/>
 
-                    <Expander Header="Тестовые аккаунты" Margin="0,24,0,0" ExpandDirection="Down"
+                    <!--<Expander Header="Тестовые аккаунты" Margin="0,24,0,0" ExpandDirection="Down"
                               Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ScrollViewer>
                             <StackPanel>
@@ -287,7 +286,7 @@
                            Margin="0,4"/>
                             </StackPanel>
                         </ScrollViewer>
-                    </Expander>
+                    </Expander>-->
                 </StackPanel>
             </Border>
         </Grid>

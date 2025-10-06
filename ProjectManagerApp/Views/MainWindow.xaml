@@ -47,11 +47,11 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
-                    <materialDesign:PackIcon Kind="ViewDashboard" Foreground="White" Width="20" Height="20"/>
-                    <TextBlock Text="Система управления проектами" Foreground="White" FontWeight="SemiBold" Margin="8,0,0,0"/>
+                    <materialDesign:PackIcon Kind="ViewDashboard" Foreground="White" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="Система управления проектами" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="SemiBold" Margin="8,0,0,0"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,140,0">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,50,0">
                     <materialDesign:PackIcon Kind="Account" Foreground="White" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBlock Text="Здравствуйте, " Foreground="White" Margin="8,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding CurrentUserNameText}" Foreground="White" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>

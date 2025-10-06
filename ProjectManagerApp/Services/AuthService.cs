@@ -34,13 +34,21 @@ namespace ProjectManagementSystem.WPF.Services
                 var message = ex.Message?.ToLowerInvariant();
                 if (!string.IsNullOrEmpty(message) && message.Contains("already exists"))
                 {
-                    throw new Exception("Аккаунт с таким email уже существует");
+                    throw new Exception("Пользователь с таким email уже существует");
                 }
-                throw new Exception("Некорректные данные регистрации");
+                if (!string.IsNullOrEmpty(message) && message.Contains("email"))
+                {
+                    throw new Exception("Введите корректный email адрес");
+                }
+                throw new Exception("Проверьте правильность введенных данных");
             }
             catch (HttpRequestException ex)
             {
-                throw new Exception($"Ошибка регистрации: {ex.Message}");
+                throw new Exception("Ошибка подключения к серверу. Проверьте, что API запущен");
+            }
+            catch (Exception ex) when (ex.Message.Contains("API") || ex.Message.Contains("сервер"))
+            {
+                throw new Exception("Ошибка подключения к серверу. Проверьте, что API запущен");
             }
         }
 
@@ -65,13 +73,17 @@ namespace ProjectManagementSystem.WPF.Services
             {
                 throw new Exception("Неверный email или пароль");
             }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                throw new Exception("Неверный email или пароль");
+            }
             catch (HttpRequestException ex)
             {
-                throw new Exception($"Ошибка подключения к серверу: {ex.Message}");
+                throw new Exception("Ошибка подключения к серверу. Проверьте, что API запущен");
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex.Message.Contains("API") || ex.Message.Contains("сервер"))
             {
-                throw new Exception($"Ошибка авторизации: Вы должны включить API");
+                throw new Exception("Ошибка подключения к серверу. Проверьте, что API запущен");
             }
         }
 

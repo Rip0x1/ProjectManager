@@ -4,7 +4,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="Детали проекта"
         WindowStartupLocation="CenterScreen"
-        Width="600" Height="700"
+        Width="600" Height="600"
         WindowStyle="None"
         ResizeMode="CanResize"
         Background="{DynamicResource MaterialDesignPaper}"
