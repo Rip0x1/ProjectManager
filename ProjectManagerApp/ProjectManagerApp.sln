@@ -9,10 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementSystem.API
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementSystem.Database", "..\ProjectManagementSystem.Database\ProjectManagementSystem.Database.csproj", "{36951E27-7825-4916-805E-D4883CD23C91}"
 EndProject
-Project("{840C416C-B8F3-42BC-B0DD-F6BB14C9F8CB}") = "ProjectManagerSetup", "..\ProjectManagerSetup\ProjectManagerSetup.aiproj", "{4B1E01AB-AD28-4BAA-960C-0D575C0B29E5}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ProjectManagement", "..\ProjectManagement\ProjectManagement.vdproj", "{0A0B5A0C-CB13-8672-2832-7976FBF0DDD4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		All|Any CPU = All|Any CPU
@@ -38,15 +34,6 @@ Global
 		{36951E27-7825-4916-805E-D4883CD23C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36951E27-7825-4916-805E-D4883CD23C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36951E27-7825-4916-805E-D4883CD23C91}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B1E01AB-AD28-4BAA-960C-0D575C0B29E5}.All|Any CPU.ActiveCfg = DefaultBuild
-		{4B1E01AB-AD28-4BAA-960C-0D575C0B29E5}.All|Any CPU.Build.0 = DefaultBuild
-		{4B1E01AB-AD28-4BAA-960C-0D575C0B29E5}.Debug|Any CPU.ActiveCfg = DefaultBuild
-		{4B1E01AB-AD28-4BAA-960C-0D575C0B29E5}.Debug|Any CPU.Build.0 = DefaultBuild
-		{4B1E01AB-AD28-4BAA-960C-0D575C0B29E5}.Release|Any CPU.ActiveCfg = DefaultBuild
-		{4B1E01AB-AD28-4BAA-960C-0D575C0B29E5}.Release|Any CPU.Build.0 = DefaultBuild
-		{0A0B5A0C-CB13-8672-2832-7976FBF0DDD4}.All|Any CPU.ActiveCfg = Debug
-		{0A0B5A0C-CB13-8672-2832-7976FBF0DDD4}.Debug|Any CPU.ActiveCfg = Debug
-		{0A0B5A0C-CB13-8672-2832-7976FBF0DDD4}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
