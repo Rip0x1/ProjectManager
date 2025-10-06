@@ -12,7 +12,6 @@ namespace ProjectManagementSystem.WPF
     public partial class App : Application
     {
         private static IHost? Host { get; set; }
-
         public App()
         {
             Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
