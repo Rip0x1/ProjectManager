@@ -222,9 +222,18 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
             try
             {
-                IsLoading = true;
+                var viewModel = App.GetService<CreateEditTaskViewModel>();
                 var window = new Views.CreateEditTaskWindow();
+                window.DataContext = viewModel;
                 window.Owner = System.Windows.Application.Current.MainWindow;
+                
+                viewModel.CloseRequested += (s, success) =>
+                {
+                    window.DialogResult = success;
+                    window.Close();
+                };
+                
+                await viewModel.LoadAsync();
                 
                 if (window.ShowDialog() == true)
                 {
@@ -250,14 +259,27 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
             try
             {
-                IsLoading = true;
-                var window = new Views.CreateEditTaskWindow(task.Id);
+                var viewModel = App.GetService<CreateEditTaskViewModel>();
+                var window = new Views.CreateEditTaskWindow();
+                window.DataContext = viewModel;
                 window.Owner = System.Windows.Application.Current.MainWindow;
+                
+                viewModel.CloseRequested += (s, success) =>
+                {
+                    window.DialogResult = success;
+                    window.Close();
+                };
+                
+                await viewModel.InitializeForEdit(task.Id);
                 
                 if (window.ShowDialog() == true)
                 {
                     await LoadAsync();
                 }
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка редактирования задачи: {ex.Message}");
             }
             finally
             {

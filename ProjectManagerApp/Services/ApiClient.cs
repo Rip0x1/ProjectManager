@@ -104,12 +104,114 @@ namespace ProjectManagementSystem.WPF.Services
                     HttpStatusCode.NotFound => "Данные не найдены",
                     HttpStatusCode.Unauthorized => "Недостаточно прав доступа",
                     HttpStatusCode.Forbidden => "Доступ запрещён",
-                    HttpStatusCode.BadRequest => $"Некорректный запрос. Детали: {errorContent}",
-                    HttpStatusCode.InternalServerError => $"Ошибка сервера. Детали: {errorContent}",
-                    _ => $"Ошибка: {response.StatusCode}. Детали: {errorContent}"
+                    HttpStatusCode.BadRequest => GetBadRequestMessage(errorContent),
+                    HttpStatusCode.InternalServerError => "Временная ошибка сервера. Попробуйте позже",
+                    _ => $"Ошибка: {response.StatusCode}"
                 };
                 throw new HttpRequestException(userFriendlyMessage, null, response.StatusCode);
             }
+        }
+
+        private string GetBadRequestMessage(string errorContent)
+        {
+            if (string.IsNullOrWhiteSpace(errorContent))
+            {
+                return "Проверьте правильность введенных данных";
+            }
+
+            var lowerContent = errorContent.ToLower();
+
+            if (lowerContent.Contains("email") && lowerContent.Contains("уже существует"))
+            {
+                return "Пользователь с таким email уже существует";
+            }
+
+            if (lowerContent.Contains("email") && lowerContent.Contains("некорректный"))
+            {
+                return "Введите корректный email адрес";
+            }
+
+            if (lowerContent.Contains("имя") && lowerContent.Contains("обязательно"))
+            {
+                return "Имя является обязательным полем";
+            }
+
+            if (lowerContent.Contains("фамилия") && lowerContent.Contains("обязательно"))
+            {
+                return "Фамилия является обязательным полем";
+            }
+
+            if (lowerContent.Contains("пароль") && lowerContent.Contains("короткий"))
+            {
+                return "Пароль должен содержать минимум 6 символов";
+            }
+
+            if (lowerContent.Contains("роль") && lowerContent.Contains("неверная"))
+            {
+                return "Выберите корректную роль пользователя";
+            }
+
+            if (lowerContent.Contains("название") && lowerContent.Contains("уже существует"))
+            {
+                return "Проект с таким названием уже существует";
+            }
+
+            if (lowerContent.Contains("название") && lowerContent.Contains("обязательно"))
+            {
+                return "Название проекта является обязательным полем";
+            }
+
+            if (lowerContent.Contains("менеджер") && lowerContent.Contains("не найден"))
+            {
+                return "Выбранный менеджер не найден";
+            }
+
+            if (lowerContent.Contains("менеджер") && lowerContent.Contains("обязательно"))
+            {
+                return "Менеджер проекта является обязательным полем";
+            }
+
+            if (lowerContent.Contains("заголовок") && lowerContent.Contains("обязательно"))
+            {
+                return "Заголовок задачи является обязательным полем";
+            }
+
+            if (lowerContent.Contains("проект") && lowerContent.Contains("не найден"))
+            {
+                return "Выбранный проект не найден";
+            }
+
+            if (lowerContent.Contains("проект") && lowerContent.Contains("обязательно"))
+            {
+                return "Проект является обязательным полем";
+            }
+
+            if (lowerContent.Contains("приоритет") && lowerContent.Contains("неверный"))
+            {
+                return "Выберите корректный приоритет задачи";
+            }
+
+            if (lowerContent.Contains("статус") && lowerContent.Contains("неверный"))
+            {
+                return "Выберите корректный статус задачи";
+            }
+
+            if (lowerContent.Contains("содержимое") && lowerContent.Contains("обязательно"))
+            {
+                return "Содержимое комментария является обязательным полем";
+            }
+
+            if (lowerContent.Contains("задача") && lowerContent.Contains("не найдена"))
+            {
+                return "Задача не найдена";
+            }
+
+            if (lowerContent.Contains("modelstate") || lowerContent.Contains("validation"))
+            {
+                return "Проверьте правильность введенных данных";
+            }
+
+            return "Проверьте правильность введенных данных";
         }
     }
 }

@@ -21,6 +21,9 @@ namespace ProjectManagementSystem.WPF.ViewModels
         private bool _isLoading = false;
 
         [ObservableProperty]
+        private string _currentDateTime = string.Empty;
+
+        [ObservableProperty]
         private int _totalProjects = 0;
 
         [ObservableProperty]
@@ -90,6 +93,8 @@ namespace ProjectManagementSystem.WPF.ViewModels
             _usersService = usersService;
             _statisticsService = statisticsService;
             _notificationService = notificationService;
+            
+            UpdateCurrentDateTime();
         }
 
         public async Task LoadDataAsync()
@@ -137,7 +142,14 @@ namespace ProjectManagementSystem.WPF.ViewModels
         private async Task Refresh()
         {
             await LoadDataAsync();
+            UpdateCurrentDateTime();
             _notificationService.ShowSuccess($"Статистика обновлена!");
+        }
+
+        private void UpdateCurrentDateTime()
+        {
+            CurrentDateTime = DateTime.Now.ToString("dddd, dd MMMM yyyy, HH:mm:ss", 
+                new System.Globalization.CultureInfo("ru-RU"));
         }
     }
 }

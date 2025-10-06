@@ -25,49 +25,51 @@
         <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     </Window.Resources>
 
-    <Border Background="White" CornerRadius="15" Effect="{StaticResource MaterialDesignShadowDepth5}">
-        <Grid Margin="25">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+    <Grid>
+        <Border Background="White" CornerRadius="15" Effect="{StaticResource MaterialDesignShadowDepth5}">
+            <Grid Margin="25">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" CornerRadius="15,15,0,0" Padding="25,20">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="{Binding WindowTitle}" 
+                <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" CornerRadius="15,15,0,0" Padding="25,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="{Binding WindowTitle}" 
                                FontSize="24" 
                                FontWeight="Bold" 
                                Foreground="White"
                                VerticalAlignment="Center"/>
 
-                    <Button Grid.Column="1"
+                        <Button Grid.Column="1"
                             Click="Close_Click"
                             Style="{StaticResource MaterialDesignIconButton}"
                             Width="32" Height="32"
                             ToolTip="Закрыть">
-                        <materialDesign:PackIcon Kind="Close" Foreground="White" Width="20" Height="20"/>
-                    </Button>
-                </Grid>
-            </Border>
+                            <materialDesign:PackIcon Kind="Close" Foreground="White" Width="20" Height="20"/>
+                        </Button>
+                    </Grid>
+                </Border>
 
-            <Grid Grid.Row="1">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="25,20">
-                    <StackPanel>
-                    <TextBlock Text="Название задачи *" Style="{StaticResource LabelStyle}"/>
-                    <TextBox Text="{Binding TaskTitle, UpdateSourceTrigger=PropertyChanged}"
+                <Grid Grid.Row="1">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="25,20">
+                        <StackPanel Margin="0, 0, 10, 0">
+                            <TextBlock Text="Название задачи *" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding TaskTitle, UpdateSourceTrigger=PropertyChanged}"
                              materialDesign:HintAssist.Hint="Введите название задачи"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              FontSize="14"
                              Margin="0,0,0,20"/>
 
-                    <TextBlock Text="Описание задачи" Style="{StaticResource LabelStyle}"/>
-                    <TextBox Text="{Binding TaskDescription, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBlock Text="Описание задачи" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding TaskDescription, UpdateSourceTrigger=PropertyChanged}"
                              materialDesign:HintAssist.Hint="Введите описание задачи"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              FontSize="14"
@@ -78,122 +80,111 @@
                              VerticalScrollBarVisibility="Auto"
                              Margin="0,0,0,20"/>
 
-                    <TextBlock Text="Проект *" Style="{StaticResource LabelStyle}"/>
-                    <ComboBox ItemsSource="{Binding Projects}"
+                            <TextBlock Text="Проект *" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox ItemsSource="{Binding Projects}"
                               SelectedItem="{Binding SelectedProject}"
                               DisplayMemberPath="Name"
                               Style="{StaticResource MaterialDesignOutlinedComboBox}"
                               FontSize="14"
                               Margin="0,0,0,20"/>
 
-                    <TextBlock Text="Исполнитель" Style="{StaticResource LabelStyle}"/>
-                    <ComboBox ItemsSource="{Binding Users}"
+                            <TextBlock Text="Исполнитель" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox ItemsSource="{Binding Users}"
                               SelectedItem="{Binding SelectedAssignee}"
                               DisplayMemberPath="FullName"
                               Style="{StaticResource MaterialDesignOutlinedComboBox}"
                               FontSize="14"
                               Margin="0,0,0,20"/>
 
-                    <Grid Margin="0,0,0,20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                            <Grid Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Статус *" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox SelectedValue="{Binding SelectedStatus}"
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Статус *" Style="{StaticResource LabelStyle}"/>
+                                    <ComboBox SelectedValue="{Binding SelectedStatus}"
                                       SelectedValuePath="Tag"
                                       Style="{StaticResource MaterialDesignOutlinedComboBox}"
                                       FontSize="14">
-                                <ComboBoxItem Content="Новая" Tag="0"/>
-                                <ComboBoxItem Content="В работе" Tag="1"/>
-                                <ComboBoxItem Content="На проверке" Tag="2"/>
-                                <ComboBoxItem Content="Завершена" Tag="3"/>
-                            </ComboBox>
-                        </StackPanel>
+                                        <ComboBoxItem Content="Новая" Tag="0"/>
+                                        <ComboBoxItem Content="В работе" Tag="1"/>
+                                        <ComboBoxItem Content="На проверке" Tag="2"/>
+                                        <ComboBoxItem Content="Завершена" Tag="3"/>
+                                    </ComboBox>
+                                </StackPanel>
 
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Приоритет *" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox SelectedValue="{Binding SelectedPriority}"
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Приоритет *" Style="{StaticResource LabelStyle}"/>
+                                    <ComboBox SelectedValue="{Binding SelectedPriority}"
                                       SelectedValuePath="Tag"
                                       Style="{StaticResource MaterialDesignOutlinedComboBox}"
                                       FontSize="14">
-                                <ComboBoxItem Content="Низкий" Tag="0"/>
-                                <ComboBoxItem Content="Средний" Tag="1"/>
-                                <ComboBoxItem Content="Высокий" Tag="2"/>
-                                <ComboBoxItem Content="Критический" Tag="3"/>
-                            </ComboBox>
-                        </StackPanel>
-                    </Grid>
+                                        <ComboBoxItem Content="Низкий" Tag="0"/>
+                                        <ComboBoxItem Content="Средний" Tag="1"/>
+                                        <ComboBoxItem Content="Высокий" Tag="2"/>
+                                        <ComboBoxItem Content="Критический" Tag="3"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
 
-                    <Grid Margin="0,0,0,20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                            <Grid Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Планируемые часы" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Text="{Binding PlannedHours, UpdateSourceTrigger=PropertyChanged}"
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Планируемые часы" Style="{StaticResource LabelStyle}"/>
+                                    <TextBox Text="{Binding PlannedHours, UpdateSourceTrigger=PropertyChanged}"
                                      materialDesign:HintAssist.Hint="Например: 8.5"
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                      FontSize="14"/>
-                        </StackPanel>
+                                </StackPanel>
 
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Фактические часы" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Text="{Binding ActualHours, UpdateSourceTrigger=PropertyChanged}"
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Фактические часы" Style="{StaticResource LabelStyle}"/>
+                                    <TextBox Text="{Binding ActualHours, UpdateSourceTrigger=PropertyChanged}"
                                      materialDesign:HintAssist.Hint="Например: 7.5"
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                      FontSize="14"/>
-                        </StackPanel>
-                    </Grid>
+                                </StackPanel>
+                            </Grid>
 
-                    <TextBlock Text="* - обязательные поля" 
+                            <TextBlock Text="* - обязательные поля" 
                                FontSize="12" 
                                FontStyle="Italic" 
                                Foreground="#757575"
                                Margin="0,10,0,0"/>
-                </StackPanel>
-                </ScrollViewer>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
 
-                <Border Background="#80000000" 
-                        Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Panel.ZIndex="1000">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <ProgressBar IsIndeterminate="True" 
-                                   Width="150" Height="10"
-                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"
-                                   Margin="0,0,0,5"/>
-                        <TextBlock Text="Загрузка данных..." 
-                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                                   Foreground="White"
-                                   HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-            </Grid>
-
-            <Border Grid.Row="2" 
+                <Border Grid.Row="2" 
                     Background="#F5F5F5" 
                     CornerRadius="0,0,15,15" 
                     Padding="25,15">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <ProgressBar Grid.Column="0"
-                                 IsIndeterminate="True"
-                                 Visibility="{Binding IsSaving, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                 VerticalAlignment="Center"
-                                 Margin="0,0,20,0"/>
+                        <Border
+                        Visibility="{Binding IsSaving, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Panel.ZIndex="1000">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ProgressBar IsIndeterminate="True" 
+                                   Width="150" Height="10"
+                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"/>
+                            </StackPanel>
+                        </Border>
 
-                    <Button Grid.Column="1"
+                        <Button Grid.Column="1"
                             Content="Отмена"
                             Click="Cancel_Click"
                             Style="{StaticResource MaterialDesignOutlinedButton}"
@@ -202,7 +193,7 @@
                             Margin="0,0,15,0"
                             IsEnabled="{Binding IsSaving, Converter={StaticResource InverseBooleanConverter}}"/>
 
-                    <Button Grid.Column="2"
+                        <Button Grid.Column="2"
                             Content="{Binding SaveButtonText}"
                             Command="{Binding SaveCommand}"
                             Style="{StaticResource MaterialDesignRaisedButton}"
@@ -211,9 +202,10 @@
                             Width="120"
                             Height="40"
                             IsEnabled="{Binding CanSave}"/>
-                </Grid>
-            </Border>
-        </Grid>
-    </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>
 

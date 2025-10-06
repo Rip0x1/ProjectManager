@@ -12,7 +12,7 @@
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -59,78 +59,78 @@
         <Grid Grid.Row="1" Margin="20,0,20,0">
             <ScrollViewer>
                 <ItemsControl ItemsSource="{Binding UserProjects}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Background="{DynamicResource MaterialDesignCardBackground}"
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{DynamicResource MaterialDesignCardBackground}"
                                 CornerRadius="12"
                                 Margin="0,0,0,20"
                                 Padding="24"
                                 Effect="{StaticResource MaterialDesignElevationShadow2}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Row="0" Grid.Column="0">
-                                    <TextBlock Text="{Binding Name}" 
+                                    <StackPanel Grid.Row="0" Grid.Column="0">
+                                        <TextBlock Text="{Binding Name}" 
                                                Style="{StaticResource MaterialDesignHeadline4TextBlock}"
                                                Foreground="{DynamicResource MaterialDesignBodyLight}"
                                                FontWeight="Bold"
                                                FontSize="20"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                        <Border Background="{Binding StatusColor}"
+                                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                            <Border Background="{Binding StatusColor}"
                                                 CornerRadius="8"
                                                 Padding="8,4"
                                                 Margin="0,0,8,0">
-                                            <TextBlock Text="{Binding StatusText}" 
+                                                <TextBlock Text="{Binding StatusText}" 
                                                        Foreground="White"
                                                        FontWeight="Bold"
                                                        FontSize="11"/>
-                                        </Border>
-                                        <Border Background="{Binding RoleInProjectColor}"
+                                            </Border>
+                                            <Border Background="{Binding RoleInProjectColor}"
                                                 CornerRadius="8"
                                                 Padding="8,4">
-                                            <TextBlock Text="{Binding RoleInProjectText}" 
+                                                <TextBlock Text="{Binding RoleInProjectText}" 
                                                        Foreground="White"
                                                        FontWeight="Bold"
                                                        FontSize="11"/>
-                                        </Border>
+                                            </Border>
+                                        </StackPanel>
                                     </StackPanel>
-                                </StackPanel>
 
-                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                        <Button Style="{StaticResource MaterialDesignIconButton}"
                                             ToolTip="Добавить комментарий"
                                             Margin="2"
                                             Command="{Binding DataContext.AddCommentAsyncCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}">
-                                        <materialDesign:PackIcon Kind="Comment" Width="20" Height="20"/>
-                                    </Button>
-                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                            <materialDesign:PackIcon Kind="Comment" Width="20" Height="20"/>
+                                        </Button>
+                                        <Button Style="{StaticResource MaterialDesignIconButton}"
                                             ToolTip="Создать задачу"
                                             Margin="2"
                                             Command="{Binding DataContext.CreateTaskAsyncCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}">
-                                        <materialDesign:PackIcon Kind="Plus" Width="20" Height="20"/>
-                                    </Button>
-                                    <Button Style="{StaticResource MaterialDesignIconButton}"
+                                            <materialDesign:PackIcon Kind="Plus" Width="20" Height="20"/>
+                                        </Button>
+                                        <Button Style="{StaticResource MaterialDesignIconButton}"
                                             ToolTip="Настройки проекта"
                                             Margin="2"
                                             Command="{Binding DataContext.ProjectSettingsAsyncCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}">
-                                        <materialDesign:PackIcon Kind="Settings" Width="20" Height="20"/>
-                                    </Button>
-                                </StackPanel>
+                                            <materialDesign:PackIcon Kind="Settings" Width="20" Height="20"/>
+                                        </Button>
+                                    </StackPanel>
 
-                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                            Text="{Binding Description}"
                                            Style="{StaticResource MaterialDesignBody2TextBlock}"
                                            Foreground="{DynamicResource MaterialDesignBody}"
@@ -138,134 +138,110 @@
                                            TextWrapping="Wrap"
                                            Margin="0,15,0,0"/>
 
-                                <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,15,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="AccountGroup" Width="16" Height="16" 
-                                                               Foreground="{DynamicResource PrimaryHueMidBrush}" 
-                                                               VerticalAlignment="Center" Margin="0,0,5,0"/>
-                                        <TextBlock Text="{Binding ParticipantsText}" 
-                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                                                   Foreground="{DynamicResource MaterialDesignBody}"
-                                                   FontSize="12"/>
-                                    </StackPanel>
-                                    
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="CheckCircle" Width="16" Height="16" 
-                                                               Foreground="{DynamicResource PrimaryHueMidBrush}" 
-                                                               VerticalAlignment="Center" Margin="0,0,5,0"/>
-                                        <TextBlock Text="{Binding TasksText}" 
-                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                                                   Foreground="{DynamicResource MaterialDesignBody}"
-                                                   FontSize="12"/>
-                                    </StackPanel>
-                                    
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="Comment" Width="16" Height="16" 
-                                                               Foreground="{DynamicResource PrimaryHueMidBrush}" 
-                                                               VerticalAlignment="Center" Margin="0,0,5,0"/>
-                                        <TextBlock Text="{Binding CommentsText}" 
-                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                                                   Foreground="{DynamicResource MaterialDesignBody}"
-                                                   FontSize="12"/>
-                                    </StackPanel>
-                                </Grid>
+                                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,15,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" 
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="AccountGroup" Width="16" Height="16" 
+                                                               Foreground="{DynamicResource PrimaryHueMidBrush}" 
+                                                               VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBlock Text="{Binding ParticipantsText}" 
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource MaterialDesignBody}"
+                                                   FontSize="12"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="CheckCircle" Width="16" Height="16" 
+                                                               Foreground="{DynamicResource PrimaryHueMidBrush}" 
+                                                               VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBlock Text="{Binding TasksText}" 
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource MaterialDesignBody}"
+                                                   FontSize="12"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="Comment" Width="16" Height="16" 
+                                                               Foreground="{DynamicResource PrimaryHueMidBrush}" 
+                                                               VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <TextBlock Text="{Binding CommentsText}" 
+                                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                   Foreground="{DynamicResource MaterialDesignBody}"
+                                                   FontSize="12"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" 
                                             Orientation="Horizontal" 
                                             Margin="0,15,0,0">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
-                                        <materialDesign:PackIcon Kind="Calendar" Width="14" Height="14" 
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
+                                            <materialDesign:PackIcon Kind="Calendar" Width="14" Height="14" 
                                                                Foreground="{DynamicResource MaterialDesignBodyLight}" 
                                                                VerticalAlignment="Center" Margin="0,0,5,0"/>
-                                        <TextBlock Text="{Binding CreatedAtText}" 
+                                            <TextBlock Text="{Binding CreatedAtText}" 
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
-                                        <materialDesign:PackIcon Kind="Clock" Width="14" Height="14" 
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
+                                            <materialDesign:PackIcon Kind="Clock" Width="14" Height="14" 
                                                                Foreground="{DynamicResource MaterialDesignBodyLight}" 
                                                                VerticalAlignment="Center" Margin="0,0,5,0"/>
-                                        <TextBlock Text="{Binding DeadlineText}" 
+                                            <TextBlock Text="{Binding DeadlineText}" 
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource MaterialDesignBodyLight}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="Account" Width="14" Height="14" 
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="Account" Width="14" Height="14" 
                                                                Foreground="{DynamicResource MaterialDesignBodyLight}" 
                                                                VerticalAlignment="Center" Margin="0,0,5,0"/>
-                                        <TextBlock Text="{Binding ManagerName}" 
+                                            <TextBlock Text="{Binding ManagerName}" 
                                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                    Foreground="{DynamicResource MaterialDesignBodyLight}"
                                                    FontWeight="Bold"/>
+                                        </StackPanel>
                                     </StackPanel>
-                                </StackPanel>
 
-                                <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,15,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    
-                                    <ProgressBar Grid.Column="0" 
+                                    <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,15,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <ProgressBar Grid.Column="0" 
                                                  Value="{Binding Progress}" 
                                                  Maximum="100"
                                                  Height="6"
                                                  Style="{StaticResource MaterialDesignLinearProgressBar}"
                                                  Margin="0,0,10,0"/>
-                                    
-                                    <TextBlock Grid.Column="1" 
+
+                                        <TextBlock Grid.Column="1" 
                                                Text="{Binding ProgressText}"
                                                Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                                Foreground="{DynamicResource MaterialDesignBodyLight}"
                                                VerticalAlignment="Center"/>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </ScrollViewer>
-
-            <Border Background="#80000000" 
-                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
-                        Panel.ZIndex="1000">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <ProgressBar IsIndeterminate="True" 
-                                   Width="150" Height="10"
-                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"
-                                   Margin="0,0,0,5"/>
-                    <TextBlock Text="Загрузка данных..." 
-                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                                   Foreground="White"
-                                   HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Border>
         </Grid>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,20">
-            <Button Content="⟪" Command="{Binding FirstPageCommand}" Margin="4,0" 
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    ToolTip="Первая страница"/>
-            <Button Content="‹" Command="{Binding PreviousPageCommand}" Margin="4,0"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    ToolTip="Предыдущая страница"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
+            <Button Content="⟪" Command="{Binding FirstPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+            <Button Content="‹" Command="{Binding PreviousPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
             <TextBlock Text="Стр." VerticalAlignment="Center" Margin="8,0"/>
-            <TextBox Width="50" Text="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}"
-                     HorizontalContentAlignment="Center"/>
+            <TextBox Width="50" Text="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="из" VerticalAlignment="Center" Margin="8,0"/>
             <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center"/>
-            <Button Content="›" Command="{Binding NextPageCommand}" Margin="8,0"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    ToolTip="Следующая страница"/>
-            <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    ToolTip="Последняя страница"/>
+            <Button Content="›" Command="{Binding NextPageCommand}" Margin="8,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+            <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
         </StackPanel>
 
     </Grid>

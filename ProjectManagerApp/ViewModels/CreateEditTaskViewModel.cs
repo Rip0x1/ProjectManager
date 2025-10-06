@@ -120,11 +120,11 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 if (task != null)
                 {
                     TaskTitle = task.Title;
-                    TaskDescription = task.Description;
+                    TaskDescription = task.Description ?? string.Empty;
                     SelectedStatus = task.Status;
                     SelectedPriority = task.Priority;
-                    PlannedHours = task.PlannedHours.ToString();
-                    ActualHours = task.ActualHours.ToString();
+                    PlannedHours = task.PlannedHours?.ToString() ?? string.Empty;
+                    ActualHours = task.ActualHours?.ToString() ?? string.Empty;
                     
                     var project = Projects.FirstOrDefault(p => p.Id == task.ProjectId);
                     if (project != null)
@@ -200,6 +200,10 @@ namespace ProjectManagementSystem.WPF.ViewModels
             {
                 _notificationService.ShowError($"Ошибка загрузки данных: {ex.Message}");
             }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         partial void OnTaskTitleChanged(string value)
@@ -214,20 +218,25 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
         private void ValidateForm()
         {
-            CanSave = !string.IsNullOrWhiteSpace(TaskTitle) && SelectedProject != null && !IsSaving;
+            CanSave = !string.IsNullOrWhiteSpace(TaskTitle) && 
+                     TaskTitle.Trim().Length >= 2 && 
+                     TaskTitle.Trim().Length <= 100 &&
+                     SelectedProject != null && 
+                     !IsSaving;
         }
 
         [RelayCommand]
         private async Task SaveAsync()
         {
-            if (!CanSave) return;
+            if (!ValidateInput())
+                return;
 
             IsSaving = true;
             CanSave = false;
 
             try
             {
-                await Task.Delay(1000);
+                await Task.Delay(2000);
 
                 decimal? plannedHrs = null;
                 if (!string.IsNullOrWhiteSpace(PlannedHours))
@@ -275,13 +284,131 @@ namespace ProjectManagementSystem.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                _notificationService.ShowError($"Ошибка сохранения задачи: {ex.Message}");
+                var userFriendlyMessage = GetUserFriendlyErrorMessage(ex);
+                _notificationService.ShowError(userFriendlyMessage);
             }
             finally
             {
                 IsSaving = false;
                 ValidateForm();
             }
+        }
+
+        private bool ValidateInput()
+        {
+            var errors = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(TaskTitle))
+            {
+                errors.Add("Введите заголовок задачи");
+            }
+            else if (TaskTitle.Trim().Length < 2)
+            {
+                errors.Add("Заголовок задачи должен содержать минимум 2 символа");
+            }
+            else if (TaskTitle.Trim().Length > 100)
+            {
+                errors.Add("Заголовок задачи не должен превышать 100 символов");
+            }
+
+            if (!string.IsNullOrWhiteSpace(TaskDescription) && TaskDescription.Trim().Length > 1000)
+            {
+                errors.Add("Описание задачи не должно превышать 1000 символов");
+            }
+
+            if (SelectedProject == null)
+            {
+                errors.Add("Выберите проект");
+            }
+
+            if (!string.IsNullOrWhiteSpace(PlannedHours))
+            {
+                if (!decimal.TryParse(PlannedHours.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var planned))
+                {
+                    errors.Add("Введите корректное количество запланированных часов");
+                }
+                else if (planned < 0 || planned > 9999)
+                {
+                    errors.Add("Запланированные часы должны быть от 0 до 9999");
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(ActualHours))
+            {
+                if (!decimal.TryParse(ActualHours.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var actual))
+                {
+                    errors.Add("Введите корректное количество фактических часов");
+                }
+                else if (actual < 0 || actual > 9999)
+                {
+                    errors.Add("Фактические часы должны быть от 0 до 9999");
+                }
+            }
+
+            if (errors.Any())
+            {
+                _notificationService.ShowError(string.Join("\n", errors));
+                return false;
+            }
+
+            return true;
+        }
+
+        private string GetUserFriendlyErrorMessage(Exception ex)
+        {
+            var message = ex.Message.ToLower();
+
+            if (message.Contains("заголовок") && message.Contains("уже существует"))
+            {
+                return "Задача с таким заголовком уже существует";
+            }
+
+            if (message.Contains("заголовок") && message.Contains("обязательно"))
+            {
+                return "Заголовок задачи является обязательным полем";
+            }
+
+            if (message.Contains("проект") && message.Contains("не найден"))
+            {
+                return "Выбранный проект не найден";
+            }
+
+            if (message.Contains("проект") && message.Contains("обязательно"))
+            {
+                return "Проект является обязательным полем";
+            }
+
+            if (message.Contains("исполнитель") && message.Contains("не найден"))
+            {
+                return "Выбранный исполнитель не найден";
+            }
+
+            if (message.Contains("приоритет") && message.Contains("неверный"))
+            {
+                return "Выберите корректный приоритет задачи";
+            }
+
+            if (message.Contains("статус") && message.Contains("неверный"))
+            {
+                return "Выберите корректный статус задачи";
+            }
+
+            if (message.Contains("некорректный запрос"))
+            {
+                return "Проверьте правильность введенных данных";
+            }
+
+            if (message.Contains("ошибка сервера"))
+            {
+                return "Временная ошибка сервера. Попробуйте позже";
+            }
+
+            if (message.Contains("недостаточно прав"))
+            {
+                return "У вас недостаточно прав для выполнения этой операции";
+            }
+
+            return "Произошла ошибка при сохранении задачи. Проверьте введенные данные";
         }
 
     }

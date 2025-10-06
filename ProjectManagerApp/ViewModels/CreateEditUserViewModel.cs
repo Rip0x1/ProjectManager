@@ -42,6 +42,9 @@ namespace ProjectManagerApp.ViewModels
         [ObservableProperty]
         private bool _isLoading = false;
 
+        [ObservableProperty]
+        private bool _isSaving = false;
+
 
         public ObservableCollection<KeyValuePair<int, string>> Roles { get; } = new()
         {
@@ -100,7 +103,8 @@ namespace ProjectManagerApp.ViewModels
             try
             {
                 IsLoading = true;
-                await Task.Delay(1000);
+                IsSaving = true;
+                await Task.Delay(2000);
 
                 if (IsEditMode)
                 {
@@ -142,11 +146,12 @@ namespace ProjectManagerApp.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                _notificationService.ShowError($"Ошибка сохранения пользователя: {ex.Message}");
+                var userFriendlyMessage = GetUserFriendlyErrorMessage(ex);
+                _notificationService.ShowError(userFriendlyMessage);
             }
             finally
             {
-                IsLoading = false;
+                IsSaving = false;
             }
         }
 
@@ -162,39 +167,67 @@ namespace ProjectManagerApp.ViewModels
 
         private bool ValidateInput()
         {
+            var errors = new List<string>();
+
             if (string.IsNullOrWhiteSpace(FirstName))
             {
-                _notificationService.ShowError("Введите имя");
-                return false;
+                errors.Add("Введите имя");
+            }
+            else if (FirstName.Trim().Length < 2)
+            {
+                errors.Add("Имя должно содержать минимум 2 символа");
+            }
+            else if (FirstName.Trim().Length > 50)
+            {
+                errors.Add("Имя не должно превышать 50 символов");
             }
 
             if (string.IsNullOrWhiteSpace(LastName))
             {
-                _notificationService.ShowError("Введите фамилию");
-                return false;
+                errors.Add("Введите фамилию");
+            }
+            else if (LastName.Trim().Length < 2)
+            {
+                errors.Add("Фамилия должна содержать минимум 2 символа");
+            }
+            else if (LastName.Trim().Length > 50)
+            {
+                errors.Add("Фамилия не должна превышать 50 символов");
             }
 
             if (string.IsNullOrWhiteSpace(Email))
             {
-                _notificationService.ShowError("Введите email");
-                return false;
+                errors.Add("Введите email");
             }
-
-            if (!IsValidEmail(Email))
+            else if (!IsValidEmail(Email))
             {
-                _notificationService.ShowError("Введите корректный email адрес");
-                return false;
+                errors.Add("Введите корректный email адрес");
+            }
+            else if (Email.Trim().Length > 100)
+            {
+                errors.Add("Email не должен превышать 100 символов");
             }
 
             if (!IsEditMode && string.IsNullOrWhiteSpace(Password))
             {
-                _notificationService.ShowError("Введите пароль");
-                return false;
+                errors.Add("Введите пароль");
             }
 
-            if (!string.IsNullOrWhiteSpace(Password) && Password.Length < 6)
+            if (!string.IsNullOrWhiteSpace(Password))
             {
-                _notificationService.ShowError("Пароль должен содержать минимум 6 символов");
+                if (Password.Length < 6)
+                {
+                    errors.Add("Пароль должен содержать минимум 6 символов");
+                }
+                else if (Password.Length > 100)
+                {
+                    errors.Add("Пароль не должен превышать 100 символов");
+                }
+            }
+
+            if (errors.Any())
+            {
+                _notificationService.ShowError(string.Join("\n", errors));
                 return false;
             }
 
@@ -212,6 +245,58 @@ namespace ProjectManagerApp.ViewModels
             {
                 return false;
             }
+        }
+
+        private string GetUserFriendlyErrorMessage(Exception ex)
+        {
+            var message = ex.Message.ToLower();
+
+            if (message.Contains("email") && message.Contains("уже существует"))
+            {
+                return "Пользователь с таким email уже существует";
+            }
+
+            if (message.Contains("email") && message.Contains("некорректный"))
+            {
+                return "Введите корректный email адрес";
+            }
+
+            if (message.Contains("имя") && message.Contains("обязательно"))
+            {
+                return "Имя является обязательным полем";
+            }
+
+            if (message.Contains("фамилия") && message.Contains("обязательно"))
+            {
+                return "Фамилия является обязательным полем";
+            }
+
+            if (message.Contains("пароль") && message.Contains("короткий"))
+            {
+                return "Пароль должен содержать минимум 6 символов";
+            }
+
+            if (message.Contains("роль") && message.Contains("неверная"))
+            {
+                return "Выберите корректную роль пользователя";
+            }
+
+            if (message.Contains("некорректный запрос"))
+            {
+                return "Проверьте правильность введенных данных";
+            }
+
+            if (message.Contains("ошибка сервера"))
+            {
+                return "Временная ошибка сервера. Попробуйте позже";
+            }
+
+            if (message.Contains("недостаточно прав"))
+            {
+                return "У вас недостаточно прав для выполнения этой операции";
+            }
+
+            return "Произошла ошибка при сохранении пользователя. Проверьте введенные данные";
         }
     }
 }

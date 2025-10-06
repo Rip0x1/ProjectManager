@@ -150,15 +150,29 @@ namespace ProjectManagementSystem.WPF.ViewModels
         }
 
         [RelayCommand]
-        private void CreateProject()
+        private async Task CreateProject()
         {
-            var viewModel = new CreateEditProjectViewModel(_projectsService, _usersService, _notificationService);
-            var window = new Views.CreateEditProjectWindow(viewModel);
-            
-            if (window.ShowDialog() == true)
+            if (!_permissionService.CanCreateProject())
             {
-                _ = LoadAsync();
+                _notificationService.ShowWarning("У вас нет прав для создания проектов");
+                return;
             }
+
+            try
+            {
+                var viewModel = new CreateEditProjectViewModel(_projectsService, _usersService, _notificationService);
+                var window = new Views.CreateEditProjectWindow(viewModel);
+                window.Owner = System.Windows.Application.Current.MainWindow;
+                if (window.ShowDialog() == true)
+                {
+                    await LoadAsync();
+                }
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+
         }
 
         [RelayCommand]

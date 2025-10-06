@@ -1,5 +1,6 @@
 using ProjectManagementSystem.WPF.Models;
 using ProjectManagerApp.Models;
+using System.Net.Http;
 
 namespace ProjectManagementSystem.WPF.Services
 {
@@ -90,6 +91,10 @@ namespace ProjectManagementSystem.WPF.Services
                 
                 return await _apiClient.PostAsync<UserDto>("Users", apiDto);
             }
+            catch (HttpRequestException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new Exception($"Ошибка создания пользователя: {ex.Message}", ex);
@@ -110,6 +115,10 @@ namespace ProjectManagementSystem.WPF.Services
                 };
                 
                 return await _apiClient.PutAsync<UserDto>($"Users/{id}", apiDto);
+            }
+            catch (HttpRequestException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

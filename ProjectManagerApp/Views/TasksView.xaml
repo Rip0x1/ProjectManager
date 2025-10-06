@@ -18,175 +18,190 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
 
-    <Grid Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Grid>
+        <Border Background="#80000000" 
+                        Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Panel.ZIndex="1000">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" 
+                                   Width="150" Height="10"
+                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"
+                                   Margin="0,0,0,5"/>
+                <TextBlock Text="Загрузка данных..." 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,12">
-            <Grid Margin="0,0,0,8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+            <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" 
+                    <TextBox Grid.Column="0" 
                          Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                          materialDesign:HintAssist.Hint="Поиск задач">
-                    <TextBox.InputBindings>
-                        <KeyBinding Key="Enter" Command="{Binding RefreshCommand}"/>
-                    </TextBox.InputBindings>
-                </TextBox>
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter" Command="{Binding RefreshCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
 
-                <ComboBox Grid.Column="1" 
+                    <ComboBox Grid.Column="1" 
                           SelectedValue="{Binding PageSize}"
                           SelectedValuePath="Tag"
                           Margin="8,0,0,0"
                           Width="100"
                           VerticalAlignment="Bottom">
-                    <ComboBoxItem Content="10" Tag="10"/>
-                    <ComboBoxItem Content="25" Tag="25"/>
-                    <ComboBoxItem Content="50" Tag="50"/>
-                    <ComboBoxItem Content="100" Tag="100"/>
-                </ComboBox>
+                        <ComboBoxItem Content="10" Tag="10"/>
+                        <ComboBoxItem Content="25" Tag="25"/>
+                        <ComboBoxItem Content="50" Tag="50"/>
+                        <ComboBoxItem Content="100" Tag="100"/>
+                    </ComboBox>
 
-                <Button Grid.Column="2" Margin="8,0,0,0"
+                    <Button Grid.Column="2" Margin="8,0,0,0"
                         Style="{StaticResource MaterialDesignRaisedButton}"
                         Background="{StaticResource PrimaryBrush}"
                         BorderBrush="{StaticResource PrimaryBrush}"
                         Command="{Binding CreateTaskCommand}"
                         Visibility="{Binding CanCreateTasks, Converter={StaticResource BooleanToVisibilityConverter}}" Cursor="Hand">
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                            <TextBlock Text="Создать" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button.Content>
-                </Button>
-                <Button Grid.Column="3" Content="Обновить" Margin="8,0,0,0"
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                <TextBlock Text="Создать" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <Button Grid.Column="3" Content="Обновить" Margin="8,0,0,0"
                         Style="{StaticResource MaterialDesignRaisedButton}"
                         Command="{Binding RefreshCommand}"/>
-            </Grid>
+                </Grid>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" 
+                    <TextBlock Grid.Column="0" 
                            Text="Статус:" 
                            VerticalAlignment="Center" 
                            Margin="0,0,8,0"/>
-                
-                <ComboBox Grid.Column="1" 
+
+                    <ComboBox Grid.Column="1" 
                           SelectedValue="{Binding SelectedStatusFilter}"
                           SelectedValuePath="Tag"
                           materialDesign:HintAssist.Hint="Все статусы">
-                    <ComboBoxItem Content="Все статусы" Tag="-1"/>
-                    <ComboBoxItem Content="Новая" Tag="0"/>
-                    <ComboBoxItem Content="В работе" Tag="1"/>
-                    <ComboBoxItem Content="На проверке" Tag="2"/>
-                    <ComboBoxItem Content="Завершена" Tag="3"/>
-                </ComboBox>
+                        <ComboBoxItem Content="Все статусы" Tag="-1"/>
+                        <ComboBoxItem Content="Новая" Tag="0"/>
+                        <ComboBoxItem Content="В работе" Tag="1"/>
+                        <ComboBoxItem Content="На проверке" Tag="2"/>
+                        <ComboBoxItem Content="Завершена" Tag="3"/>
+                    </ComboBox>
 
-                <TextBlock Grid.Column="2" 
+                    <TextBlock Grid.Column="2" 
                            Text="Приоритет:" 
                            VerticalAlignment="Center" 
                            Margin="16,0,8,0"/>
-                
-                <ComboBox Grid.Column="3" 
+
+                    <ComboBox Grid.Column="3" 
                           SelectedValue="{Binding SelectedPriorityFilter}"
                           SelectedValuePath="Tag"
                           materialDesign:HintAssist.Hint="Все приоритеты">
-                    <ComboBoxItem Content="Все приоритеты" Tag="-1"/>
-                    <ComboBoxItem Content="Низкий" Tag="0"/>
-                    <ComboBoxItem Content="Средний" Tag="1"/>
-                    <ComboBoxItem Content="Высокий" Tag="2"/>
-                    <ComboBoxItem Content="Критический" Tag="3"/>
-                </ComboBox>
+                        <ComboBoxItem Content="Все приоритеты" Tag="-1"/>
+                        <ComboBoxItem Content="Низкий" Tag="0"/>
+                        <ComboBoxItem Content="Средний" Tag="1"/>
+                        <ComboBoxItem Content="Высокий" Tag="2"/>
+                        <ComboBoxItem Content="Критический" Tag="3"/>
+                    </ComboBox>
 
-                <Button Grid.Column="5" 
+                    <Button Grid.Column="5" 
                         Content="Сбросить фильтры" 
                         Margin="16,0,0,0"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
                         Command="{Binding ClearFiltersCommand}"/>
-            </Grid>
-        </StackPanel>
+                </Grid>
+            </StackPanel>
 
-        <Grid Grid.Row="1">
-            <ScrollViewer>
-                <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="16">
-                    <ItemsControl ItemsSource="{Binding PagedTasks}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" IsItemsHost="True" Margin="-8, 0, 0, 0"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Width="320" Height="240" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8,0,0,8"
+            <Grid Grid.Row="1">
+                <ScrollViewer>
+                    <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="16">
+                        <ItemsControl ItemsSource="{Binding PagedTasks}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" IsItemsHost="True" Margin="-8, 0, 0, 0"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="320" Height="240" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="8,0,0,8"
                                 Cursor="Hand" MouseLeftButtonDown="TaskCard_MouseLeftButtonDown">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="Background" Value="White"/>
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <DropShadowEffect Color="Black" Opacity="0.1" ShadowDepth="1" BlurRadius="4"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#F5F5F5"/>
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="White"/>
                                                 <Setter Property="Effect">
                                                     <Setter.Value>
-                                                        <DropShadowEffect Color="Black" Opacity="0.2" ShadowDepth="2" BlurRadius="8"/>
+                                                        <DropShadowEffect Color="Black" Opacity="0.1" ShadowDepth="1" BlurRadius="4"/>
                                                     </Setter.Value>
                                                 </Setter>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#F5F5F5"/>
+                                                        <Setter Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect Color="Black" Opacity="0.2" ShadowDepth="2" BlurRadius="8"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
 
-                                    <Grid Grid.Row="0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" 
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" 
                                               TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
-                                        <TextBlock Grid.Column="1" Text="👁" FontSize="14" 
+                                                <TextBlock Grid.Column="1" Text="👁" FontSize="14" 
                                               ToolTip="Нажмите для просмотра деталей"/>
-                                    </Grid>
+                                            </Grid>
 
-                                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
-                                        <Border Background="{Binding StatusColor}" CornerRadius="12" Padding="8,2" Margin="0,0,4,0">
-                                            <TextBlock Text="{Binding StatusText}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
-                                        </Border>
-                                        <Border Background="{Binding PriorityColor}" CornerRadius="12" Padding="8,2">
-                                            <TextBlock Text="{Binding PriorityText}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
-                                        </Border>
-                                    </StackPanel>
+                                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,4,0,0">
+                                                <Border Background="{Binding StatusColor}" CornerRadius="12" Padding="8,2" Margin="0,0,4,0">
+                                                    <TextBlock Text="{Binding StatusText}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                                                </Border>
+                                                <Border Background="{Binding PriorityColor}" CornerRadius="12" Padding="8,2">
+                                                    <TextBlock Text="{Binding PriorityText}" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                                                </Border>
+                                            </StackPanel>
 
-                                    <TextBlock Grid.Row="2"
+                                            <TextBlock Grid.Row="2"
                                            Text="{Binding Description}"
                                            Foreground="Gray"
                                            TextWrapping="Wrap"
@@ -195,87 +210,73 @@
                                            LineHeight="16"
                                            MaxHeight="80"/>
 
-                                    <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,0">
-                                        <TextBlock Text="Проект: " FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding ProjectName}"/>
-                                    </StackPanel>
+                                            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,0">
+                                                <TextBlock Text="Проект: " FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding ProjectName}"/>
+                                            </StackPanel>
 
-                                    <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,4,0,0">
-                                        <TextBlock Text="Автор: " FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding AuthorName}"/>
-                                        <TextBlock Text=" | Исполнитель: " FontWeight="SemiBold" Margin="8,0,0,0"/>
-                                        <TextBlock Text="{Binding AssigneeDisplayName}"/>
-                                    </StackPanel>
+                                            <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,4,0,0">
+                                                <TextBlock Text="Автор: " FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding AuthorName}"/>
+                                                <TextBlock Text=" | Исполнитель: " FontWeight="SemiBold" Margin="8,0,0,0"/>
+                                                <TextBlock Text="{Binding AssigneeDisplayName}"/>
+                                            </StackPanel>
 
-                                    <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,4,0,0">
-                                        <TextBlock Text="Планируемые часы: " FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding PlannedHoursText}"/>
-                                        <TextBlock Text=" | Фактические: " FontWeight="SemiBold" Margin="8,0,0,0"/>
-                                        <TextBlock Text="{Binding ActualHoursText}"/>
-                                    </StackPanel>
+                                            <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,4,0,0">
+                                                <TextBlock Text="Планируемые часы: " FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding PlannedHoursText}"/>
+                                                <TextBlock Text=" | Фактические: " FontWeight="SemiBold" Margin="8,0,0,0"/>
+                                                <TextBlock Text="{Binding ActualHoursText}"/>
+                                            </StackPanel>
 
-                                        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-                                            <Button Command="{Binding DataContext.ViewCommentsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                                                <Button Command="{Binding DataContext.ViewCommentsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}"
                                                 Style="{StaticResource MaterialDesignIconButton}"
                                                 Width="32" Height="32"
                                                 ToolTip="Комментарии"
                                                 Margin="0,0,8,0">
-                                            <materialDesign:PackIcon Kind="Comment" Width="18" Height="18" Foreground="#4CAF50"/>
-                                        </Button>
+                                                    <materialDesign:PackIcon Kind="Comment" Width="18" Height="18" Foreground="#4CAF50"/>
+                                                </Button>
 
-                                        <StackPanel Orientation="Horizontal" 
+                                                <StackPanel Orientation="Horizontal" 
                                                     Visibility="{Binding DataContext.CanManageTasks, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                            <Button Command="{Binding DataContext.EditTaskCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    <Button Command="{Binding DataContext.EditTaskCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
                                                     Style="{StaticResource MaterialDesignIconButton}"
                                                     Width="32" Height="32"
                                                     ToolTip="Редактировать"
                                                     Margin="0,0,4,0">
-                                                <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18" Foreground="#2196F3"/>
-                                            </Button>
-                                            <Button Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18" Foreground="#2196F3"/>
+                                                    </Button>
+                                                    <Button Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                     CommandParameter="{Binding}"
                                                     Style="{StaticResource MaterialDesignIconButton}"
                                                     Width="32" Height="32"
                                                     ToolTip="Удалить">
-                                                <materialDesign:PackIcon Kind="Delete" Width="18" Height="18" Foreground="#F44336"/>
-                                            </Button>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                </WrapPanel>
-            </ScrollViewer>
+                                                        <materialDesign:PackIcon Kind="Delete" Width="18" Height="18" Foreground="#F44336"/>
+                                                    </Button>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </WrapPanel>
+                </ScrollViewer>
+            </Grid>
 
-            <Border Background="#80000000" 
-                        Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Panel.ZIndex="1000">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <ProgressBar IsIndeterminate="True" 
-                                   Width="150" Height="10"
-                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"
-                                   Margin="0,0,0,5"/>
-                    <TextBlock Text="Загрузка данных..." 
-                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                                   Foreground="White"
-                                   HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Border>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
+                <Button Content="⟪" Command="{Binding FirstPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                <Button Content="‹" Command="{Binding PreviousPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                <TextBlock Text="Стр." VerticalAlignment="Center" Margin="8,0"/>
+                <TextBox Width="50" Text="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Text="из" VerticalAlignment="Center" Margin="8,0"/>
+                <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center"/>
+                <Button Content="›" Command="{Binding NextPageCommand}" Margin="8,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+                <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
+            </StackPanel>
         </Grid>
-        
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
-            <Button Content="⟪" Command="{Binding FirstPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
-            <Button Content="‹" Command="{Binding PreviousPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
-            <TextBlock Text="Стр." VerticalAlignment="Center" Margin="8,0"/>
-            <TextBox Width="50" Text="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Text="из" VerticalAlignment="Center" Margin="8,0"/>
-            <TextBlock Text="{Binding TotalPages}" VerticalAlignment="Center"/>
-            <Button Content="›" Command="{Binding NextPageCommand}" Margin="8,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
-            <Button Content="⟫" Command="{Binding LastPageCommand}" Margin="4,0" Style="{StaticResource MaterialDesignOutlinedButton}"/>
-        </StackPanel>
     </Grid>
 </UserControl>

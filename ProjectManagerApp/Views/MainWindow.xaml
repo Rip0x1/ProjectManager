@@ -27,7 +27,8 @@
                     CornerRadius="6" HorizontalAlignment="Left" VerticalAlignment="Bottom" 
                     Effect="{StaticResource MaterialDesignShadowDepth2}"
                     x:Name="NotificationBorder"
-                    MaxWidth="500">
+                    MaxWidth="500"
+                    Panel.ZIndex="1000000">
                 <materialDesign:Snackbar x:Name="MainSnackbar" 
                                          Background="Transparent"
                                          Foreground="White"

@@ -40,6 +40,9 @@ namespace ProjectManagementSystem.WPF.ViewModels
         private UserItem _selectedManager;
 
         [ObservableProperty]
+        private bool _isLoading = false;
+
+        [ObservableProperty]
         private bool _isSaving = false;
 
         [ObservableProperty]
@@ -77,7 +80,19 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
         public async Task InitializeForEdit(int projectId)
         {
-            await LoadDataAsync();
+            try
+            {
+                IsLoading = true;
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ShowError($"Ошибка инициализации: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         private async Task LoadDataAsync()
@@ -123,6 +138,10 @@ namespace ProjectManagementSystem.WPF.ViewModels
             {
                 _notificationService.ShowError($"Ошибка загрузки данных: {ex.Message}");
             }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         partial void OnProjectNameChanged(string value)
@@ -137,20 +156,25 @@ namespace ProjectManagementSystem.WPF.ViewModels
 
         private void ValidateForm()
         {
-            CanSave = !string.IsNullOrWhiteSpace(ProjectName) && SelectedManager != null && !IsSaving;
+            CanSave = !string.IsNullOrWhiteSpace(ProjectName) && 
+                     ProjectName.Trim().Length >= 2 && 
+                     ProjectName.Trim().Length <= 100 &&
+                     SelectedManager != null && 
+                     !IsSaving;
         }
 
         [RelayCommand]
         private async Task SaveAsync()
         {
-            if (!CanSave) return;
+            if (!ValidateInput())
+                return;
 
             IsSaving = true;
             CanSave = false;
 
             try
             {
-                await System.Threading.Tasks.Task.Delay(1000);
+                await System.Threading.Tasks.Task.Delay(2000);
 
                 var projectDto = new CreateUpdateProjectDto
                 {
@@ -176,13 +200,97 @@ namespace ProjectManagementSystem.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                _notificationService.ShowError($"Ошибка сохранения проекта: {ex.Message}");
+                var userFriendlyMessage = GetUserFriendlyErrorMessage(ex);
+                _notificationService.ShowError(userFriendlyMessage);
             }
             finally
             {
                 IsSaving = false;
                 ValidateForm();
             }
+        }
+
+        private bool ValidateInput()
+        {
+            var errors = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(ProjectName))
+            {
+                errors.Add("Введите название проекта");
+            }
+            else if (ProjectName.Trim().Length < 2)
+            {
+                errors.Add("Название проекта должно содержать минимум 2 символа");
+            }
+            else if (ProjectName.Trim().Length > 100)
+            {
+                errors.Add("Название проекта не должно превышать 100 символов");
+            }
+
+            if (!string.IsNullOrWhiteSpace(ProjectDescription) && ProjectDescription.Trim().Length > 500)
+            {
+                errors.Add("Описание проекта не должно превышать 500 символов");
+            }
+
+            if (SelectedManager == null)
+            {
+                errors.Add("Выберите менеджера проекта");
+            }
+
+            if (Deadline.HasValue && Deadline.Value < DateTime.Today)
+            {
+                errors.Add("Срок выполнения не может быть в прошлом");
+            }
+
+            if (errors.Any())
+            {
+                _notificationService.ShowError(string.Join("\n", errors));
+                return false;
+            }
+
+            return true;
+        }
+
+        private string GetUserFriendlyErrorMessage(Exception ex)
+        {
+            var message = ex.Message.ToLower();
+
+            if (message.Contains("название") && message.Contains("уже существует"))
+            {
+                return "Проект с таким названием уже существует";
+            }
+
+            if (message.Contains("менеджер") && message.Contains("не найден"))
+            {
+                return "Выбранный менеджер не найден";
+            }
+
+            if (message.Contains("название") && message.Contains("обязательно"))
+            {
+                return "Название проекта является обязательным полем";
+            }
+
+            if (message.Contains("менеджер") && message.Contains("обязательно"))
+            {
+                return "Менеджер проекта является обязательным полем";
+            }
+
+            if (message.Contains("некорректный запрос"))
+            {
+                return "Проверьте правильность введенных данных";
+            }
+
+            if (message.Contains("ошибка сервера"))
+            {
+                return "Временная ошибка сервера. Попробуйте позже";
+            }
+
+            if (message.Contains("недостаточно прав"))
+            {
+                return "У вас недостаточно прав для выполнения этой операции";
+            }
+
+            return "Произошла ошибка при сохранении проекта. Проверьте введенные данные";
         }
     }
 }

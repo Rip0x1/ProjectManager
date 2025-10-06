@@ -73,6 +73,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
             }
             catch (Exception ex)
             {
+                _notificationService.ShowError($"Ошибка загрузки пользователей: {ex.Message}");
             }
             finally
             {
@@ -202,6 +203,7 @@ namespace ProjectManagementSystem.WPF.ViewModels
         {
             try
             {
+                IsLoading = true;
                 var result = MessageBox.Show(
                     $"Вы уверены, что хотите удалить пользователя {user.FullName}?",
                     "Подтверждение удаления",
@@ -211,13 +213,17 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 if (result == MessageBoxResult.Yes)
                 {
                     await _usersService.DeleteUserAsync(user.Id);
+                    _notificationService.ShowSuccess($"Пользователь '{user.LastName}' удален успешно!");
                     await LoadAsync();
-                    _notificationService.ShowSuccess("Пользователь удален успешно!");
                 }
             }
             catch (Exception ex)
             {
                 _notificationService.ShowError($"Ошибка удаления пользователя: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 

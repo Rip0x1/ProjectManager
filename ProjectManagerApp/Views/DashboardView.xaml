@@ -20,7 +20,7 @@
                     <StackPanel Margin="12,0,0,0">
                         <TextBlock Text="Панель управления" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
                         <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                            <TextBlock Text="Роль: " Foreground="#EDE7F6"/>
+                            <TextBlock Text="Роль: " Foreground="#EDE7F6" VerticalAlignment="Center"/>
                             <Border Background="{Binding RoleColor, Converter={StaticResource StringToBrushConverter}}" 
                                     CornerRadius="10" Padding="8,2" Margin="4,0,0,0">
                                 <TextBlock Text="{Binding RoleName}" 
@@ -307,8 +307,8 @@
 
                             <Border Background="#E3F2FD" CornerRadius="4" Padding="12" Margin="0,12,0,0">
                                 <StackPanel>
-                                    <TextBlock Text="💡 Совет дня" FontSize="14" FontWeight="SemiBold" Foreground="#1976D2" Margin="0,0,0,4"/>
-                                    <TextBlock Text="Не забывайте регулярно обновлять статус задач для актуальной статистики!" 
+                                    <TextBlock Text="🕒 Текущее время" FontSize="14" FontWeight="SemiBold" Foreground="#1976D2" Margin="0,0,0,4"/>
+                                    <TextBlock Text="{Binding CurrentDateTime}" 
                                                FontSize="12" 
                                                TextWrapping="Wrap" 
                                                Foreground="#424242"/>
