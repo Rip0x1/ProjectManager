@@ -77,13 +77,6 @@ namespace ProjectManagementSystem.API.Controllers
                         TaskId = t.TaskId,
                         AuthorId = t.AuthorId,
                         CreatedAt = t.CreatedAt,
-                        CommentUserResponceDto = new CommentUserResponceDto
-                        {
-                            Id = t.Author.Id,
-                            FirstName = t.Author.FirstName,
-                            LastName = t.Author.LastName,
-                            Email = t.Author.Email,
-                        },
                         CommentTaskReponseDto = new CommentTaskReponseDto
                         {
                             Id = t.Task.Id,
