@@ -94,6 +94,12 @@ ProjectManagementSystem/
 2. Убедитесь в корректности подключения к базе данных
 3. Проверьте логи в консоли приложения
 
+## 🚀 Фото
+<img width="1920" height="1080" alt="{558D5A38-45A1-4929-A738-433C0CA5814C}" src="https://github.com/user-attachments/assets/850f740f-a92f-4a38-9225-4afbcca8f6b2" />
+<img width="1920" height="1080" alt="{9AA7E10D-4315-469A-8E43-44773FBDA5E1}" src="https://github.com/user-attachments/assets/808ba695-8748-4298-afa2-d0bef02c5002" />
+<img width="588" height="795" alt="{FB48D0BA-72C5-4CBB-9262-787A48AF82B7}" src="https://github.com/user-attachments/assets/c55b0ded-3ceb-420d-bdc2-4ecedc254d7a" />
+
+
 ## 📄 Лицензия
 
 См. `LICENSE.txt`
