@@ -68,15 +68,6 @@ dotnet run
 - **База данных**: SQL Server
 - **Паттерн**: MVVM с Dependency Injection
 
-## 📁 Структура проекта
-
-```
-ProjectManagementSystem/
-├── ProjectManagementSystem.API/     # Web API
-├── ProjectManagementSystem.Database/ # База данных
-└── ProjectManagerApp/               # WPF клиент
-```
-
 ## 🔧 Конфигурация
 
 ### API
