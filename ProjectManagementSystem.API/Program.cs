@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectManagementSystem.Database.Data;
+using ProjectManagementSystem.Database.Entities;
+using ProjectManagementSystem.API.Utilities;
 
 namespace ProjectManagementSystem.API
 {
@@ -46,6 +48,22 @@ namespace ProjectManagementSystem.API
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 context.Database.Migrate();
+
+                if (!context.Users.Any())
+                {
+                    var adminUser = new User
+                    {
+                        FirstName = "admin",
+                        LastName = "admin",
+                        Email = "admin@admin.com",
+                        PasswordHash = PasswordHasher.HashPassword("admin123"),
+                        Role = 2,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    context.Users.Add(adminUser);
+                    context.SaveChanges();
+                }
             }
 
             if (app.Environment.IsDevelopment())

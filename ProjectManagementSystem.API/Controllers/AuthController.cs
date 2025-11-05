@@ -26,13 +26,16 @@ namespace ProjectManagementSystem.API.Controllers
                 return BadRequest(new AuthResponseDto { Message = "User with this email already exists" });
             }
 
+            var isFirstUser = !await _context.Users.AnyAsync();
+            var userRole = isFirstUser ? 2 : registerDto.Role;
+
             var user = new User
             {
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
                 Email = registerDto.Email,
                 PasswordHash = PasswordHasher.HashPassword(registerDto.Password),
-                Role = registerDto.Role,
+                Role = userRole,
                 CreatedAt = DateTime.UtcNow
             };
 

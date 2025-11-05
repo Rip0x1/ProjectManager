@@ -28,6 +28,7 @@ namespace ProjectManagementSystem.API.Controllers
                 _logger.LogInformation("Starting LARGE test data generation...");
 
                 await ClearDatabase();
+                await CreateAdminUser();
 
                 var results = new
                 {
@@ -61,6 +62,7 @@ namespace ProjectManagementSystem.API.Controllers
                 _logger.LogInformation("Starting MASSIVE test data generation...");
 
                 await ClearDatabase();
+                await CreateAdminUser();
 
                 var results = new
                 {
@@ -103,6 +105,26 @@ namespace ProjectManagementSystem.API.Controllers
 
             _logger.LogInformation("Database cleared successfully");
             return Ok("Database cleared successfully");
+        }
+
+        private async System.Threading.Tasks.Task CreateAdminUser()
+        {
+            if (!await _context.Users.AnyAsync(u => u.Email == "admin@admin.com"))
+            {
+                var adminUser = new User
+                {
+                    FirstName = "admin",
+                    LastName = "admin",
+                    Email = "admin@admin.com",
+                    PasswordHash = PasswordHasher.HashPassword("admin123"),
+                    Role = 2,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Users.Add(adminUser);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Admin user created: admin@admin.com / admin123");
+            }
         }
 
         private async Task<int> GenerateUsers(int count)
