@@ -25,7 +25,7 @@ namespace ProjectManagementSystem.API.Controllers
         {
             try
             {
-                _logger.LogInformation("Starting LARGE test data generation...");
+                _logger.LogInformation("Начало генерации LARGE тестовых данных...");
 
                 await ClearDatabase();
                 await CreateAdminUser();
@@ -39,17 +39,17 @@ namespace ProjectManagementSystem.API.Controllers
                     Comments = await GenerateComments(100000) 
                 };
 
-                _logger.LogInformation("LARGE test data generation completed");
+                _logger.LogInformation("LARGE тестовые данные успешно были загружены");
                 return Ok(new
                 {
-                    Message = "Large dataset generated successfully",
+                    Message = "LARGE данные успешно загружены",
                     Results = results,
                     TotalRecords = results.Users + results.Projects + results.ProjectUsers + results.Tasks + results.Comments
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during large data generation");
+                _logger.LogError(ex, "Ошибка генерации LARGE тестовых данных");
                 return StatusCode(500, $"Error: {ex.Message}");
             }
         }
@@ -59,7 +59,7 @@ namespace ProjectManagementSystem.API.Controllers
         {
             try
             {
-                _logger.LogInformation("Starting MASSIVE test data generation...");
+                _logger.LogInformation("Начало  генерации MASSIVE тестовых данных...");
 
                 await ClearDatabase();
                 await CreateAdminUser();
@@ -73,17 +73,17 @@ namespace ProjectManagementSystem.API.Controllers
                     Comments = await GenerateComments(200000)
                 };
 
-                _logger.LogInformation("MASSIVE test data generation completed");
+                _logger.LogInformation("MASSIVE тестовые данные успешно были загружены");
                 return Ok(new
                 {
-                    Message = "Massive dataset generated successfully",
+                    Message = "MASSIVE данные успешно загружены",
                     Results = results,
                     TotalRecords = results.Users + results.Projects + results.ProjectUsers + results.Tasks + results.Comments
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during massive data generation");
+                _logger.LogError(ex, "Ошибка генерации MASSIVE тестовых данных");
                 return StatusCode(500, $"Error: {ex.Message}");
             }
         }
@@ -91,7 +91,7 @@ namespace ProjectManagementSystem.API.Controllers
         [HttpPost("clear")]
         public async Task<ActionResult> ClearDatabase()
         {
-            _logger.LogInformation("Clearing database...");
+            _logger.LogInformation("Очистка базы данных...");
 
             _context.ChangeTracker.AutoDetectChangesEnabled = false;
 
@@ -103,8 +103,8 @@ namespace ProjectManagementSystem.API.Controllers
 
             _context.ChangeTracker.AutoDetectChangesEnabled = true;
 
-            _logger.LogInformation("Database cleared successfully");
-            return Ok("Database cleared successfully");
+            _logger.LogInformation("База данных была успешно очищена");
+            return Ok("База данных успешно очищена");
         }
 
         private async System.Threading.Tasks.Task CreateAdminUser()
@@ -123,13 +123,13 @@ namespace ProjectManagementSystem.API.Controllers
 
                 _context.Users.Add(adminUser);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Admin user created: admin@admin.com / admin123");
+                _logger.LogInformation("Администратор был создан: admin@admin.com / admin123");
             }
         }
 
         private async Task<int> GenerateUsers(int count)
         {
-            _logger.LogInformation($"Generating {count} users...");
+            _logger.LogInformation($"Генерация {count} пользователей...");
 
             var users = new List<User>();
             var userFaker = new Bogus.Faker<User>()
@@ -156,7 +156,7 @@ namespace ProjectManagementSystem.API.Controllers
                 _context.ChangeTracker.Clear();
 
                 users.AddRange(batch);
-                _logger.LogInformation($"Generated {i + batchSize}/{count} users");
+                _logger.LogInformation($"Генерация {i + batchSize}/{count} пользователей");
             }
 
             return users.Count;
@@ -164,7 +164,7 @@ namespace ProjectManagementSystem.API.Controllers
 
         private async Task<int> GenerateProjects(int count)
         {
-            _logger.LogInformation($"Generating {count} projects...");
+            _logger.LogInformation($"Генерация {count} проектов...");
 
             var users = await _context.Users.ToListAsync();
             var managers = users.Where(u => u.Role >= 1).ToList();
@@ -190,7 +190,7 @@ namespace ProjectManagementSystem.API.Controllers
 
                 _context.ChangeTracker.Clear();
                 projects.AddRange(batch);
-                _logger.LogInformation($"Generated {i + batchSize}/{count} projects");
+                _logger.LogInformation($"Генерация {i + batchSize}/{count} проектов");
             }
 
             return projects.Count;

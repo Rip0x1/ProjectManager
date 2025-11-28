@@ -23,7 +23,7 @@ namespace ProjectManagementSystem.API.Controllers
         {
             if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
             {
-                return BadRequest(new AuthResponseDto { Message = "User with this email already exists" });
+                return BadRequest(new AuthResponseDto { Message = "Данный email уже используется" });
             }
 
             var isFirstUser = !await _context.Users.AnyAsync();
@@ -49,7 +49,7 @@ namespace ProjectManagementSystem.API.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Role = user.Role,
-                Message = "User registered successfully"
+                Message = "Регистрация пользователя прошла успешно"
             });
         }
 
@@ -60,12 +60,12 @@ namespace ProjectManagementSystem.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized(new AuthResponseDto { Message = "Invalid email or password" });
+                return Unauthorized(new AuthResponseDto { Message = "Неверный email или пароль" });
             }
 
             if (!PasswordHasher.VerifyPassword(loginDto.Password, user.PasswordHash))
             {
-                return Unauthorized(new AuthResponseDto { Message = "Invalid email or password" });
+                return Unauthorized(new AuthResponseDto { Message = "Неверный email или пароль" });
             }
 
             return Ok(new AuthResponseDto
@@ -75,7 +75,7 @@ namespace ProjectManagementSystem.API.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Role = user.Role,
-                Message = "Login successful"
+                Message = "Авторизация прошла успешно"
             });
         }
     }

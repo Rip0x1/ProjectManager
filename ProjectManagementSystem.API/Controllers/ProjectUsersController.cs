@@ -101,7 +101,7 @@ namespace ProjectManagementSystem.API.Controllers
 
             if (existing != null)
             {
-                return Conflict("User is already assigned to this project");
+                return Conflict("Пользователь уже присоединен к данному проекту");
             }
 
             _context.ProjectUsers.Add(projectUser);
