@@ -29,7 +29,7 @@ namespace ProjectManagementSystem.API.Controllers
             {
                 _logger.LogInformation("Начало генерации малого набора данных (100 записей)...");
 
-                await ClearDatabase();
+                await WipeDatabaseKeepAdminAsync();
                 await CreateAdminUser();
 
                 var results = new
@@ -63,7 +63,7 @@ namespace ProjectManagementSystem.API.Controllers
             {
                 _logger.LogInformation("Начало генерации среднего набора данных (1 000 записей)...");
 
-                await ClearDatabase();
+                await WipeDatabaseKeepAdminAsync();
                 await CreateAdminUser();
 
                 var results = new
@@ -97,7 +97,7 @@ namespace ProjectManagementSystem.API.Controllers
             {
                 _logger.LogInformation("Начало генерации набора данных (10 000 записей)...");
 
-                await ClearDatabase();
+                await WipeDatabaseKeepAdminAsync();
                 await CreateAdminUser();
 
                 var results = new
@@ -131,7 +131,7 @@ namespace ProjectManagementSystem.API.Controllers
             {
                 _logger.LogInformation("Начало генерации набора данных (20 000 записей)...");
 
-                await ClearDatabase();
+                await WipeDatabaseKeepAdminAsync();
                 await CreateAdminUser();
 
                 var results = new
@@ -165,7 +165,7 @@ namespace ProjectManagementSystem.API.Controllers
             {
                 _logger.LogInformation("Начало генерации набора данных (50 000 записей)...");
 
-                await ClearDatabase();
+                await WipeDatabaseKeepAdminAsync();
                 await CreateAdminUser();
 
                 var results = new
@@ -199,7 +199,7 @@ namespace ProjectManagementSystem.API.Controllers
             {
                 _logger.LogInformation("Начало генерации набора данных (100 000 записей)...");
 
-                await ClearDatabase();
+                await WipeDatabaseKeepAdminAsync();
                 await CreateAdminUser();
 
                 var results = new
@@ -230,19 +230,29 @@ namespace ProjectManagementSystem.API.Controllers
         public async Task<ActionResult> ClearDatabase()
         {
             _logger.LogInformation("Очистка базы данных...");
+            await WipeDatabaseKeepAdminAsync();
+            await CreateAdminUser();
+            _logger.LogInformation("База данных была успешно очищена, администратор сохранён");
+            return Ok("База данных успешно очищена, учётная запись admin сохранена");
+        }
 
+        private async System.Threading.Tasks.Task WipeDatabaseKeepAdminAsync()
+        {
             _context.ChangeTracker.AutoDetectChangesEnabled = false;
+            _context.ChangeTracker.Clear();
 
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM CommentAttachments");
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM Comments");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM TaskAttachments");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM TaskAssignees");
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM Tasks");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM ProjectAttachments");
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM ProjectUsers");
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM Projects");
-            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Users");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM AuditLogs");
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM Users WHERE [Login] <> N'admin'");
 
             _context.ChangeTracker.AutoDetectChangesEnabled = true;
-
-            _logger.LogInformation("База данных была успешно очищена");
-            return Ok("База данных успешно очищена");
         }
 
         private async System.Threading.Tasks.Task CreateAdminUser()
@@ -483,7 +493,7 @@ namespace ProjectManagementSystem.API.Controllers
             {
                 _logger.LogInformation("Начало генерации тестовых данных для проверки...");
 
-                await ClearDatabase();
+                await WipeDatabaseKeepAdminAsync();
                 await CreateAdminUser();
 
                 var results = new

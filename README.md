@@ -89,9 +89,9 @@ docker compose up -d --build
 Логин: `admin`  
 Пароль: `admin123`
 
-## Генерация данных
+## Генерация и очистка данных
 
-Эндпоинты только `POST`. В браузере открывать бессмысленно. Каждый вызов **очищает базу** и заново создаёт `admin` / `admin123`.
+Эндпоинты только `POST`. В браузере открывать бессмысленно. Генерация сначала удаляет все данные, **кроме** пользователя `admin` (пароль не сбрасывается, если его уже меняли). Если `admin` отсутствует, он создаётся как `admin` / `admin123`.
 
 | Набор | URL |
 | --- | --- |
@@ -107,6 +107,14 @@ docker compose up -d --build
 ```powershell
 Invoke-RestMethod -Method Post -Uri "http://localhost:7260/api/DataGenerator/generate-medium"
 ```
+
+Очистить все данные, оставив только `admin`:
+
+```powershell
+Invoke-RestMethod -Method Post -Uri "http://localhost:7260/api/DataGenerator/clear"
+```
+
+Если пароль админа уже меняли, он останется прежним. Если записи `admin` нет, она создастся заново (`admin` / `admin123`).
 
 ## API
 
@@ -147,4 +155,44 @@ docker compose up -d
 
 `docker compose down` без `-v` данные сохраняет.
 
+Чтобы убрать проекты, задачи и пользователей, но оставить админа, используйте `POST /api/DataGenerator/clear`, а не `docker compose down -v`.
+
 Локальный `appsettings.json` API с LocalDB (`TaskMasterDB2`) для Docker-сценария не используется: строка подключения задаётся в `docker-compose.yml`.
+
+## Перенос Docker на другой компьютер
+
+На втором ПК нужен только Docker (Docker Desktop на Windows или Docker Engine на Ubuntu). Исходники клиента и Visual Studio там не обязательны.
+
+### Что собрать на этом ПК
+
+```powershell
+docker compose build
+docker pull mcr.microsoft.com/mssql/server:2022-latest
+docker save -o pms-images.tar pms-api:latest mcr.microsoft.com/mssql/server:2022-latest
+```
+
+На флешку или в архив положите два файла:
+
+| Файл | Зачем |
+| --- | --- |
+| `pms-images.tar` | готовые образы API и SQL Server |
+| `docker-compose.yml` | как запускать контейнеры |
+
+`Dockerfile` и код API на второй машине не нужны, если образы уже собраны здесь. Клиент (WPF) переносится отдельно, если им будут пользоваться с того же ПК.
+
+### Что сделать на втором ПК
+
+1. Установить Docker.
+2. Скопировать `pms-images.tar` и `docker-compose.yml` в одну папку.
+3. Загрузить образы и запустить:
+
+```powershell
+docker load -i pms-images.tar
+docker compose up -d
+```
+
+Без `--build`: образы уже в tar. API будет на `http://localhost:7260`.
+
+Клиенту на любом ПК в `appsettings.json` указать адрес той машины, где крутится Docker, например `http://192.168.1.20:7260/api/`.
+
+Если на втором ПК нет интернета, `pull_policy: missing` не будет качать слои заново — достаточно загруженного tar.
