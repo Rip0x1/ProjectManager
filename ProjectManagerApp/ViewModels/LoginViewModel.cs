@@ -200,30 +200,6 @@ namespace ProjectManagementSystem.WPF.ViewModels
             Application.Current.Shutdown();
         }
 
-        [RelayCommand]
-        private async void UseDemoUser()
-        {
-            try
-            {
-                Login = "admin";
-                Password = "admin123";
-                PasswordChanged?.Invoke(Password);
-
-            }
-            catch (System.Exception ex)
-            {
-                if (ex.Message.Contains("Ошибка при загрузке данных"))
-                {
-                    IsLoginInvalid = true;
-                    IsPasswordInvalid = true;
-                }
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
         partial void OnLoginChanged(string value)
         {
             IsLoginInvalid = false;

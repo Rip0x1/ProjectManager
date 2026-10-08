@@ -86,7 +86,7 @@
                                             <TextBlock Text="{Binding FullName}" 
                                                        FontWeight="SemiBold" FontSize="14"
                                                        Foreground="{DynamicResource MaterialDesignBody}"/>
-                                            <TextBlock Text="{Binding Email}" 
+                                            <TextBlock Text="{Binding Login}" 
                                                        FontSize="12" Margin="0,2,0,0"
                                                        Foreground="{DynamicResource MaterialDesignBodyLight}"/>
                                             <TextBlock Text="{Binding JoinedAtText}" 

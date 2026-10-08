@@ -32,7 +32,7 @@ namespace ProjectManagementSystem.WPF.Views
                 Id = log.Id;
                 TimestampText = log.TimestampText;
                 UserDisplay = log.UserDisplay;
-                UserEmail = string.IsNullOrWhiteSpace(log.UserEmail) ? "—" : log.UserEmail;
+                UserLogin = string.IsNullOrWhiteSpace(log.UserLogin) ? "—" : log.UserLogin;
                 ActionText = log.ActionText;
                 EntityTypeText = log.EntityTypeText;
                 EntityIdText = log.EntityIdText;
@@ -43,7 +43,7 @@ namespace ProjectManagementSystem.WPF.Views
             public int Id { get; }
             public string TimestampText { get; }
             public string UserDisplay { get; }
-            public string UserEmail { get; }
+            public string UserLogin { get; }
             public string ActionText { get; }
             public string EntityTypeText { get; }
             public string EntityIdText { get; }

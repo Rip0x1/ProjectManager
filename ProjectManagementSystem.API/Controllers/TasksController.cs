@@ -509,7 +509,7 @@ namespace ProjectManagementSystem.API.Controllers
             }
         }
 
-        private static string FormatPersonName(string? firstName, string? lastName, string? email, int userId)
+        private static string FormatPersonName(string? firstName, string? lastName, string? login, int userId)
         {
             var fullName = $"{firstName} {lastName}".Trim();
             if (!string.IsNullOrEmpty(fullName))
@@ -517,7 +517,7 @@ namespace ProjectManagementSystem.API.Controllers
                 return fullName;
             }
 
-            return string.IsNullOrEmpty(email) ? $"Пользователь #{userId}" : email;
+            return string.IsNullOrEmpty(login) ? $"Пользователь #{userId}" : login;
         }
 
         private static TaskResponseDto MapTask(Task t, bool includeAttachments = false)

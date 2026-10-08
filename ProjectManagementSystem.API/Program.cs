@@ -104,7 +104,7 @@ namespace ProjectManagementSystem.API
                     context.Database.Migrate();
                 }
 
-                if (!context.Users.Any())
+                if (!context.Users.Any(u => u.Login == "admin"))
                 {
                     var adminUser = new User
                     {

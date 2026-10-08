@@ -84,8 +84,8 @@
                         <TextBlock Text="Логин *" Style="{StaticResource LabelStyle}"/>
                         <TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"
                              materialDesign:HintAssist.Hint="user@example.com"
-                             helpers:TextBoxInputRestriction.Kind="Email"
-                             ToolTip="{x:Static helpers:InputFieldHints.Email}"
+                             helpers:TextBoxInputRestriction.Kind="Login"
+                             ToolTip="{x:Static helpers:InputFieldHints.Login}"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}"
                              FontSize="14"
                              Margin="0,0,0,20"/>

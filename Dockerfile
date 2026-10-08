@@ -11,7 +11,7 @@ COPY ProjectManagementSystem.Database/ProjectManagementSystem.Database.csproj Pr
 COPY ProjectManagementSystem.API/ProjectManagementSystem.API.csproj ProjectManagementSystem.API/
 RUN --network=host \
     --mount=type=bind,from=nuget,target=/root/.nuget/packages,readonly \
-    dotnet restore ProjectManagementSystem.API/ProjectManagementSystem.API.csproj --disable-parallel
+    dotnet restore --disable-parallel --ignore-failed-sources ProjectManagementSystem.API/ProjectManagementSystem.API.csproj
 COPY ProjectManagementSystem.Database/ ProjectManagementSystem.Database/
 COPY ProjectManagementSystem.API/ ProjectManagementSystem.API/
 RUN --mount=type=bind,from=nuget,target=/root/.nuget/packages,readonly \

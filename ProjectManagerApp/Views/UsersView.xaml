@@ -156,7 +156,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn x:Name="ColId" Header="ID пользователя" Binding="{Binding Id}" SortMemberPath="Id" Width="Auto" MinWidth="88"/>
                     <DataGridTextColumn x:Name="ColFullName" Header="ФИО" Binding="{Binding FullName}" SortMemberPath="FullName" Width="*" MinWidth="140"/>
-                    <DataGridTextColumn x:Name="ColEmail" Header="Email" Binding="{Binding Email}" SortMemberPath="Email" Width="1.2*" MinWidth="160"/>
+                    <DataGridTextColumn x:Name="ColLogin" Header="Логин" Binding="{Binding Login}" SortMemberPath="Login" Width="1.2*" MinWidth="160"/>
                     <DataGridTemplateColumn x:Name="ColRole" Header="Роль" SortMemberPath="Role" Width="Auto" MinWidth="110">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

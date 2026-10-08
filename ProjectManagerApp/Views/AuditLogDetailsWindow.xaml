@@ -76,8 +76,8 @@
                         <TextBlock Grid.Row="0" Grid.Column="2" Text="Кто" FontWeight="SemiBold" Margin="0,0,0,10"/>
                         <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding UserDisplay}" Margin="0,0,0,10" TextWrapping="Wrap"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Email" FontWeight="SemiBold" Margin="0,0,0,10"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding UserEmail}" Margin="0,0,12,10" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Логин" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding UserLogin}" Margin="0,0,12,10" TextWrapping="Wrap"/>
                         <TextBlock Grid.Row="1" Grid.Column="2" Text="Действие" FontWeight="SemiBold" Margin="0,0,0,10"/>
                         <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding ActionText}" Margin="0,0,0,10"/>
 

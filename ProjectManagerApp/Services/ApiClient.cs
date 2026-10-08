@@ -17,7 +17,7 @@ namespace ProjectManagementSystem.WPF.Services
             var baseUrl = configuration["ApiBaseUrl"];
             if (string.IsNullOrWhiteSpace(baseUrl))
             {
-                baseUrl = "https://localhost:7260/api/";
+                baseUrl = "http://localhost:7260/api/";
             }
             if (!baseUrl.EndsWith("/", StringComparison.Ordinal))
             {

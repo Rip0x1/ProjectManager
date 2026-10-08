@@ -53,6 +53,10 @@ namespace ProjectManagementSystem.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (await _context.Users.AnyAsync(u => u.Login == dto.Login))
+            {
+                return BadRequest(new { Message = "Данный логин уже используется" });
+            }
 
             var user = new User
             {
@@ -96,6 +100,11 @@ namespace ProjectManagementSystem.API.Controllers
             if (user == null)
             {
                 return NotFound();
+            }
+
+            if (await _context.Users.AnyAsync(u => u.Login == dto.Login && u.Id != id))
+            {
+                return BadRequest(new { Message = "Данный логин уже используется" });
             }
 
             user.FirstName = dto.FirstName;

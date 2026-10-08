@@ -172,10 +172,10 @@
                                  Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}"
                                  materialDesign:HintAssist.IsFloating="True"
                                  Margin="0,0,0,12"/>
-                        <TextBox materialDesign:HintAssist.Hint="user@example.com"
-                                 helpers:TextBoxInputRestriction.Kind="Email"
-                                 ToolTip="{x:Static helpers:InputFieldHints.Email}"
-                                 Text="{Binding RegisterEmail, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox materialDesign:HintAssist.Hint="Логин"
+                                 helpers:TextBoxInputRestriction.Kind="Login"
+                                 ToolTip="{x:Static helpers:InputFieldHints.Login}"
+                                 Text="{Binding RegisterLogin, UpdateSourceTrigger=PropertyChanged}"
                                  materialDesign:HintAssist.IsFloating="True"
                                  Margin="0,0,0,12"/>
                         <Grid Margin="0,0,0,12">
@@ -284,20 +284,6 @@
                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Margin="0,0,0,16"
                         Height="4"/>
-
-                    <Expander Header="Тестовые аккаунты" Margin="0,24,0,0" ExpandDirection="Down"
-                              Visibility="{Binding IsLoginMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <ScrollViewer>
-                            <StackPanel>
-                                <Button Content="User (admin@admin.com)"
-                           Command="{Binding UseDemoUserCommand}"
-                           Style="{StaticResource MaterialDesignOutlinedButton}"
-                           Foreground="{StaticResource PrimaryBrush}"
-                           Height="36"
-                           Margin="0,4"/>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Expander>
                 </StackPanel>
             </Border>
         </Grid>
