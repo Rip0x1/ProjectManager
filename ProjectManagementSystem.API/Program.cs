@@ -22,7 +22,7 @@ namespace ProjectManagementSystem.API
                 logsPath = Path.Combine(builder.Environment.ContentRootPath, "logs");
             }
             Directory.CreateDirectory(logsPath);
-            builder.Logging.AddProvider(new FileLoggerProvider(logsPath));
+            builder.Services.AddSingleton(new AuditFileWriter(logsPath));
 
             builder.Services.AddControllers()
                 .AddJsonOptions(opts =>
@@ -62,13 +62,6 @@ namespace ProjectManagementSystem.API
             var app = builder.Build();
 
             app.UseCors("AllowAll");
-            app.Use(async (context, next) =>
-            {
-                var logger = context.RequestServices.GetRequiredService<ILoggerFactory>().CreateLogger("HTTP");
-                logger.LogInformation("{Method} {Path} from {IP}", context.Request.Method, context.Request.Path, context.Connection.RemoteIpAddress);
-                await next();
-                logger.LogInformation("{Method} {Path} => {Status}", context.Request.Method, context.Request.Path, context.Response.StatusCode);
-            });
             app.UseMiddleware<CurrentUserMiddleware>();
 
             var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using ProjectManagementSystem.API.Logging;
 using ProjectManagementSystem.API.Utilities;
 using ProjectManagementSystem.Database.Entities;
 using TaskEntity = ProjectManagementSystem.Database.Entities.Task;
@@ -21,18 +22,22 @@ namespace ProjectManagementSystem.API.Services
 
         private readonly ICurrentRequestUser _currentUser;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AuditFileWriter _auditFileWriter;
         private readonly List<(AuditLog Log, object Entity)> _addedLogs = new();
+        private readonly List<AuditLog> _pendingFileLogs = new();
         private bool _isPatchingIds;
 
-        public AuditSaveChangesInterceptor(ICurrentRequestUser currentUser, IHttpContextAccessor httpContextAccessor)
+        public AuditSaveChangesInterceptor(ICurrentRequestUser currentUser, IHttpContextAccessor httpContextAccessor, AuditFileWriter auditFileWriter)
         {
             _currentUser = currentUser;
             _httpContextAccessor = httpContextAccessor;
+            _auditFileWriter = auditFileWriter;
         }
 
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
         {
             WriteAudit(eventData.Context);
+            CollectPendingFileLogs(eventData.Context);
             return base.SavingChanges(eventData, result);
         }
 
@@ -42,6 +47,7 @@ namespace ProjectManagementSystem.API.Services
             CancellationToken cancellationToken = default)
         {
             WriteAudit(eventData.Context);
+            CollectPendingFileLogs(eventData.Context);
             return base.SavingChangesAsync(eventData, result, cancellationToken);
         }
 
@@ -50,6 +56,7 @@ namespace ProjectManagementSystem.API.Services
             if (!_isPatchingIds)
             {
                 PatchAddedEntityIds(eventData.Context);
+                FlushAuditFile();
             }
 
             return base.SavedChanges(eventData, result);
@@ -63,9 +70,36 @@ namespace ProjectManagementSystem.API.Services
             if (!_isPatchingIds)
             {
                 await PatchAddedEntityIdsAsync(eventData.Context, cancellationToken);
+                FlushAuditFile();
             }
 
             return await base.SavedChangesAsync(eventData, result, cancellationToken);
+        }
+
+        private void CollectPendingFileLogs(DbContext? context)
+        {
+            if (context == null || _isPatchingIds)
+            {
+                return;
+            }
+
+            foreach (var entry in context.ChangeTracker.Entries<AuditLog>())
+            {
+                if (entry.State == EntityState.Added && !_pendingFileLogs.Contains(entry.Entity))
+                {
+                    _pendingFileLogs.Add(entry.Entity);
+                }
+            }
+        }
+
+        private void FlushAuditFile()
+        {
+            foreach (var log in _pendingFileLogs)
+            {
+                _auditFileWriter.Write(log);
+            }
+
+            _pendingFileLogs.Clear();
         }
 
         private void WriteAudit(DbContext? context)
