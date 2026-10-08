@@ -1,0 +1,145 @@
+<Window x:Class="ProjectManagementSystem.WPF.Views.UserDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Детали пользователя"
+        WindowStartupLocation="CenterOwner"
+        MinWidth="560" MinHeight="480"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="CanResizeWithGrip"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <Grid Margin="12">
+        <Border Style="{StaticResource DetailWindowRootBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Style="{StaticResource DetailWindowHeaderBorder}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="AccountCircle" Width="28" Height="28" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="Детали пользователя" Style="{StaticResource DetailWindowHeaderTitle}" Margin="12,0,0,0"/>
+                        <Button Grid.Column="2"
+                                x:Name="CloseButton"
+                                Click="CloseButton_Click"
+                                Style="{StaticResource MaterialDesignIconButton}"
+                                Width="32" Height="32"
+                                ToolTip="Закрыть">
+                            <materialDesign:PackIcon Kind="Close" Foreground="White" Width="20" Height="20"/>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20,16,20,8">
+                    <StackPanel>
+                        <Border Style="{StaticResource DetailSectionCard}">
+                            <StackPanel>
+                                <TextBlock Text="Основная информация" Style="{StaticResource DetailSectionTitle}"/>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Имя" Style="{StaticResource DetailFieldLabel}"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CurrentUser.FullName}" Style="{StaticResource DetailFieldValue}" FontWeight="SemiBold"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Логин" Style="{StaticResource DetailFieldLabel}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentUser.Login}" Style="{StaticResource DetailFieldValue}"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Роль" Style="{StaticResource DetailFieldLabel}"/>
+                                    <Border Grid.Row="2" Grid.Column="1"
+                                            Style="{StaticResource DetailStatusBadge}"
+                                            Background="{Binding CurrentUser.RoleColor}">
+                                        <TextBlock Text="{Binding CurrentUser.RoleText}" Style="{StaticResource DetailStatusBadgeText}"/>
+                                    </Border>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Дата регистрации" Style="{StaticResource DetailFieldLabel}"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CurrentUser.CreatedAtText}" Style="{StaticResource DetailFieldValue}"/>
+
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="ID" Style="{StaticResource DetailFieldLabel}"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding CurrentUser.Id}" Style="{StaticResource DetailFieldValue}" Foreground="#9E9E9E"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource DetailSectionCard}" Margin="0">
+                            <StackPanel>
+                                <TextBlock Text="Статистика активности" Style="{StaticResource DetailSectionTitle}"/>
+                                <WrapPanel>
+                                    <Border Style="{StaticResource DetailMiniStatCard}" Cursor="Hand" ToolTip="Открыть проекты пользователя">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding ViewProjectsCommand}"/>
+                                        </Border.InputBindings>
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="FolderOpen" Width="22" Height="22" Foreground="#5E35B1" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding CurrentUser.ManagedProjectsCount}" Style="{StaticResource DetailMiniStatValue}" Foreground="#5E35B1" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="Проектов" Style="{StaticResource DetailMiniStatLabel}" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource DetailMiniStatCard}" Cursor="Hand" ToolTip="Открыть созданные задачи">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding ViewAuthoredTasksCommand}"/>
+                                        </Border.InputBindings>
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="Pencil" Width="22" Height="22" Foreground="#1976D2" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding CurrentUser.AuthoredTasksCount}" Style="{StaticResource DetailMiniStatValue}" Foreground="#1976D2" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="Создано задач" Style="{StaticResource DetailMiniStatLabel}" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource DetailMiniStatCard}" Cursor="Hand" ToolTip="Открыть назначенные задачи">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding ViewAssignedTasksCommand}"/>
+                                        </Border.InputBindings>
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="ClipboardCheck" Width="22" Height="22" Foreground="#E65100" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding CurrentUser.AssignedTasksCount}" Style="{StaticResource DetailMiniStatValue}" Foreground="#E65100" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="Назначено" Style="{StaticResource DetailMiniStatLabel}" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource DetailMiniStatCard}" Cursor="Hand" ToolTip="Открыть комментарии пользователя">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick" Command="{Binding ViewCommentsCommand}"/>
+                                        </Border.InputBindings>
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="CommentText" Width="22" Height="22" Foreground="#00897B" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding CurrentUser.CommentsCount}" Style="{StaticResource DetailMiniStatValue}" Foreground="#00897B" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="Комментариев" Style="{StaticResource DetailMiniStatLabel}" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Border Grid.Row="2" Style="{StaticResource DetailWindowFooterBorder}">
+                    <Button Content="Закрыть"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            HorizontalAlignment="Right"
+                            MinWidth="120"
+                            MinHeight="40"
+                            Click="CloseButton_Click"/>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

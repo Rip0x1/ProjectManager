@@ -1,0 +1,147 @@
+﻿<Window x:Class="ProjectManagementSystem.WPF.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:ProjectManagementSystem.WPF.Views"
+        xmlns:myViews="clr-namespace:ProjectManagerApp.Views"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:ProjectManagementSystem.WPF.Converters"
+        mc:Ignorable="d"
+        Title="Система управления проектами" Height="600" Width="1000"
+        WindowStyle="None" ResizeMode="CanResize"
+        Background="White">
+
+    <Window.Resources>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+
+    <Border x:Name="WindowRootBorder" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" SnapsToDevicePixels="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Border Grid.Row="1" Margin="20,0,0,5" 
+                    CornerRadius="6" HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+                    Effect="{StaticResource MaterialDesignShadowDepth2}"
+                    x:Name="NotificationBorder"
+                    MaxWidth="500"
+                    Panel.ZIndex="1000000">
+                <materialDesign:Snackbar x:Name="MainSnackbar" 
+                                         Background="Transparent"
+                                         Foreground="White"
+                                         FontSize="12"
+                                         FontWeight="Medium"
+                                         HorizontalContentAlignment="Center"/>
+            </Border>
+
+            <Grid Grid.Row="0" Background="{StaticResource PrimaryBrush}"
+                  MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,16,0">
+                    <materialDesign:PackIcon Kind="ViewDashboard" Foreground="White" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="Система управления проектами"
+                               VerticalAlignment="Center"
+                               Foreground="White"
+                               FontWeight="SemiBold"
+                               Margin="8,0,0,0"
+                               TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,12,0">
+                    <materialDesign:PackIcon Kind="Account" Foreground="White" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="Здравствуйте, " Foreground="White" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding CurrentUserNameText}" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="160"/>
+                    <TextBlock Text=". Вы авторизовались как " Foreground="White" Margin="4,0,4,0" VerticalAlignment="Center"/>
+                    <Border Background="{Binding CurrentUserRoleColor, Converter={StaticResource StringToBrushConverter}}"
+                            CornerRadius="10" Padding="8,2" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding CurrentUserRoleName}"
+                                   Foreground="White"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"/>
+                    </Border>
+                </StackPanel>
+
+                <Button Grid.Column="2" Width="50" Height="32" Margin="0,0,4,0"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        ToolTip="Свернуть" Click="Minimize_Click">
+                    <materialDesign:PackIcon Kind="WindowMinimize" Foreground="White"/>
+                </Button>
+                <Button Grid.Column="3" Width="50" Height="32" Margin="0,0,4,0"
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        ToolTip="Развернуть/Восстановить" Click="MaximizeRestore_Click">
+                    <materialDesign:PackIcon x:Name="MaximizeRestoreIcon" Kind="WindowMaximize" Foreground="White"/>
+                </Button>
+                <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <Button Width="100" Height="32" Margin="0,0,8,0"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Foreground="White"
+                            ToolTip="Выйти из аккаунта" Click="Logout_Click">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Logout" Foreground="White"/>
+                            <TextBlock Text="Выйти" Margin="6,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Width="50" Height="32"
+                            Background="#E53935" Foreground="White"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            ToolTip="Закрыть" Click="Close_Click">
+                        <materialDesign:PackIcon Kind="Close"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <TabControl x:Name="TabControl">
+                    <TabItem Header="Панель">
+                        <views:DashboardView/>
+                    </TabItem>
+                    <TabItem Header="Проекты">
+                        <views:ProjectsView/>
+                    </TabItem>
+                    <TabItem Header="Мои проекты">
+                        <myViews:MyProjectsView/>
+                    </TabItem>
+                    <TabItem Header="Задачи">
+                        <views:TasksView/>
+                    </TabItem>
+                    <TabItem Header="Пользователи">
+                        <views:UsersView/>
+                    </TabItem>
+                    <TabItem Header="Логи"
+                             Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <views:AuditLogsView/>
+                    </TabItem>
+                </TabControl>
+
+                <Border Background="#80000000" 
+                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Panel.ZIndex="1000">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ProgressBar IsIndeterminate="True" 
+                                   Width="150" Height="10"
+                                   Foreground="{DynamicResource MaterialDesignShadowBrush}"
+                                   Margin="0,0,0,5"/>
+                        <TextBlock Text="Загрузка данных..." 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

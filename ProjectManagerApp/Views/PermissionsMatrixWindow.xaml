@@ -1,0 +1,171 @@
+<Window x:Class="ProjectManagementSystem.WPF.Views.PermissionsMatrixWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Таблица прав доступа"
+        WindowStartupLocation="CenterOwner"
+        Width="1100" Height="820"
+        MinWidth="920" MinHeight="560"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="CanResizeWithGrip"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <Style x:Key="MatrixCellTextStyle" TargetType="TextBlock" BasedOn="{StaticResource DataGridCellTextStyle}">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="TextWrapping" Value="NoWrap"/>
+        </Style>
+
+        <Style x:Key="MatrixDataGridCellStyle" TargetType="DataGridCell" BasedOn="{StaticResource AppDataGridCellStyle}">
+            <Setter Property="Padding" Value="8,0"/>
+        </Style>
+
+        <Style x:Key="MatrixDataGridColumnHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource AppDataGridColumnHeaderStyle}">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="8,0"/>
+        </Style>
+
+        <Style x:Key="MatrixDataGridRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource AppDataGridRowStyle}">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="MinHeight" Value="32"/>
+        </Style>
+
+        <Style x:Key="MatrixDataGridStyle" TargetType="DataGrid" BasedOn="{StaticResource AppDataGridStyle}">
+            <Setter Property="RowHeight" Value="32"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="CanUserSortColumns" Value="False"/>
+            <Setter Property="EnableRowVirtualization" Value="False"/>
+            <Setter Property="CellStyle" Value="{StaticResource MatrixDataGridCellStyle}"/>
+            <Setter Property="ColumnHeaderStyle" Value="{StaticResource MatrixDataGridColumnHeaderStyle}"/>
+            <Setter Property="RowStyle" Value="{StaticResource MatrixDataGridRowStyle}"/>
+        </Style>
+
+        <Style x:Key="MatrixAccessTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Border Style="{StaticResource DetailWindowRootBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Style="{StaticResource DetailWindowHeaderBorder}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="ShieldAccount" Width="28" Height="28" Foreground="White" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Таблица прав доступа" Style="{StaticResource DetailWindowHeaderTitle}"/>
+                            <TextBlock Text="Сводка возможностей по ролям в системе"
+                                       Foreground="#EDE7F6"
+                                       FontSize="12"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Click="CloseButton_Click"
+                                Style="{StaticResource MaterialDesignIconButton}"
+                                Width="32" Height="32"
+                                ToolTip="Закрыть">
+                            <materialDesign:PackIcon Kind="Close" Foreground="White" Width="20" Height="20"/>
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1"
+                        Background="#F3E5F5"
+                        Margin="16,12,16,0"
+                        CornerRadius="8"
+                        Padding="10,6"
+                        BorderBrush="#E4DCEF"
+                        BorderThickness="1">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Information" Width="16" Height="16"
+                                                 Foreground="#5E35B1" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="RoleInfoText"
+                                   FontSize="11"
+                                   Foreground="#424242"
+                                   VerticalAlignment="Center"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="2"
+                        x:Name="GridHost"
+                        Style="{StaticResource AppDataGridHostBorder}"
+                        Margin="16,10,16,0"
+                        Padding="4">
+                    <DataGrid x:Name="PermissionsGrid"
+                              Style="{StaticResource MatrixDataGridStyle}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              ColumnWidth="*"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.CanContentScroll="True">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridTextColumn" BasedOn="{StaticResource AppDataGridTextColumnStyle}">
+                                <Setter Property="ElementStyle" Value="{StaticResource MatrixCellTextStyle}"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Раздел" Binding="{Binding Category}" Width="96" MinWidth="88"/>
+                            <DataGridTextColumn Header="Действие" Binding="{Binding Action}" Width="1.35*" MinWidth="130"/>
+                            <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="1.8*" MinWidth="160"/>
+                            <DataGridTemplateColumn x:Name="ColUser" Header="Пользователь" Width="118" MinWidth="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding UserAccess}" Style="{StaticResource MatrixAccessTextStyle}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn x:Name="ColManager" Header="Менеджер" Width="138" MinWidth="118">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding ManagerAccess}" Style="{StaticResource MatrixAccessTextStyle}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn x:Name="ColAdmin" Header="Администратор" Width="118" MinWidth="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding AdminAccess}" Style="{StaticResource MatrixAccessTextStyle}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+
+                <Border Grid.Row="3" Style="{StaticResource DetailWindowFooterBorder}">
+                    <Button Content="Закрыть"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            HorizontalAlignment="Right"
+                            MinWidth="120"
+                            MinHeight="36"
+                            Click="CloseButton_Click"/>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

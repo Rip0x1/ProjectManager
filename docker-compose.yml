@@ -1,0 +1,48 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    pull_policy: missing
+    platform: linux/amd64
+    container_name: pms-mssql
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: Pms_Sql_2026!Strong
+      MSSQL_PID: Express
+    volumes:
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"Pms_Sql_2026!Strong\" -Q \"SELECT 1\" -b -o /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 45s
+
+  api:
+    image: pms-api:latest
+    pull_policy: missing
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+      additional_contexts:
+        nuget: .nuget-packages
+    container_name: pms-api
+    restart: unless-stopped
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      LogsPath: /app/logs
+      ConnectionStrings__DefaultConnection: "Server=mssql,1433;Database=TaskMasterDB2;User Id=sa;Password=Pms_Sql_2026!Strong;TrustServerCertificate=True;Encrypt=False;MultipleActiveResultSets=True"
+    ports:
+      - "7260:8080"
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+
+volumes:
+  mssql_data:

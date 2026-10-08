@@ -1,0 +1,241 @@
+<Window x:Class="ProjectManagerApp.Views.ProjectCommentsViewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:ProjectManagementSystem.WPF.Converters"
+        xmlns:helpers="clr-namespace:ProjectManagementSystem.WPF.Helpers"
+        Title="Комментарии к проекту" 
+        MinWidth="860" MinHeight="640"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="CanResizeWithGrip">
+    
+    <Window.Resources>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    
+    <Border Background="{DynamicResource MaterialDesignPaper}"
+            CornerRadius="8"
+            Effect="{StaticResource MaterialDesignElevationShadow4}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="{DynamicResource PrimaryHueMidBrush}" 
+                    CornerRadius="8,8,0,0" Height="50">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                        <materialDesign:PackIcon Kind="CommentMultiple" Width="24" Height="24" 
+                                               Foreground="{DynamicResource MaterialDesignBody}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="Комментарии к проекту" 
+                                   Foreground="{DynamicResource MaterialDesignBody}"
+                                   VerticalAlignment="Center"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <Button Content="✕" 
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Center"
+                            Margin="0,0,16,0"
+                            Background="Transparent"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Width="32" Height="32"
+                            FontSize="16"
+                            Click="Close_Click"/>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1" Margin="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="{DynamicResource MaterialDesignDivider}" 
+                        CornerRadius="4" Padding="12" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="{Binding ProjectName}" 
+                                   Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                   Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="Просмотр всех комментариев к проекту" 
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                   Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Row="1" Margin="0,0,0,12" Style="{StaticResource FilterToolbarGrid}">
+                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:HintAssist.Hint="Поиск по ID комментария, ID задачи или тексту..."
+                             Style="{StaticResource FilterTextBox}"
+                             Margin="0"/>
+                </Grid>
+
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Comments}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource MaterialDesignCardBackground}" 
+                                        CornerRadius="8" 
+                                        Margin="0,0,0,12"
+                                        Padding="16"
+                                        Effect="{StaticResource MaterialDesignElevationShadow2}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                            <materialDesign:PackIcon Kind="Account" Width="16" Height="16" 
+                                                                   Foreground="{DynamicResource PrimaryHueMidBrush}" 
+                                                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding AuthorName}" 
+                                                       Style="{StaticResource MaterialDesignSubtitle2TextBlock}"
+                                                       Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                                       FontWeight="SemiBold"/>
+                                            <TextBlock Text=" • " 
+                                                       Foreground="{DynamicResource MaterialDesignBodyLight}" 
+                                                       VerticalAlignment="Center" Margin="4,0"/>
+                                            <TextBlock Text="{Binding FormattedCreatedAt}" 
+                                                       Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                                       Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Row="1" Text="{Binding Content}" 
+                                                   Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                                   Foreground="{DynamicResource MaterialDesignBody}"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,0,0,8"/>
+
+                                        <ItemsControl Grid.Row="2"
+                                                      ItemsSource="{Binding Attachments}"
+                                                      Margin="0,0,0,8">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <DockPanel Margin="0,0,0,4" LastChildFill="True">
+                                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                                            <Button Content="Просмотр"
+                                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                                    Padding="8,4"
+                                                                    Margin="0,0,4,0"
+                                                                    Foreground="#5E35B1"
+                                                                    BorderBrush="#5E35B1"
+                                                                    Command="{Binding DataContext.PreviewCommentAttachmentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    CommandParameter="{Binding}"/>
+                                                            <Button Content="Удалить"
+                                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                                    Padding="8,4"
+                                                                    Foreground="#F44336"
+                                                                    BorderBrush="#F44336"
+                                                                    Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                                    Command="{Binding DataContext.DeleteCommentAttachmentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                    CommandParameter="{Binding}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <materialDesign:PackIcon Kind="Paperclip" Width="16" Height="16"
+                                                                                     VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <TextBlock Text="{Binding FileName}"
+                                                                       VerticalAlignment="Center"
+                                                                       TextTrimming="CharacterEllipsis"
+                                                                       ToolTip="{Binding FileName}"/>
+                                                            <TextBlock Text="{Binding FileSizeText, StringFormat=' ({0})'}"
+                                                                       Foreground="Gray"
+                                                                       FontSize="11"
+                                                                       VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                    </DockPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <Button Content="Прикрепить файл"
+                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                    Margin="0,0,8,0"
+                                                    Visibility="{Binding CanAddAttachment, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Command="{Binding DataContext.AddAttachmentToCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Content="Удалить комментарий"
+                                                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                    Foreground="#F44336"
+                                                    BorderBrush="#F44336"
+                                                    Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Command="{Binding DataContext.DeleteCommentCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Border Grid.Row="3" Style="{StaticResource PaginationFooterBorder}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Button Style="{StaticResource PaginationNavButton}" Command="{Binding FirstPageCommand}" ToolTip="Первая страница">
+                            <materialDesign:PackIcon Kind="ChevronDoubleLeft" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource PaginationNavButton}" Command="{Binding PreviousPageCommand}" ToolTip="Предыдущая">
+                            <materialDesign:PackIcon Kind="ChevronLeft" Width="20" Height="20"/>
+                        </Button>
+                        <TextBlock Text="Стр." VerticalAlignment="Center" Margin="10,0,6,0" Foreground="#666"/>
+                        <TextBox Style="{StaticResource PaginationPageTextBox}"
+                                 Text="{Binding CurrentPage, Converter={StaticResource PageNumberConverter}, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"/>
+                        <TextBlock VerticalAlignment="Center" Margin="6,0,10,0" Foreground="#666">
+                            <Run Text="из "/><Run Text="{Binding TotalPages}"/>
+                        </TextBlock>
+                        <Button Style="{StaticResource PaginationNavButton}" Command="{Binding NextPageCommand}" ToolTip="Следующая">
+                            <materialDesign:PackIcon Kind="ChevronRight" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource PaginationNavButton}" Command="{Binding LastPageCommand}" ToolTip="Последняя страница">
+                            <materialDesign:PackIcon Kind="ChevronDoubleRight" Width="20" Height="20"/>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Grid.Row="2" Background="{DynamicResource MaterialDesignDivider}" 
+                    CornerRadius="0,0,8,8" Height="60">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                        <materialDesign:PackIcon Kind="Information" Width="16" Height="16" 
+                                               Foreground="{DynamicResource MaterialDesignBodyLight}" 
+                                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding Comments.Count, StringFormat='Всего комментариев: {0}'}" 
+                                   Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                   Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                    </StackPanel>
+                    
+                    <Button Grid.Column="1" 
+                            Content="Добавить комментарий" 
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Margin="8,0,8,0"
+                            Command="{Binding AddCommentCommand}"/>
+                    <Button Grid.Column="2" 
+                            Content="Закрыть" 
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Margin="8,0,16,0"
+                            Click="Close_Click"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

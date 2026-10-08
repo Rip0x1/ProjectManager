@@ -1,0 +1,84 @@
+<Window x:Class="ProjectManagementSystem.WPF.Views.AttachmentPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Предпросмотр"
+        WindowStartupLocation="CenterOwner"
+        MinWidth="480" MinHeight="360"
+        Width="720" Height="520"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <Grid x:Name="RootGrid" Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="TitleText"
+                   Grid.Row="0"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,12"
+                   TextTrimming="CharacterEllipsis"/>
+
+        <Border Grid.Row="1"
+                x:Name="PreviewBorder"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1"
+                CornerRadius="4"
+                Background="White">
+            <Grid>
+                <Viewbox x:Name="ImageViewbox"
+                         Visibility="Collapsed"
+                         Stretch="Uniform"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center">
+                    <Image x:Name="PreviewImage"/>
+                </Viewbox>
+
+                <ScrollViewer x:Name="TextScroll"
+                              Visibility="Collapsed"
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Auto"
+                              Padding="12">
+                    <TextBox x:Name="PreviewText"
+                             IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             FontFamily="Consolas"/>
+                </ScrollViewer>
+
+                <StackPanel x:Name="UnsupportedPanel"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="FileEye" Width="48" Height="48"
+                                           HorizontalAlignment="Center"
+                                           Foreground="#757575"/>
+                    <TextBlock Text="Встроенный предпросмотр для этого типа файла недоступен."
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               Margin="16,12,16,0"
+                               Foreground="#616161"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,12,0,0">
+            <Button x:Name="OpenExternalButton"
+                    Content="Открыть в приложении"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Margin="0,0,8,0"
+                    Click="OpenExternalButton_Click"/>
+            <Button Content="Закрыть"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Click="CloseButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

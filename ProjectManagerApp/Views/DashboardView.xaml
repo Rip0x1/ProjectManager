@@ -1,0 +1,518 @@
+<UserControl x:Class="ProjectManagementSystem.WPF.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="DashboardDetailTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+        <Style x:Key="DashboardDetailSectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="17"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+        <Style x:Key="DashboardDetailRowLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="DashboardDetailRowValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="DashboardDetailStatRow" TargetType="Grid">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="DashboardDetailDot" TargetType="Border">
+            <Setter Property="Width" Value="16"/>
+            <Setter Property="Height" Value="16"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="ViewDashboard" Foreground="White" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <StackPanel Margin="12,0,0,0">
+                        <TextBlock Text="Панель управления" Foreground="White" FontSize="18" FontWeight="SemiBold"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <TextBlock Text="Роль: " Foreground="#EDE7F6" VerticalAlignment="Center"/>
+                            <Border Background="{Binding RoleColor, Converter={StaticResource StringToBrushConverter}}" 
+                                    CornerRadius="10" Padding="8,2" Margin="4,0,0,0">
+                                <TextBlock Text="{Binding RoleName}" 
+                                           Foreground="White" 
+                                           FontSize="11" 
+                                           FontWeight="SemiBold"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                
+                <Button HorizontalAlignment="Right"
+                        Command="{Binding ShowPermissionsMatrixCommand}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Foreground="White"
+                        BorderBrush="#EDE7F6"
+                        ToolTip="Таблица прав доступа">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="ShieldAccount" Foreground="White" Width="18" Height="18" Margin="0,0,6,0"/>
+                        <TextBlock Text="Права доступа" Foreground="White" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <WrapPanel Grid.Row="1" Margin="0,0,0,8">
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="FolderMultiple" Style="{StaticResource DashboardStatIcon}" Foreground="#2196F3"/>
+                    <TextBlock Text="Всего проектов" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding TotalProjects}" Style="{StaticResource DashboardStatValue}" Foreground="#2196F3"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="RocketLaunch" Style="{StaticResource DashboardStatIcon}" Foreground="#4CAF50"/>
+                    <TextBlock Text="Активных проектов" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding ActiveProjects}" Style="{StaticResource DashboardStatValue}" Foreground="#4CAF50"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="CheckboxMultipleMarked" Style="{StaticResource DashboardStatIcon}" Foreground="#9C27B0"/>
+                    <TextBlock Text="Всего задач" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding TotalTasks}" Style="{StaticResource DashboardStatValue}" Foreground="#9C27B0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="BellOutline" Style="{StaticResource DashboardStatIcon}" Foreground="#9E9E9E"/>
+                    <TextBlock Text="Новые задачи" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding TaskStatusNew}" Style="{StaticResource DashboardStatValue}" Foreground="#9E9E9E"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="ClipboardPlay" Style="{StaticResource DashboardStatIcon}" Foreground="#FF9800"/>
+                    <TextBlock Text="В работе" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding ActiveTasks}" Style="{StaticResource DashboardStatValue}" Foreground="#FF9800"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="EyeCheckOutline" Style="{StaticResource DashboardStatIcon}" Foreground="#FB8C00"/>
+                    <TextBlock Text="На проверке" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding TaskStatusReview}" Style="{StaticResource DashboardStatValue}" Foreground="#FB8C00"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="CheckCircle" Style="{StaticResource DashboardStatIcon}" Foreground="#4CAF50"/>
+                    <TextBlock Text="Завершено" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding CompletedTasks}" Style="{StaticResource DashboardStatValue}" Foreground="#4CAF50"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="CalendarClock" Style="{StaticResource DashboardStatIcon}" Foreground="#607D8B"/>
+                    <TextBlock Text="Отложено" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding TaskStatusPostponed}" Style="{StaticResource DashboardStatValue}" Foreground="#607D8B"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Style="{StaticResource DashboardStatIcon}" Foreground="#E53935"/>
+                    <TextBlock Text="Проблема" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding TaskStatusProblem}" Style="{StaticResource DashboardStatValue}" Foreground="#E53935"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="CommentTextMultiple" Style="{StaticResource DashboardStatIcon}" Foreground="#009688"/>
+                    <TextBlock Text="Комментарии" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding TotalComments}" Style="{StaticResource DashboardStatValue}" Foreground="#009688"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource DashboardStatCard}">
+                <StackPanel Style="{StaticResource DashboardStatPanel}">
+                    <materialDesign:PackIcon Kind="AccountGroup" Style="{StaticResource DashboardStatIcon}" Foreground="#F44336"/>
+                    <TextBlock Text="Пользователей" Style="{StaticResource DashboardStatLabel}"/>
+                    <TextBlock Text="{Binding TotalUsers}" Style="{StaticResource DashboardStatValue}" Foreground="#F44336"/>
+                </StackPanel>
+            </Border>
+        </WrapPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,10" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="20"
+                            Margin="0,0,8,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <Grid VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="📊 Детальная статистика задач" Style="{StaticResource DashboardDetailTitle}"/>
+                            <TextBlock Grid.Row="1" Text="Задачи по статусам:" Style="{StaticResource DashboardDetailSectionTitle}"/>
+
+                            <Grid Grid.Row="2" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#9E9E9E"/>
+                                <TextBlock Grid.Column="1" Text="Новая" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusNew}" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="3" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#2196F3"/>
+                                <TextBlock Grid.Column="1" Text="В работе" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusInProgress}" Foreground="#2196F3" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="4" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#FF9800"/>
+                                <TextBlock Grid.Column="1" Text="На проверке" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusReview}" Foreground="#FF9800" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="5" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#4CAF50"/>
+                                <TextBlock Grid.Column="1" Text="Завершена" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusCompleted}" Foreground="#4CAF50" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="6" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#607D8B"/>
+                                <TextBlock Grid.Column="1" Text="Отложено" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusPostponed}" Foreground="#607D8B" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="7" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#E53935"/>
+                                <TextBlock Grid.Column="1" Text="Проблема" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskStatusProblem}" Foreground="#E53935" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+
+                            <TextBlock Grid.Row="8" Text="Задачи по приоритетам:" Style="{StaticResource DashboardDetailSectionTitle}" Margin="0,8,0,8"/>
+
+                            <Grid Grid.Row="9" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#4CAF50"/>
+                                <TextBlock Grid.Column="1" Text="Низкий" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskPriorityLow}" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="10" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#FF9800"/>
+                                <TextBlock Grid.Column="1" Text="Средний" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskPriorityMedium}" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="11" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#F44336"/>
+                                <TextBlock Grid.Column="1" Text="Высокий" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskPriorityHigh}" Foreground="#F44336" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="12" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#9C27B0"/>
+                                <TextBlock Grid.Column="1" Text="Критический" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TaskPriorityCritical}" Foreground="#9C27B0" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="20"
+                            Margin="8,0,0,0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <Grid VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="📈 Статистика проектов" Style="{StaticResource DashboardDetailTitle}"/>
+                            <TextBlock Grid.Row="1" Text="Проекты по статусам:" Style="{StaticResource DashboardDetailSectionTitle}"/>
+
+                            <Grid Grid.Row="2" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#9E9E9E"/>
+                                <TextBlock Grid.Column="1" Text="Запланирован" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding ProjectStatusPlanned}" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="3" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#2196F3"/>
+                                <TextBlock Grid.Column="1" Text="В процессе" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding ProjectStatusInProgress}" Foreground="#2196F3" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+                            <Grid Grid.Row="4" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource DashboardDetailDot}" Background="#4CAF50"/>
+                                <TextBlock Grid.Column="1" Text="Завершен" Margin="10,0,0,0" Style="{StaticResource DashboardDetailRowLabel}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding ProjectStatusCompleted}" Foreground="#4CAF50" Style="{StaticResource DashboardDetailRowValue}"/>
+                            </Grid>
+
+                            <TextBlock Grid.Row="5" Text="🚀 Быстрая информация" Style="{StaticResource DashboardDetailSectionTitle}" Margin="0,8,0,8"/>
+
+                            <Grid Grid.Row="6" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <materialDesign:PackIcon Kind="CheckCircle" Width="32" Height="32" Foreground="#2196F3" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock FontSize="16" VerticalAlignment="Center">
+                                        <Run Text="Завершено задач: "/>
+                                        <Run Text="{Binding CompletedTasks}" FontWeight="Bold" FontSize="20"/>
+                                        <Run Text=" из "/>
+                                        <Run Text="{Binding TotalTasks}" FontWeight="Bold" FontSize="20"/>
+                                    </TextBlock>
+                                    <ProgressBar Value="{Binding CompletedTasks}" Maximum="{Binding TotalTasks}" Height="10" Margin="0,6,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Row="7" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <materialDesign:PackIcon Kind="CommentTextMultiple" Width="32" Height="32" Foreground="#009688" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Margin="14,0,0,0" FontSize="16" VerticalAlignment="Center">
+                                    <Run Text="Комментариев в системе: "/>
+                                    <Run Text="{Binding TotalComments}" FontWeight="Bold" FontSize="20"/>
+                                </TextBlock>
+                            </Grid>
+                            <Grid Grid.Row="8" Style="{StaticResource DashboardDetailStatRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <materialDesign:PackIcon Kind="Rocket" Width="32" Height="32" Foreground="#FF9800" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock FontSize="16" VerticalAlignment="Center">
+                                        <Run Text="Активных проектов: "/>
+                                        <Run Text="{Binding ActiveProjects}" FontWeight="Bold" FontSize="20"/>
+                                        <Run Text=" из "/>
+                                        <Run Text="{Binding TotalProjects}" FontWeight="Bold" FontSize="20"/>
+                                    </TextBlock>
+                                    <ProgressBar Value="{Binding ActiveProjects}" Maximum="{Binding TotalProjects}" Height="10" Margin="0,6,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="#FFEBEE" CornerRadius="8" Padding="12" Margin="0,0,6,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <materialDesign:PackIcon Kind="AlertCircleOutline" Width="18" Height="18" Foreground="#C62828" VerticalAlignment="Center"/>
+                            <TextBlock Text="Требует внимания" FontSize="14" FontWeight="SemiBold" Margin="6,0,0,0" Foreground="#C62828"/>
+                        </StackPanel>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="На проверке" FontSize="12" Foreground="#424242"/>
+                            <TextBlock Grid.Column="1" Text="{Binding TaskStatusReview}" FontWeight="Bold" Foreground="#FB8C00" FontSize="12"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="С проблемой" FontSize="12" Foreground="#424242"/>
+                            <TextBlock Grid.Column="1" Text="{Binding TaskStatusProblem}" FontWeight="Bold" Foreground="#E53935" FontSize="12"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Критический" FontSize="12" Foreground="#424242"/>
+                            <TextBlock Grid.Column="1" Text="{Binding TaskPriorityCritical}" FontWeight="Bold" Foreground="#9C27B0" FontSize="12"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Новые" FontSize="12" Foreground="#424242"/>
+                            <TextBlock Grid.Column="1" Text="{Binding TaskStatusNew}" FontWeight="Bold" Foreground="#9E9E9E" FontSize="12"/>
+                        </Grid>
+                        <TextBlock Text="{Binding AttentionSummary}" FontSize="11" TextWrapping="Wrap" Foreground="#424242"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Background="#FFF3E0" CornerRadius="8" Padding="12" Margin="0,0,6,0">
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <materialDesign:PackIcon Kind="ClockOutline" Width="18" Height="18" Foreground="#F57C00" VerticalAlignment="Center"/>
+                            <TextBlock Text="Время" FontSize="14" FontWeight="SemiBold" Margin="6,0,0,0" Foreground="#F57C00"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding CurrentTime}" FontSize="20" FontWeight="Bold" Foreground="#F57C00"/>
+                        <TextBlock Text="{Binding CurrentDate}" FontSize="11" Foreground="#424242" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Background="#F3E5F5" CornerRadius="8" Padding="12" Margin="0,0,6,0">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Прогресс" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,6" Foreground="#7B1FA2"/>
+                        <TextBlock FontSize="12" Foreground="#7B1FA2" Margin="0,0,0,4">
+                            <Run Text="{Binding CompletedTasks}" FontWeight="Bold"/>
+                            <Run Text=" / "/>
+                            <Run Text="{Binding TotalTasks}" FontWeight="Bold"/>
+                            <Run Text=" задач"/>
+                        </TextBlock>
+                        <ProgressBar Value="{Binding CompletedTasks}" Maximum="{Binding TotalTasks}" Height="6"
+                                     Background="#E1BEE7" Foreground="#7B1FA2"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="3" Background="#E0F2F1" CornerRadius="8" Padding="12">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Активность" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,6" Foreground="#00695C"/>
+                        <TextBlock FontSize="12" Foreground="#00695C" Margin="0,0,0,4">
+                            <Run Text="{Binding ActiveProjects}" FontWeight="Bold"/>
+                            <Run Text=" / "/>
+                            <Run Text="{Binding TotalProjects}" FontWeight="Bold"/>
+                            <Run Text=" проектов"/>
+                        </TextBlock>
+                        <ProgressBar Value="{Binding ActiveProjects}" Maximum="{Binding TotalProjects}" Height="6"
+                                     Background="#B2DFDB" Foreground="#00695C"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
+

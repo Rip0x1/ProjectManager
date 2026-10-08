@@ -1,0 +1,95 @@
+<Window x:Class="ProjectManagementSystem.WPF.Views.ConfirmClearLogsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Очистка журнала"
+        Width="520" Height="Auto" SizeToContent="Height"
+        MinWidth="480"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+
+    <Border Background="{DynamicResource MaterialDesignPaper}"
+            CornerRadius="8"
+            BorderBrush="#E0E0E0"
+            BorderThickness="1"
+            Effect="{StaticResource MaterialDesignElevationShadow4}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="#C62828" CornerRadius="8,8,0,0"
+                    MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                        <materialDesign:PackIcon Kind="AlertCircleOutline" Width="22" Height="22" Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="Очистка журнала"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <Button Content="✕"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,12,0"
+                            Background="Transparent"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Width="32" Height="32"
+                            FontSize="16"
+                            Click="Cancel_Click"/>
+                </Grid>
+            </Border>
+
+            <StackPanel Grid.Row="1" Margin="24,20">
+                <TextBlock Text="{Binding Summary}"
+                           FontSize="15"
+                           TextWrapping="Wrap"
+                           LineHeight="22"
+                           Foreground="{DynamicResource MaterialDesignBody}"/>
+
+                <Border Background="#FFF4F4" CornerRadius="8" Padding="16" Margin="0,16,0,0"
+                        BorderBrush="#FFCDD2" BorderThickness="1">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="DeleteSweep" Width="28" Height="28"
+                                                 Foreground="#C62828" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <StackPanel>
+                            <TextBlock Text="Будет удалено записей" FontSize="12" Foreground="#8D6E6E"/>
+                            <TextBlock Text="{Binding CountText}" FontSize="22" FontWeight="SemiBold" Foreground="#C62828"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Это действие нельзя отменить."
+                           Margin="0,16,0,0"
+                           FontSize="13"
+                           Foreground="#757575"/>
+            </StackPanel>
+
+            <Border Grid.Row="2" Padding="16,12" BorderBrush="#E0E0E0" BorderThickness="0,1,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Отмена"
+                            Width="120"
+                            Height="36"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Click="Cancel_Click"/>
+                    <Button Content="Удалить"
+                            Width="140"
+                            Height="36"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Background="#C62828"
+                            BorderBrush="#C62828"
+                            Foreground="White"
+                            Click="Confirm_Click"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

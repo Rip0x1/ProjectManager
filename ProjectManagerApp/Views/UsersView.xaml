@@ -1,0 +1,231 @@
+<UserControl x:Class="ProjectManagementSystem.WPF.Views.UsersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodels="clr-namespace:ProjectManagementSystem.WPF.ViewModels"
+             xmlns:convert="clr-namespace:ProjectManagementSystem.WPF.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewmodels:UsersViewModel}">
+
+    <UserControl.Resources>
+        <convert:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <convert:InverseBoolToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+        <convert:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        <Style x:Key="UserCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Effect" Value="{StaticResource MaterialDesignShadowDepth2}"/>
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="200"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <Grid Margin="0,0,0,4" Style="{StaticResource FilterToolbarGrid}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" 
+                         Style="{StaticResource FilterTextBox}"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:HintAssist.Hint="Поиск по ID, ФИО, логину или роли"/>
+
+                <ComboBox Grid.Column="1" 
+                          Style="{StaticResource FilterPageSizeComboBox}"
+                          SelectedValue="{Binding PageSize, UpdateSourceTrigger=PropertyChanged}"
+                          SelectedValuePath="Tag"
+                          materialDesign:HintAssist.Hint="На стр.">
+                    <ComboBoxItem Content="5" Tag="5"/>
+                    <ComboBoxItem Content="10" Tag="10"/>
+                    <ComboBoxItem Content="25" Tag="25"/>
+                    <ComboBoxItem Content="50" Tag="50"/>
+                </ComboBox>
+
+                <Button Grid.Column="2" Margin="8,0,0,0"
+                        VerticalAlignment="Center" MinHeight="56"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Background="{StaticResource PrimaryBrush}"
+                        BorderBrush="{StaticResource PrimaryBrush}"
+                        Command="{Binding CreateUserCommand}"
+                        Visibility="{Binding CanManageUsers, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Создать" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <Button Grid.Column="3" Margin="8,0,0,0"
+                        VerticalAlignment="Center" MinHeight="56"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Command="{Binding ShowPermissionsMatrixCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="ShieldAccount" Width="16" Height="16" Margin="0,0,6,0"/>
+                        <TextBlock Text="Права доступа" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="ColumnsButton" Grid.Column="4" Margin="8,0,0,0"
+                        VerticalAlignment="Center" MinHeight="56"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Click="ColumnsButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="ViewColumn" Width="16" Height="16" Margin="0,0,6,0"/>
+                        <TextBlock Text="Столбцы"/>
+                    </StackPanel>
+                </Button>
+                <Popup x:Name="ColumnsPopup"
+                       PlacementTarget="{Binding ElementName=ColumnsButton}"
+                       Placement="Bottom"
+                       StaysOpen="False"
+                       AllowsTransparency="True">
+                    <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1"
+                            CornerRadius="4" Padding="12" MinWidth="200"
+                            Effect="{StaticResource MaterialDesignElevationShadow2}">
+                        <StackPanel>
+                            <TextBlock Text="Отображаемые столбцы" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <ItemsControl ItemsSource="{Binding ColumnOptions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding Header}"
+                                                  IsChecked="{Binding IsVisible}"
+                                                  IsEnabled="{Binding IsLocked, Converter={StaticResource InverseBooleanConverter}}"
+                                                  Margin="0,2"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+                <Button Grid.Column="5"
+                        Style="{StaticResource ClearFiltersButton}"
+                        Command="{Binding ClearFiltersCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FilterRemove" Width="16" Height="16" Margin="0,0,6,0"/>
+                        <TextBlock Text="Сбросить фильтры"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <Border Style="{StaticResource FilterPanelBorder}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="FilterVariant" Width="20" Height="20"
+                                             Foreground="#5E35B1" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="Роль:" Style="{StaticResource FilterLabelText}"/>
+                    <ComboBox Style="{StaticResource FilterComboBox}"
+                              Width="200"
+                              SelectedValue="{Binding SelectedRoleFilter}"
+                              SelectedValuePath="Tag"
+                              materialDesign:HintAssist.Hint="Все роли">
+                        <ComboBoxItem Content="Все роли" Tag="-1"/>
+                        <ComboBoxItem Content="Пользователь" Tag="0"/>
+                        <ComboBoxItem Content="Менеджер" Tag="1"/>
+                        <ComboBoxItem Content="Администратор" Tag="2"/>
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Border Style="{StaticResource AppDataGridHostBorder}">
+            <DataGrid x:Name="UsersGrid"
+                      Style="{StaticResource AppDataGridStyle}"
+                      ItemsSource="{Binding PagedUsers}"
+                      AutoGenerateColumns="False"
+                      MouseDoubleClick="UsersGrid_MouseDoubleClick">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridTextColumn" BasedOn="{StaticResource AppDataGridTextColumnStyle}"/>
+                    <Style TargetType="DataGridTemplateColumn" BasedOn="{StaticResource AppDataGridTemplateColumnStyle}"/>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn x:Name="ColId" Header="ID пользователя" Binding="{Binding Id}" SortMemberPath="Id" Width="Auto" MinWidth="88"/>
+                    <DataGridTextColumn x:Name="ColFullName" Header="ФИО" Binding="{Binding FullName}" SortMemberPath="FullName" Width="*" MinWidth="140"/>
+                    <DataGridTextColumn x:Name="ColEmail" Header="Email" Binding="{Binding Email}" SortMemberPath="Email" Width="1.2*" MinWidth="160"/>
+                    <DataGridTemplateColumn x:Name="ColRole" Header="Роль" SortMemberPath="Role" Width="Auto" MinWidth="110">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource AppDataGridBadgeBorder}"
+                                        Background="{Binding RoleColor, Converter={StaticResource StringToBrushConverter}}">
+                                    <TextBlock Text="{Binding RoleText}" Style="{StaticResource AppDataGridBadgeText}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn x:Name="ColCreatedAtText" Header="Создан" Binding="{Binding CreatedAtText}" SortMemberPath="CreatedAt" Width="Auto" MinWidth="88"/>
+                    <DataGridTextColumn x:Name="ColManagedProjectsCount" Header="Проектов" Binding="{Binding ManagedProjectsCount}" SortMemberPath="ManagedProjectsCount" Width="Auto" MinWidth="72"/>
+                    <DataGridTextColumn x:Name="ColAuthoredTasksCount" Header="Создал" Binding="{Binding AuthoredTasksCount}" SortMemberPath="AuthoredTasksCount" Width="Auto" MinWidth="64"/>
+                    <DataGridTextColumn x:Name="ColAssignedTasksCount" Header="Назначено" Binding="{Binding AssignedTasksCount}" SortMemberPath="AssignedTasksCount" Width="Auto" MinWidth="80"/>
+                    <DataGridTextColumn x:Name="ColCommentsCount" Header="Комментариев" Binding="{Binding CommentsCount}" SortMemberPath="CommentsCount" Width="Auto" MinWidth="88"/>
+                    <DataGridTemplateColumn x:Name="ColActions" Header="Действия"
+                                            CanUserSort="False"
+                                            Width="112"
+                                            MinWidth="112"
+                                            HeaderStyle="{StaticResource AppDataGridActionsHeaderStyle}"
+                                            CellStyle="{StaticResource AppDataGridActionsCellStyle}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Visibility="{Binding DataContext.CanManageUsers, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Button Command="{Binding DataContext.EditUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource MaterialDesignIconButton}"
+                                            Width="32" Height="32" Padding="0" Margin="0"
+                                            ToolTip="Редактировать">
+                                        <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18" Foreground="#2196F3"/>
+                                    </Button>
+                                    <Button Command="{Binding DataContext.DeleteUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource MaterialDesignIconButton}"
+                                            Width="32" Height="32" Padding="0" Margin="0"
+                                            ToolTip="Удалить">
+                                        <materialDesign:PackIcon Kind="Delete" Width="18" Height="18" Foreground="#F44336"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Style="{StaticResource PaginationFooterBorder}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Style="{StaticResource PaginationNavButton}" Command="{Binding FirstPageCommand}" ToolTip="Первая страница">
+                    <materialDesign:PackIcon Kind="ChevronDoubleLeft" Width="20" Height="20"/>
+                </Button>
+                <Button Style="{StaticResource PaginationNavButton}" Command="{Binding PreviousPageCommand}" ToolTip="Предыдущая">
+                    <materialDesign:PackIcon Kind="ChevronLeft" Width="20" Height="20"/>
+                </Button>
+                <TextBlock Text="Стр." VerticalAlignment="Center" Margin="10,0,6,0" Foreground="#666"/>
+                <TextBox Style="{StaticResource PaginationPageTextBox}"
+                         Text="{Binding CurrentPage, Converter={StaticResource PageNumberConverter}, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"/>
+                <TextBlock VerticalAlignment="Center" Margin="6,0,10,0" Foreground="#666">
+                    <Run Text="из "/><Run Text="{Binding TotalPages}"/>
+                </TextBlock>
+                <Button Style="{StaticResource PaginationNavButton}" Command="{Binding NextPageCommand}" ToolTip="Следующая">
+                    <materialDesign:PackIcon Kind="ChevronRight" Width="20" Height="20"/>
+                </Button>
+                <Button Style="{StaticResource PaginationNavButton}" Command="{Binding LastPageCommand}" ToolTip="Последняя страница">
+                    <materialDesign:PackIcon Kind="ChevronDoubleRight" Width="20" Height="20"/>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,194 @@
+<UserControl x:Class="ProjectManagerApp.Views.MyProjectsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:ProjectManagementSystem.WPF.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="1200">
+    
+    <UserControl.Resources>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+            <Grid Margin="0,0,0,4" Style="{StaticResource FilterToolbarGrid}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:HintAssist.Hint="Поиск по ID, названию, описанию или менеджеру"
+                         Style="{StaticResource FilterTextBox}"/>
+
+                <Button x:Name="ColumnsButton" Grid.Column="1"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        VerticalAlignment="Center" MinHeight="56"
+                        Margin="8,0,0,0"
+                        Click="ColumnsButton_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="ViewColumn" Width="16" Height="16" Margin="0,0,6,0"/>
+                        <TextBlock Text="Столбцы"/>
+                    </StackPanel>
+                </Button>
+                <Popup x:Name="ColumnsPopup"
+                       PlacementTarget="{Binding ElementName=ColumnsButton}"
+                       Placement="Bottom"
+                       StaysOpen="False"
+                       AllowsTransparency="True">
+                    <Border Background="White" BorderBrush="#E0E0E0" BorderThickness="1"
+                            CornerRadius="4" Padding="12" MinWidth="200"
+                            Effect="{StaticResource MaterialDesignElevationShadow2}">
+                        <StackPanel>
+                            <TextBlock Text="Отображаемые столбцы" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <ItemsControl ItemsSource="{Binding ColumnOptions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding Header}"
+                                                  IsChecked="{Binding IsVisible}"
+                                                  IsEnabled="{Binding IsLocked, Converter={StaticResource InverseBooleanConverter}}"
+                                                  Margin="0,2"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </Popup>
+
+                <Button Grid.Column="2"
+                        Command="{Binding ClearFiltersCommand}"
+                        Style="{StaticResource ClearFiltersButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FilterRemove" Width="16" Height="16" Margin="0,0,6,0"/>
+                        <TextBlock Text="Сбросить фильтры"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <Border Style="{StaticResource FilterPanelBorder}" ClipToBounds="False">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20"
+                                             Foreground="#5E35B1" VerticalAlignment="Center"
+                                             Margin="0,0,10,0"/>
+                    <TextBlock Text="Поиск активен по ID, названию, описанию и менеджеру проекта"
+                               Style="{StaticResource FilterLabelText}"
+                               Margin="0"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,0,0,0">
+            <Border Style="{StaticResource AppDataGridHostBorder}">
+            <DataGrid x:Name="MyProjectsGrid"
+                      Style="{StaticResource AppDataGridStyle}"
+                      ItemsSource="{Binding UserProjects}"
+                      AutoGenerateColumns="False"
+                      MouseDoubleClick="MyProjectsGrid_MouseDoubleClick">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridTextColumn" BasedOn="{StaticResource AppDataGridTextColumnStyle}"/>
+                    <Style TargetType="DataGridTemplateColumn" BasedOn="{StaticResource AppDataGridTemplateColumnStyle}"/>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn x:Name="ColId" Header="ID проекта" Binding="{Binding Id}" SortMemberPath="Id" Width="Auto" MinWidth="72"/>
+                    <DataGridTextColumn x:Name="ColName" Header="Название" Binding="{Binding Name}" SortMemberPath="Name" Width="*" MinWidth="140"/>
+                    <DataGridTemplateColumn x:Name="ColStatus" Header="Статус" SortMemberPath="Status" Width="SizeToCells" MinWidth="160">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource AppDataGridBadgeBorder}"
+                                        Background="{Binding StatusColor, Converter={StaticResource StringToBrushConverter}}">
+                                    <TextBlock Text="{Binding StatusText}" Style="{StaticResource AppDataGridBadgeText}" TextTrimming="None"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn x:Name="ColManagerName" Header="Менеджер" Binding="{Binding ManagerName}" SortMemberPath="ManagerName" Width="Auto" MinWidth="120"/>
+                    <DataGridTextColumn x:Name="ColDeadlineText" Header="Дедлайн" Binding="{Binding DeadlineText}" SortMemberPath="Deadline" Width="Auto" MinWidth="88"/>
+                    <DataGridTextColumn x:Name="ColProgressText" Header="Прогресс" Binding="{Binding ProgressText}" SortMemberPath="Progress" Width="Auto" MinWidth="80"/>
+                    <DataGridTextColumn x:Name="ColParticipantsCount" Header="Участники" Binding="{Binding ParticipantsCount}" SortMemberPath="ParticipantsCount" Width="Auto" MinWidth="80"/>
+                    <DataGridTextColumn x:Name="ColTasksCount" Header="Задачи" Binding="{Binding TasksCount}" SortMemberPath="TasksCount" Width="Auto" MinWidth="64"/>
+                    <DataGridTextColumn x:Name="ColCommentsCount" Header="Комментарии" Binding="{Binding CommentsCount}" SortMemberPath="CommentsCount" Width="Auto" MinWidth="88"/>
+                    <DataGridTemplateColumn x:Name="ColActions" Header="Действия"
+                                            CanUserSort="False"
+                                            Width="148"
+                                            MinWidth="148"
+                                            HeaderStyle="{StaticResource AppDataGridActionsHeaderStyle}"
+                                            CellStyle="{StaticResource AppDataGridActionsCellStyle}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Button Command="{Binding DataContext.AddCommentAsyncCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource MaterialDesignIconButton}"
+                                            Width="32" Height="32" Padding="0" Margin="0"
+                                            ToolTip="Комментарии">
+                                        <materialDesign:PackIcon Kind="Comment" Width="18" Height="18" Foreground="#4CAF50"/>
+                                    </Button>
+                                    <Button Command="{Binding DataContext.CreateTaskAsyncCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource MaterialDesignIconButton}"
+                                            Width="32" Height="32" Padding="0" Margin="0"
+                                            ToolTip="Задачи проекта">
+                                        <materialDesign:PackIcon Kind="ClipboardList" Width="18" Height="18" Foreground="#2196F3"/>
+                                    </Button>
+                                    <Button Command="{Binding DataContext.ManageMembersCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource MaterialDesignIconButton}"
+                                            Width="32" Height="32" Padding="0" Margin="0"
+                                            ToolTip="Участники проекта"
+                                            Visibility="{Binding DataContext.CanManageProjectMembers, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <materialDesign:PackIcon Kind="AccountGroup" Width="18" Height="18" Foreground="#9C27B0"/>
+                                    </Button>
+                                    <Button Command="{Binding DataContext.ProjectSettingsAsyncCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource MaterialDesignIconButton}"
+                                            Width="32" Height="32" Padding="0" Margin="0"
+                                            ToolTip="Настройки проекта">
+                                        <materialDesign:PackIcon Kind="Settings" Width="18" Height="18" Foreground="#FF9800"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Style="{StaticResource PaginationFooterBorder}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Style="{StaticResource PaginationNavButton}" Command="{Binding FirstPageCommand}" ToolTip="Первая страница">
+                    <materialDesign:PackIcon Kind="ChevronDoubleLeft" Width="20" Height="20"/>
+                </Button>
+                <Button Style="{StaticResource PaginationNavButton}" Command="{Binding PreviousPageCommand}" ToolTip="Предыдущая">
+                    <materialDesign:PackIcon Kind="ChevronLeft" Width="20" Height="20"/>
+                </Button>
+                <TextBlock Text="Стр." VerticalAlignment="Center" Margin="10,0,6,0" Foreground="#666"/>
+                <TextBox Style="{StaticResource PaginationPageTextBox}"
+                         Text="{Binding CurrentPage, Converter={StaticResource PageNumberConverter}, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"/>
+                <TextBlock VerticalAlignment="Center" Margin="6,0,10,0" Foreground="#666">
+                    <Run Text="из "/><Run Text="{Binding TotalPages}"/>
+                </TextBlock>
+                <Button Style="{StaticResource PaginationNavButton}" Command="{Binding NextPageCommand}" ToolTip="Следующая">
+                    <materialDesign:PackIcon Kind="ChevronRight" Width="20" Height="20"/>
+                </Button>
+                <Button Style="{StaticResource PaginationNavButton}" Command="{Binding LastPageCommand}" ToolTip="Последняя страница">
+                    <materialDesign:PackIcon Kind="ChevronDoubleRight" Width="20" Height="20"/>
+                </Button>
+            </StackPanel>
+        </Border>
+
+    </Grid>
+</UserControl>

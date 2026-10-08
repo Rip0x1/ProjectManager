@@ -1,0 +1,26 @@
+﻿namespace ProjectManagementSystem.WPF.Models
+{
+    public class RegisterDto
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class LoginDto
+    {
+        public string Login { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class AuthResponseDto
+    {
+        public int UserId { get; set; }
+        public string Login { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Role { get; set; }
+        public string Message { get; set; }
+    }
+}

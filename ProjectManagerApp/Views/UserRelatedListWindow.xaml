@@ -1,0 +1,198 @@
+<Window x:Class="ProjectManagementSystem.WPF.Views.UserRelatedListWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:convert="clr-namespace:ProjectManagementSystem.WPF.Converters"
+        Title="{Binding WindowTitle}"
+        MinWidth="860" MinHeight="640"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="CanResizeWithGrip">
+
+    <Window.Resources>
+        <convert:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <convert:InverseBoolToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+        <convert:StringToBrushConverter x:Key="StringToBrushConverter"/>
+    </Window.Resources>
+
+    <Border Background="{DynamicResource MaterialDesignPaper}"
+            CornerRadius="8"
+            Effect="{StaticResource MaterialDesignElevationShadow4}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="White"
+                    BorderBrush="#E0E0E0" BorderThickness="0,0,0,1"
+                    CornerRadius="8,8,0,0" Height="50"
+                    MouseLeftButtonDown="Header_MouseLeftButtonDown">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                        <materialDesign:PackIcon Kind="AccountDetails" Width="24" Height="24"
+                                                 Foreground="#212121" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding WindowTitle}"
+                                   Foreground="#212121"
+                                   VerticalAlignment="Center"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <Button Content="✕"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,16,0"
+                            Background="Transparent"
+                            Foreground="#212121"
+                            BorderThickness="0"
+                            Width="32" Height="32"
+                            FontSize="16"
+                            Click="Close_Click"/>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1" Margin="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="{DynamicResource MaterialDesignDivider}"
+                        CornerRadius="4" Padding="12" Margin="0,0,0,16">
+                    <TextBlock Text="{Binding Subtitle}"
+                               Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                               Foreground="#212121"
+                               FontWeight="Bold"/>
+                </Border>
+
+                <TextBox Grid.Row="1"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:HintAssist.Hint="{Binding SearchHint}"
+                         Style="{StaticResource FilterTextBox}"
+                         Margin="0,0,0,12"/>
+
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding Items}"
+                                      Visibility="{Binding HasNoItems, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{Binding CardBackground, Converter={StaticResource StringToBrushConverter}}"
+                                            CornerRadius="8"
+                                            Margin="0,0,0,12"
+                                            Padding="16"
+                                            BorderBrush="#E4DCEF"
+                                            BorderThickness="1"
+                                            Effect="{StaticResource MaterialDesignElevationShadow2}"
+                                            Cursor="Hand">
+                                        <Border.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick"
+                                                          Command="{Binding DataContext.OpenItemCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                          CommandParameter="{Binding}"/>
+                                        </Border.InputBindings>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                    <TextBlock Text="{Binding Title}"
+                                                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                                               FontWeight="SemiBold"
+                                                               TextWrapping="Wrap"
+                                                               MaxWidth="560"/>
+                                                    <Border Background="{Binding BadgeColor, Converter={StaticResource StringToBrushConverter}}"
+                                                            CornerRadius="12"
+                                                            Padding="8,4"
+                                                            Margin="12,0,0,0"
+                                                            VerticalAlignment="Top"
+                                                            Visibility="{Binding HasBadge, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                        <TextBlock Text="{Binding Badge}"
+                                                                   Foreground="White"
+                                                                   FontSize="11"
+                                                                   FontWeight="SemiBold"/>
+                                                    </Border>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding Subtitle}"
+                                                           Foreground="#616161"
+                                                           TextWrapping="Wrap"
+                                                           Margin="0,0,0,4"/>
+                                                <TextBlock Text="{Binding Meta}"
+                                                           Foreground="#9E9E9E"
+                                                           FontSize="12"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0">
+                                                <Button Content="Добавить"
+                                                        Style="{StaticResource MaterialDesignRaisedButton}"
+                                                        Margin="0,0,8,0"
+                                                        Visibility="{Binding CanAdd, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                        Command="{Binding DataContext.AddToProjectCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"/>
+                                                <Button Content="Открыть"
+                                                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                        Command="{Binding DataContext.OpenItemCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Border Padding="24"
+                                Visibility="{Binding HasNoItems, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="InboxOutline" Width="40" Height="40"
+                                                         Foreground="#BDBDBD" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding EmptyText}"
+                                           Foreground="#9E9E9E"
+                                           FontStyle="Italic"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Border Grid.Row="3" Style="{StaticResource PaginationFooterBorder}"
+                        Visibility="{Binding HasNoItems, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Button Style="{StaticResource PaginationNavButton}" Command="{Binding FirstPageCommand}" ToolTip="Первая страница">
+                            <materialDesign:PackIcon Kind="ChevronDoubleLeft" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource PaginationNavButton}" Command="{Binding PreviousPageCommand}" ToolTip="Предыдущая">
+                            <materialDesign:PackIcon Kind="ChevronLeft" Width="20" Height="20"/>
+                        </Button>
+                        <TextBlock Text="Стр." VerticalAlignment="Center" Margin="10,0,6,0" Foreground="#666"/>
+                        <TextBox Style="{StaticResource PaginationPageTextBox}"
+                                 Text="{Binding CurrentPage, Converter={StaticResource PageNumberConverter}, UpdateSourceTrigger=LostFocus, Mode=TwoWay}"/>
+                        <TextBlock VerticalAlignment="Center" Margin="6,0,10,0" Foreground="#666">
+                            <Run Text="из "/><Run Text="{Binding TotalPages}"/>
+                        </TextBlock>
+                        <Button Style="{StaticResource PaginationNavButton}" Command="{Binding NextPageCommand}" ToolTip="Следующая">
+                            <materialDesign:PackIcon Kind="ChevronRight" Width="20" Height="20"/>
+                        </Button>
+                        <Button Style="{StaticResource PaginationNavButton}" Command="{Binding LastPageCommand}" ToolTip="Последняя страница">
+                            <materialDesign:PackIcon Kind="ChevronDoubleRight" Width="20" Height="20"/>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Grid.Row="2" Background="{DynamicResource MaterialDesignDivider}"
+                    CornerRadius="0,0,8,8" Height="60">
+                <Button Content="Закрыть"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,20,0"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Click="Close_Click"/>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
