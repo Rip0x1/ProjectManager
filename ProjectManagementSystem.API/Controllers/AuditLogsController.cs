@@ -29,10 +29,10 @@ namespace ProjectManagementSystem.API.Controllers
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 25)
         {
-            if (!_currentUser.IsAdmin)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new { Message = "Доступ только для администратора" });
-            }
+            //if (!_currentUser.IsAdmin)
+            //{
+            //    return StatusCode(StatusCodes.Status403Forbidden, new { Message = "Доступ только для администратора" });
+            //}
 
             var result = await _auditService.GetLogsAsync(new AuditLogFilterDto
             {
@@ -60,10 +60,10 @@ namespace ProjectManagementSystem.API.Controllers
             [FromQuery] DateTime? fromDate = null,
             [FromQuery] DateTime? toDate = null)
         {
-            if (!_currentUser.IsAdmin)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, new { Message = "Доступ только для администратора" });
-            }
+            //if (!_currentUser.IsAdmin)
+            //{
+            //    return StatusCode(StatusCodes.Status403Forbidden, new { Message = "Доступ только для администратора" });
+            //}
 
             var filter = new AuditLogFilterDto
             {

@@ -18,6 +18,27 @@ services:
       retries: 20
       start_period: 45s
 
+  dbadmin:
+    image: dbgate/dbgate:latest
+    container_name: pms-dbadmin
+    restart: unless-stopped
+    depends_on:
+      mssql:
+        condition: service_healthy
+    ports:
+      - "7261:3000"
+    environment:
+      CONNECTIONS: mssql
+      LABEL_mssql: "PMS MS SQL"
+      SERVER_mssql: mssql
+      PORT_mssql: 1433
+      USER_mssql: sa
+      PASSWORD_mssql: "Pms_Sql_2026!Strong"
+      DATABASE_mssql: TaskMasterDB2
+      ENGINE_mssql: "mssql@dbgate-plugin-mssql"
+      TRUST_SERVER_CERTIFICATE_mssql: "true"
+      ENCRYPT_mssql: "false"
+
   api:
     image: pms-api:latest
     pull_policy: missing

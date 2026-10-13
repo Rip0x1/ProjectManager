@@ -319,7 +319,8 @@ namespace ProjectManagementSystem.WPF.ViewModels
                 return "Неверный логин или пароль";
             }
 
-            if ((message.Contains("логин") || message.Contains("email")) && message.Contains("уже существует"))
+            if ((message.Contains("логин") || message.Contains("email")) &&
+                (message.Contains("уже существует") || message.Contains("уже используется")))
             {
                 return "Пользователь с таким логином уже существует";
             }

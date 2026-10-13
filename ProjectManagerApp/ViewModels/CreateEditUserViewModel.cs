@@ -294,7 +294,8 @@ namespace ProjectManagerApp.ViewModels
         {
             var message = ex.Message.ToLower();
 
-            if ((message.Contains("логин") || message.Contains("email")) && message.Contains("уже существует"))
+            if ((message.Contains("логин") || message.Contains("email")) &&
+                (message.Contains("уже существует") || message.Contains("уже используется")))
             {
                 return "Пользователь с таким логином уже существует";
             }

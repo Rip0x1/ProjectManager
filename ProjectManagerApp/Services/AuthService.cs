@@ -32,12 +32,12 @@ namespace ProjectManagementSystem.WPF.Services
             }
             catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                var message = ex.Message?.ToLowerInvariant();
-                if (!string.IsNullOrEmpty(message) && message.Contains("already exists"))
+                var message = ex.Message?.ToLowerInvariant() ?? string.Empty;
+                if (message.Contains("already exists") || message.Contains("уже существует") || message.Contains("уже используется"))
                 {
                     throw new Exception("Пользователь с таким логином уже существует");
                 }
-                if (!string.IsNullOrEmpty(message) && (message.Contains("login") || message.Contains("логин")))
+                if (message.Contains("логин") || message.Contains("login"))
                 {
                     throw new Exception("Введите корректный логин");
                 }

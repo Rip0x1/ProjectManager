@@ -7,15 +7,14 @@ namespace ProjectManagementSystem.API.Logging
     public sealed class AuditFileWriter : IDisposable
     {
         private static readonly TimeZoneInfo DisplayZone = ResolveDisplayZone();
-        private readonly string _directory;
+        private readonly string _filePath;
         private readonly object _sync = new();
         private StreamWriter? _writer;
-        private string _currentDate = string.Empty;
 
         public AuditFileWriter(string directory)
         {
-            _directory = directory;
-            Directory.CreateDirectory(_directory);
+            Directory.CreateDirectory(directory);
+            _filePath = Path.Combine(directory, "logs.txt");
         }
 
         public void Write(AuditLog log)
@@ -40,29 +39,16 @@ namespace ProjectManagementSystem.API.Logging
 
         private void EnsureWriter()
         {
-            var date = DateTime.Now.ToString("yyyy-MM-dd");
-            if (_writer != null && _currentDate == date)
+            if (_writer != null)
             {
                 return;
             }
 
-            _writer?.Dispose();
-            _currentDate = date;
-            var path = Path.Combine(_directory, $"audit-{date}.txt");
-            var isNew = !File.Exists(path) || new FileInfo(path).Length == 0;
-            var stream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+            var stream = new FileStream(_filePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
             _writer = new StreamWriter(stream, new UTF8Encoding(true))
             {
                 AutoFlush = true
             };
-
-            if (isNew)
-            {
-                _writer.WriteLine("Журнал аудита системы управления проектами");
-                _writer.WriteLine("Дата: " + DateTime.Now.ToString("dd.MM.yyyy"));
-                _writer.WriteLine("Записи совпадают с журналом в приложении (раздел «Логи» у администратора).");
-                _writer.WriteLine();
-            }
         }
 
         private static string Format(AuditLog log)
@@ -78,18 +64,7 @@ namespace ProjectManagementSystem.API.Logging
             var entityId = log.EntityId?.ToString() ?? "—";
             var details = string.IsNullOrWhiteSpace(log.Details) ? "—" : log.Details.Trim();
 
-            var builder = new StringBuilder();
-            builder.AppendLine("--------------------------------------------------------------------------------");
-            builder.AppendLine("Время:         " + when);
-            builder.AppendLine("Кто:           " + who);
-            builder.AppendLine("Логин:         " + login);
-            builder.AppendLine("Действие:      " + action);
-            builder.AppendLine("Раздел:        " + section);
-            builder.AppendLine("Название:      " + name);
-            builder.AppendLine("ID объекта:    " + entityId);
-            builder.AppendLine("Что произошло: " + details);
-            builder.Append("--------------------------------------------------------------------------------");
-            return builder.ToString();
+            return $"Time: {when} | Who: {who} | Login: {login} | Action: {action} | Section: {section} | Name: {name} | ID entity: {entityId} | Details: {details}";
         }
 
         private static string FormatWhen(DateTime timestamp)
